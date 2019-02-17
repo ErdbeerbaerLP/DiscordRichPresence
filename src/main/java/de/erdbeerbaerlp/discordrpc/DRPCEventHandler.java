@@ -41,7 +41,6 @@ public class DRPCEventHandler {
 	protected static String serverCustomMessage = "";
 	protected static boolean usingCustomMsg = false;
 	protected static boolean checkedUpdate = false;
-
 	protected static String customIco = "cube";
 	
 
@@ -76,7 +75,7 @@ public class DRPCEventHandler {
 
 			if(DRPC.isClient){
 				if(checkedUpdate == false){
-					Status result = ForgeVersion.getStatus();//getResult(ModList.get().getModFileById(DRPC.MODID));
+					Status result = ForgeVersion.getStatus();
 					DRPCLog.Info(result.toString());
 					if (result == Status.OUTDATED)
 					{
@@ -216,8 +215,7 @@ public class DRPCEventHandler {
 				if((event.getGui() instanceof GuiMainMenu || event.getGui() instanceof GuiMultiplayer) && inWorld == false){
 					resetVars();
 					checkedUpdate = false;
-					Discord.setPresence(ClientConfig.NAME.get(), ClientConfig.MENU_TEXT.get(), "cube");
-					//new RPCCrash("MANUAL INITIATED CRASH", new NullPointerException("TEST"));
+					Discord.setPresence("", "mm", "cube");
 				}else if(event.getGui() instanceof GuiDownloadTerrain){
 					
 			

@@ -6,7 +6,9 @@ import com.google.common.base.Predicate;
 
 import net.arikia.dev.drpc.DiscordRPC;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig.Type;
@@ -26,7 +28,7 @@ public class DRPC {
 	/**
 	 * Mod Version
 	 */
-	public static final String VERSION = "2.0";
+	public static final String VERSION = "2.0.0";
 	/**
 	 * Mod Name (What did you expect?)
 	 */
@@ -58,7 +60,17 @@ public class DRPC {
     	REQUEST.<RequestMessage>registerMessage(1, RequestMessage.class, (a, b) -> a.encode(a,b), (a) -> {a.readInt();return new RequestMessage(a.readString(300));}, (a, b) -> a.onMessageReceived(a,b));
     	MSG.<Message_Message>registerMessage(1, Message_Message.class, (a, b) -> a.encode(a,b), (a) -> {a.readInt();return new Message_Message(a.readString(300));}, (a, b) -> a.onMessageReceived(a,b));
 
-        
+
+    	
+    	DistExecutor.runWhenOn(Dist.CLIENT, ()->()->{
+    		ModLoadingContext.get().registerConfig(Type.COMMON, ClientConfig.CONFIG_SPEC);
+    		MinecraftForge.EVENT_BUS.register(ClientConfig.class);
+    		});
+    	DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, ()-> ()->{
+    		ModLoadingContext.get().registerConfig(Type.SERVER, ServerConfig.CONFIG_SPEC);
+        	MinecraftForge.EVENT_BUS.register(ServerConfig.class);
+    		});
+    	
 	}
     private void setup(final FMLCommonSetupEvent event) {
     	DRPCLog.Info("CommonSetupEvent");
@@ -66,8 +78,6 @@ public class DRPC {
     private void clientSetup(final FMLClientSetupEvent event) {
     	DRPCLog.Info("ClientSetupEvent");
 
-    	ModLoadingContext.get().registerConfig(Type.COMMON, ClientConfig.CONFIG_SPEC);
-    	MinecraftForge.EVENT_BUS.register(ClientConfig.class);
     	MinecraftForge.EVENT_BUS.register(DRPCEventHandler.class);
     	Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			DRPCLog.Info("Shutting down DiscordHook.");
@@ -80,8 +90,7 @@ public class DRPC {
     }
     public void serverSetup(FMLDedicatedServerSetupEvent event) {
     	DRPC.isClient = false;
-    	ModLoadingContext.get().registerConfig(Type.SERVER, ServerConfig.CONFIG_SPEC);
-    	MinecraftForge.EVENT_BUS.register(ServerConfig.class);
+    	
     	System.out.println(ServerConfig.SERVER_ICON.get());
     }
 	public void postInit(InterModProcessEvent event) {
