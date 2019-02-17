@@ -215,7 +215,7 @@ public class DRPCEventHandler {
 				if((event.getGui() instanceof GuiMainMenu || event.getGui() instanceof GuiMultiplayer) && inWorld == false){
 					resetVars();
 					checkedUpdate = false;
-					Discord.setPresence("", "mm", "cube");
+					Discord.setPresence(ClientConfig.NAME.get(), ClientConfig.MENU_TEXT.get(), "cube");
 				}else if(event.getGui() instanceof GuiDownloadTerrain){
 					
 			
