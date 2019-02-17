@@ -34,6 +34,14 @@ public class ServerConfig {
 		builder.pop();
 		
 	}
+    @SubscribeEvent
+    public static void onLoad(final ModConfig.Loading configEvent) {
+        LogManager.getLogger().info("Loaded drpc config file {}", configEvent.getConfig().getFileName());
+    }
 
+    @SubscribeEvent
+    public static void onFileChange(final ModConfig.ConfigReloading configEvent) {
+        System.out.println("DRPC config just got changed on the file system!");
+    }
 	
 }

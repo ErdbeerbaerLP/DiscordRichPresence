@@ -1,10 +1,13 @@
 package de.erdbeerbaerlp.discordrpc;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.config.ModConfig;
 
 public class ClientConfig {
 	
@@ -41,5 +44,13 @@ public class ClientConfig {
 		DEV_COMMANDS = builder.comment("Do you want to use development commands?").define("Dev-Commands", false);
 		builder.pop();
 	}
+    @SubscribeEvent
+    public static void onLoad(final ModConfig.Loading configEvent) {
+        LogManager.getLogger().info("Loaded drpc config file {}", configEvent.getConfig().getFileName());
+    }
 
+    @SubscribeEvent
+    public static void onFileChange(final ModConfig.ConfigReloading configEvent) {
+        System.out.println("DRPC config just got changed on the file system!");
+    }
 }
