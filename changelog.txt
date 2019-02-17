@@ -1,0 +1,11 @@
+Build: 1.13.2-25.0.13 - Sat Feb 16 02:57:34 GMT 2019
+	cpw: Fix the MDK..
+=========
+Build: 1.13.2-25.0.12 - Sat Feb 16 02:45:43 GMT 2019
+	cpw: Fix network syncing of SERVER config. Enable COMMON Config. Fix network
+=========
+Build: 1.13.2-25.0.11 - Sat Feb 16 01:01:01 GMT 2019
+	cpw: Fix serverlang loading issue, by frontloading MC and Forge langs, so
+=========
+Build: 1.13.2-25.0.10 - Fri Feb 15 06:11:58 GMT 2019
+	cpw: Use MC VERSION in the dependencies string for the extra jar
