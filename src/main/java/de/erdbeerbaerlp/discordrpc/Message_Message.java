@@ -7,11 +7,12 @@ import net.minecraftforge.fml.network.NetworkEvent.Context;
 
 public class Message_Message {
 	private String toSend;
-
 	public Message_Message(String toSend) {
 		// TODO Auto-generated constructor stub
 		this.toSend = toSend;
 	}
+
+
 
 	public Object encode(Message_Message a, PacketBuffer b) {
 		// TODO Auto-generated method stub
@@ -20,9 +21,11 @@ public class Message_Message {
 		return b;
 	}
 
+
+
 	public Object onMessageReceived(Message_Message a, Supplier<Context> b) {
-		DRPCLog.Info("Message-packet received: \"" + a.toSend + "\"! Applying message...");
-		DRPCEventHandler.serverCustomMessage = toSend;
-		return null;
+		DRPCLog.Info("Message-packet received: \""+a.toSend+"\"! Applying message...");
+	    DRPCEventHandler.serverCustomMessage = toSend;
+	    return null;
 	}
 }
