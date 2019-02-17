@@ -82,6 +82,7 @@ public class DRPC {
     	DRPC.isClient = false;
     	ModLoadingContext.get().registerConfig(Type.SERVER, ServerConfig.CONFIG_SPEC);
     	MinecraftForge.EVENT_BUS.register(ServerConfig.class);
+    	System.out.println(ServerConfig.SERVER_ICON.get());
     }
 	public void postInit(InterModProcessEvent event) {
 		if(isEnabled && isClient) Discord.setPresence(ClientConfig.NAME.get(), "Starting game...", "3454083453475893469");
