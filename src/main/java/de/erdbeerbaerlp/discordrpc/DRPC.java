@@ -42,9 +42,8 @@ public class DRPC {
 	private static final Predicate<String> pred = (ver) -> {return ver.equals(protVersion);};
 	protected static final SimpleChannel REQUEST = NetworkRegistry.newSimpleChannel(new ResourceLocation(DRPC.MODID, "discord-req"), ()->{return protVersion;}, pred, pred);
 	protected static final SimpleChannel MSG = NetworkRegistry.newSimpleChannel(new ResourceLocation(DRPC.MODID, "discord-msg"), ()->{return protVersion;}, pred, pred);
-	protected static final SimpleChannel ICO = NetworkRegistry.newSimpleChannel(new ResourceLocation(DRPC.MODID, "discord-icon"), ()->{return protVersion;}, pred, pred);
+	protected static final SimpleChannel ICON = NetworkRegistry.newSimpleChannel(new ResourceLocation(DRPC.MODID, "discord-icon"), ()->{return protVersion;}, pred, pred);
 	protected static boolean isClient = true;
-	
 	protected static boolean logtochat = true;
 	protected static boolean preventConfigLoad = false;
 	/**
@@ -53,12 +52,11 @@ public class DRPC {
 	public static final long gameStarted = Instant.now().getEpochSecond();
     public DRPC() {
     	System.out.println("Mod Constructor");
-    	
     	FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
     	FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
     	FMLJavaModLoadingContext.get().getModEventBus().addListener(this::serverSetup);
     	FMLJavaModLoadingContext.get().getModEventBus().addListener(this::postInit);
-    	ICO.<Message_Icon>registerMessage(0, Message_Icon.class,(a, b) -> a.encode(a,b), (a) -> {a.readInt();return new Message_Icon(a.readString(300));}, (a, b) -> a.onMessageReceived(a,b));
+    	ICON.<Message_Icon>registerMessage(0, Message_Icon.class,(a, b) -> a.encode(a,b), (a) -> {a.readInt();return new Message_Icon(a.readString(300));}, (a, b) -> a.onMessageReceived(a,b));
     	REQUEST.<RequestMessage>registerMessage(1, RequestMessage.class, (a, b) -> a.encode(a,b), (a) -> {a.readInt();return new RequestMessage(a.readString(300));}, (a, b) -> a.onMessageReceived(a,b));
     	MSG.<Message_Message>registerMessage(1, Message_Message.class, (a, b) -> a.encode(a,b), (a) -> {a.readInt();return new Message_Message(a.readString(300));}, (a, b) -> a.onMessageReceived(a,b));
 

@@ -80,7 +80,7 @@ public class Discord {
 	}
 	
 	protected static void reloadPresence() {
-//		setPresence(RPCconfig.NAME, currentSubtitle, currentImgKey);
+		setPresence(ClientConfig.NAME.get(), currentSubtitle, currentImgKey);
 	}
 	
 	protected static String getTitle(){

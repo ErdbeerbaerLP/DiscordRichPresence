@@ -194,7 +194,6 @@ public class DRPCEventHandler {
 				}
 			}catch(Throwable e){
 				e.printStackTrace();
-//				DRPCLog.Error("(Usually not a bug) ERROR in onPlayerTick... "+e);
 				
 			}
                 }
