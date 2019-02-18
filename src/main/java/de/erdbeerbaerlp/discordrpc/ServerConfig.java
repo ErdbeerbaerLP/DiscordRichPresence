@@ -14,7 +14,7 @@ public class ServerConfig {
 	public static final ServerConfig CONFIG;
 	
 	public static ConfigValue<String> SERVER_MESSAGE;
-	public static ConfigValue<String> SERVER_ICON; //ForgeMod
+	public static ConfigValue<String> SERVER_ICON;
 	
 	static
 	{
@@ -22,7 +22,9 @@ public class ServerConfig {
 		System.out.println("Loading serverside config file...");
 		CONFIG = specPair.getLeft();
 		CONFIG_SPEC = specPair.getRight();
-		
+		System.out.println("Done");
+		System.out.println(CONFIG);
+		System.out.println(CONFIG_SPEC);
 	}
 	
 	ServerConfig(ForgeConfigSpec.Builder builder)
@@ -30,7 +32,6 @@ public class ServerConfig {
 		builder.comment("Server RichPresence config").push("RichPresence");
 		SERVER_MESSAGE = builder.comment("The second line you have in the rich presence.\n Placeholders are:\n%players% - Amount of all players\n%otherpl% - Amount of players -1 (except you)").define("Message", "Playing on a random Server with %otherpl% other players");
 		SERVER_ICON = builder.comment("The Icon-Key. Use 'world' or 'cube' if you don�t have an special one.").define("IconKey", "world");
-		
 		builder.pop();
 		
 	}

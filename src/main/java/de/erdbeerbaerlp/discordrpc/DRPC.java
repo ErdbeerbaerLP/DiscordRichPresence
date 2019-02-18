@@ -63,11 +63,12 @@ public class DRPC {
 
     	
     	DistExecutor.runWhenOn(Dist.CLIENT, ()->()->{
-    		ModLoadingContext.get().registerConfig(Type.COMMON, ClientConfig.CONFIG_SPEC);
+    		ModLoadingContext.get().registerConfig(Type.COMMON, ClientConfig.CONFIG_SPEC, "DiscordRPC.toml");
     		MinecraftForge.EVENT_BUS.register(ClientConfig.class);
     		});
     	DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, ()-> ()->{
-    		ModLoadingContext.get().registerConfig(Type.SERVER, ServerConfig.CONFIG_SPEC);
+    		System.out.println("SERVER!!!");
+    		ModLoadingContext.get().registerConfig(Type.COMMON, ServerConfig.CONFIG_SPEC, "DiscordRPC-Server.toml");
         	MinecraftForge.EVENT_BUS.register(ServerConfig.class);
     		});
     	
@@ -84,17 +85,15 @@ public class DRPC {
 			DiscordRPC.discordShutdown();
 		}));
 
-    	
     	if(isEnabled) Discord.initDiscord();
         if(isEnabled) Discord.setPresence(ClientConfig.NAME.get(), "Starting game...", "34565655649643693", false);
     }
     public void serverSetup(FMLDedicatedServerSetupEvent event) {
     	DRPC.isClient = false;
     	
-    	System.out.println(ServerConfig.SERVER_ICON.get());
     }
 	public void postInit(InterModProcessEvent event) {
 		if(isEnabled && isClient) Discord.setPresence(ClientConfig.NAME.get(), "Starting game...", "3454083453475893469");
-		
+		if(!isClient) System.out.println(ServerConfig.SERVER_ICON.get());;
 	}
 }

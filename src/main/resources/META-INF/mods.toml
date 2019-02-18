@@ -24,7 +24,7 @@ modId="discordrpc" #mandatory
 # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
 version="${file.jarVersion}" #mandatory
  # A display name for the mod
-displayName="DiscordRPC" #mandatory
+displayName="DiscordRichPresence" #mandatory
 # A URL to query for updates for this mod. See the JSON update specification <here>
 updateJSONURL="http://erdbeerbaerapi.tk/discordrpc.json/" #optional
 # The description text for the mod (multi line!) (#mandatory)
@@ -32,7 +32,7 @@ description='''
 Adds Discord Rich Presence to the game
 '''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
-[[dependencies.examplemod]] #optional
+[[dependencies.discordrpc]] #optional
     # the modid of the dependency
     modId="forge" #mandatory
     # Does this dependency have to exist - if not, ordering below must be specified
@@ -44,7 +44,7 @@ Adds Discord Rich Presence to the game
     # Side this dependency is applied on - BOTH, CLIENT or SERVER
     side="BOTH"
 # Here's another dependency
-[[dependencies.examplemod]]
+[[dependencies.discordrpc]]
     modId="minecraft"
     mandatory=true
     versionRange="[1.13.2]"
