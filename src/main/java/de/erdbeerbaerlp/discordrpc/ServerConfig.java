@@ -22,9 +22,6 @@ public class ServerConfig {
 		System.out.println("Loading serverside config file...");
 		CONFIG = specPair.getLeft();
 		CONFIG_SPEC = specPair.getRight();
-		System.out.println("Done");
-		System.out.println(CONFIG);
-		System.out.println(CONFIG_SPEC);
 	}
 	
 	ServerConfig(ForgeConfigSpec.Builder builder)

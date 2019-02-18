@@ -51,7 +51,6 @@ public class DRPC {
 	 */
 	public static final long gameStarted = Instant.now().getEpochSecond();
     public DRPC() {
-    	System.out.println("Mod Constructor");
     	FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
     	FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
     	FMLJavaModLoadingContext.get().getModEventBus().addListener(this::serverSetup);
@@ -59,26 +58,18 @@ public class DRPC {
     	ICON.<Message_Icon>registerMessage(0, Message_Icon.class,(a, b) -> a.encode(a,b), (a) -> {a.readInt();return new Message_Icon(a.readString(300));}, (a, b) -> a.onMessageReceived(a,b));
     	REQUEST.<RequestMessage>registerMessage(1, RequestMessage.class, (a, b) -> a.encode(a,b), (a) -> {a.readInt();return new RequestMessage(a.readString(300));}, (a, b) -> a.onMessageReceived(a,b));
     	MSG.<Message_Message>registerMessage(1, Message_Message.class, (a, b) -> a.encode(a,b), (a) -> {a.readInt();return new Message_Message(a.readString(300));}, (a, b) -> a.onMessageReceived(a,b));
-
-
-    	
     	DistExecutor.runWhenOn(Dist.CLIENT, ()->()->{
     		ModLoadingContext.get().registerConfig(Type.COMMON, ClientConfig.CONFIG_SPEC, "DiscordRPC.toml");
     		MinecraftForge.EVENT_BUS.register(ClientConfig.class);
     		});
     	DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, ()-> ()->{
-    		System.out.println("SERVER!!!");
     		ModLoadingContext.get().registerConfig(Type.COMMON, ServerConfig.CONFIG_SPEC, "DiscordRPC-Server.toml");
         	MinecraftForge.EVENT_BUS.register(ServerConfig.class);
     		});
     	
 	}
-    private void setup(final FMLCommonSetupEvent event) {
-    	DRPCLog.Info("CommonSetupEvent");
-    }
+    private void setup(final FMLCommonSetupEvent event) {} //Unused for now
     private void clientSetup(final FMLClientSetupEvent event) {
-    	DRPCLog.Info("ClientSetupEvent");
-
     	MinecraftForge.EVENT_BUS.register(DRPCEventHandler.class);
     	Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			DRPCLog.Info("Shutting down DiscordHook.");
@@ -94,6 +85,5 @@ public class DRPC {
     }
 	public void postInit(InterModProcessEvent event) {
 		if(isEnabled && isClient) Discord.setPresence(ClientConfig.NAME.get(), "Starting game...", "3454083453475893469");
-		if(!isClient) System.out.println(ServerConfig.SERVER_ICON.get());;
 	}
 }
