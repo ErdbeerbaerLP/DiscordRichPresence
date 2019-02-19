@@ -54,7 +54,6 @@ public class Command {
 			}
 
 			private static int execute(CommandContext<CommandSource> ctx) {
-				// TODO Auto-generated method stub
 				try {
 					final EntityPlayerMP sender = ctx.getSource().asPlayer();
 					if(DRPC.logtochat == false){

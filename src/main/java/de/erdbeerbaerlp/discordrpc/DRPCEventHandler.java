@@ -136,7 +136,6 @@ public class DRPCEventHandler {
 							usingCustomMsg = true;
 						}else{
 							if(Minecraft.getInstance().getCurrentServerData().serverIP.toLowerCase().contains("hypixel.net")){
-//								Log.Fatal("HYPIXEL!!!!!!!!!");
 								String scoreboardTitle = null;
 								try {
 									scoreboardTitle = Minecraft.getInstance().world.getScoreboard().getObjectiveInDisplaySlot(1).getDisplayName().getUnformattedComponentText();
