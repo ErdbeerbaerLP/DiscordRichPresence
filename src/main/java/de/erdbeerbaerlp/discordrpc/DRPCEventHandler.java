@@ -187,7 +187,7 @@ public class DRPCEventHandler {
 					else tickAmount--;
 				}
 			}catch(Throwable e){
-				e.printStackTrace();
+//				e.printStackTrace();
 				
 			}
                 }

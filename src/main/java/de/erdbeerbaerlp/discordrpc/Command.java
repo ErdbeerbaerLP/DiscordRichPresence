@@ -11,21 +11,24 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.server.command.ForgeCommand;
 
 public class Command {
 
-	public static class CommandHelp{
+	private static class CommandHelp{
 		static ArgumentBuilder<CommandSource, ?> register()
 		{
-			return null;
-			
+			return Commands.literal("help")
+					.requires(cs->cs.hasPermissionLevel(0))
+					.executes((ctx)->execute(ctx));
+
 		}
 		private static TextComponentString helpMsg = new TextComponentString(DRPC.COMMAND_MESSAGE_PREFIX
 				+"\u00A72 Help:\n"
 				+ "\u00A76/drpc help \u00A77   Displays this\n"
 				+ "\u00A76/drpc reload \u00A77  Reloads the config file\n"
 				+ "\u00A76/drpc dev \u00A77   Some debugging functions");
-		
+
 		private static int execute(CommandContext<CommandSource> ctx) {
 			// TODO Auto-generated method stub
 
@@ -39,25 +42,74 @@ public class Command {
 			return 1;
 		}
 	}
-	public static class CommandReload{}
-	public static class CommandDev{
+	private static class CommandReload{}
+	private static class CommandDev{
+		private static class CommandLogToChat{
+			static ArgumentBuilder<CommandSource, ?> register()
+			{
+				return Commands.literal("logtochat")
+						.requires(cs->cs.hasPermissionLevel(0))
+						.executes((ctx)->execute(ctx));
 
+			}
+
+			private static int execute(CommandContext<CommandSource> ctx) {
+				// TODO Auto-generated method stub
+				try {
+					final EntityPlayerMP sender = ctx.getSource().asPlayer();
+					if(DRPC.logtochat == false){
+						sender.sendMessage(new TextComponentString(DRPC.COMMAND_MESSAGE_PREFIX+"\u00A7aTurned on log in chat!"));
+						DRPC.logtochat = true;
+					}else{
+						sender.sendMessage(new TextComponentString(DRPC.COMMAND_MESSAGE_PREFIX+"\u00A7aTurned off log in chat!"));
+						DRPC.logtochat = false;
+					}
+					DRPCLog.Debug("Test");
+					DRPCLog.Info("Test");
+					DRPCLog.Error("Test");
+					DRPCLog.Fatal("Test");
+					return 1;
+				} catch (CommandSyntaxException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return 0;
+				}
+				
+			}
+		}
+		
 		public static ArgumentBuilder<CommandSource, ?> register() {
 			// TODO Auto-generated method stub
-			return null;
+			return ClientConfig.DEV_COMMANDS.get()?Commands.literal("dev")
+					.requires(cs->cs.hasPermissionLevel(0))
+					.executes((ctx)->CommandHelp.execute(ctx))
+					.then(CommandLogToChat.register())
+					
+					:null;
 		}
 
+	}
+	
+	
+	
+	public Command(CommandDispatcher<CommandSource> dispatcher)
+	{
+		if(ClientConfig.DEV_COMMANDS.get())
+			dispatcher.register(
+					LiteralArgumentBuilder.<CommandSource>literal("drpc")
+					.then(CommandHelp.register())
+					.then(CommandDev.register())
+					.executes((ctx)->CommandHelp.execute(ctx))
+					);
+		else
+			dispatcher.register(
+					LiteralArgumentBuilder.<CommandSource>literal("drpc")
+					.then(CommandHelp.register())
+					.executes((ctx)->CommandHelp.execute(ctx))
+					);
 
 	}
-	public Command(CommandDispatcher<CommandSource> dispatcher)
-    {
-	dispatcher.register(
-            LiteralArgumentBuilder.<CommandSource>literal("drpc")
-            .then(CommandHelp.register())
-            .then(CommandDev.register())
-            );
-    }
-	
+
 
 
 }
