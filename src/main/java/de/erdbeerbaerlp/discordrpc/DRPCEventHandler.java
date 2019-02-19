@@ -56,7 +56,6 @@ public class DRPCEventHandler {
 		
 	}
 	private static void resetVars(){
-
 			Discord.now = DRPC.gameStarted;
 			inWorld = false;
 			currentOnline = -1;
