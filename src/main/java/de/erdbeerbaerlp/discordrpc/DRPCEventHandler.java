@@ -105,14 +105,13 @@ public class DRPCEventHandler {
                 if(DRPC.isEnabled){
 			try{
 				
-				int maxPlayers = -1;
+				int maxPlayers = Minecraft.getInstance().player.getServer().getMaxPlayers();
 				int online = Minecraft.getInstance().getConnection().getPlayerInfoMap().size();
 				if(usingCustomMsg == false && serverCustomMessage.equals("") == false){
 					DRPCLog.Debug("CustomMSG Applied");
 					Discord.setPresence(ClientConfig.NAME.get(), serverCustomMessage.replace("%players%", online+"").replace("%otherpl%", (online-1)+""), customIco);
 					usingCustomMsg = true;
 				}
-//				System.out.println(Minecraft.getInstance().getCurrentServerData());
 				if(Minecraft.getInstance().getCurrentServerData() == null){
 					if(tickAmount <= 0){
 						World world = Minecraft.getInstance().world;
