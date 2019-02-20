@@ -29,14 +29,7 @@ public class DRPC {
 	 * Mod ID
 	 */
 	public static final String MODID = "discordrpc";
-	/**
-	 * Mod Version
-	 */
-	public static final String VERSION = "2.0.0";
-	/**
-	 * Mod Name (What did you expect?)
-	 */
-	public static final String NAME = "DiscordRichPresence";
+
 	protected static final String COMMAND_MESSAGE_PREFIX = "\u00A78[\u00A76DiscordRPC\u00A78] ";
 	protected static boolean isEnabled = true;
 	private static final String protVersion = "1.0.0";
@@ -52,6 +45,7 @@ public class DRPC {
 	 */
 	public static final long gameStarted = Instant.now().getEpochSecond();
     public DRPC() {
+    	System.out.println(System.getProperty("java.class.path"));
     	FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
     	FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
     	FMLJavaModLoadingContext.get().getModEventBus().addListener(this::serverSetup);
