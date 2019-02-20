@@ -6,6 +6,7 @@ import com.google.common.base.Predicate;
 import com.mojang.brigadier.CommandDispatcher;
 
 import net.arikia.dev.drpc.DiscordRPC;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -51,10 +52,10 @@ public class DRPC {
 	 */
 	public static final long gameStarted = Instant.now().getEpochSecond();
     public DRPC() {
-    	MinecraftForge.EVENT_BUS.addListener(this::setup);
-    	MinecraftForge.EVENT_BUS.addListener(this::clientSetup);
-    	MinecraftForge.EVENT_BUS.addListener(this::serverSetup);
-    	MinecraftForge.EVENT_BUS.addListener(this::postInit);
+    	FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+    	FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
+    	FMLJavaModLoadingContext.get().getModEventBus().addListener(this::serverSetup);
+    	FMLJavaModLoadingContext.get().getModEventBus().addListener(this::postInit);
     	MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
     	ICON.<Message_Icon>registerMessage(1, Message_Icon.class,(a, b) -> a.encode(a,b), (a) -> {a.readInt();return new Message_Icon(a.readString(300));}, (a, b) -> a.onMessageReceived(a,b));
     	REQUEST.<RequestMessage>registerMessage(0, RequestMessage.class, (a, b) -> a.encode(a,b), (a) -> {a.readInt();return new RequestMessage(a.readString(300));}, (a, b) -> a.onMessageReceived(a,b));

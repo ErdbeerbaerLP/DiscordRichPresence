@@ -19,6 +19,9 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiDownloadTerrain;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiMultiplayer;
+import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
@@ -30,6 +33,8 @@ import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.VersionChecker.Status;
+import net.minecraftforge.fml.client.ClientHooks;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraftforge.versions.forge.ForgeVersion;
 
@@ -73,35 +78,36 @@ public class DRPCEventHandler {
 	public static void onTick(PlayerTickEvent event){
 
 			if(DRPC.isClient){
-				if(checkedUpdate == false){
-					Status result = ForgeVersion.getStatus();
-					DRPCLog.Info(result.toString());
-					if (result == Status.OUTDATED)
-					{
-						event.player.sendMessage(new TextComponentString("\u00A76[\u00A75DiscordRichPresence\u00A76]\u00A7c Update available!\n\u00A7cCurrent version: \u00A74"+DRPC.VERSION+"\u00A7c, Newest: \u00A7a"+ForgeVersion.getTarget()+"\n\u00A7cChangelog:\n\u00A76"+ForgeVersion.getSpec()).setStyle(new Style().setClickEvent(new ClickEvent(Action.OPEN_URL, "https://minecraft.curseforge.com/projects/discordrpc")).setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString("Click to get newer Version")))));
-						DRPCLog.Fatal("UpdateCheck: Update Available. Download it here: https://minecraft.curseforge.com/projects/discordrichpresence/files");
-						checkedUpdate = true;
-					}else if(result == Status.AHEAD){
-						event.player.sendMessage(new TextComponentString("\u00A76[\u00A75DiscordRichPresence\u00A76]\u00A77 It looks like you are using an Development version... \n\u00A77Your version: \u00A76"+DRPC.VERSION).setStyle(new Style().setClickEvent(new ClickEvent(Action.OPEN_URL, "https://minecraft.curseforge.com/projects/discordrpc")).setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString("Click to get current stable Version")))));
-						DRPCLog.Fatal("UpdateCheck: Unreleased version... Assuming Development Version");
-						checkedUpdate = true;
-					}else if(result == Status.FAILED){
-						event.player.sendMessage(new TextComponentString("\u00A76[\u00A75DiscordRichPresence\u00A76]\u00A7c FAILED TO CHECK FOR UPDATES"));
-						DRPCLog.Fatal("UpdateCheck: Unable to check for updates");
-						checkedUpdate = true;
-					}else if(result == Status.BETA){
-						event.player.sendMessage(new TextComponentString("\u00A76[\u00A75DiscordRichPresence\u00A76]\u00A7a You are using an Beta Version. This may contain bugs which are being fixed."));
-						DRPCLog.Fatal("UpdateCheck: Beta");
-						checkedUpdate = true;
-					}else if(result == Status.BETA_OUTDATED){
-						event.player.sendMessage(new TextComponentString("\u00A76[\u00A75DiscordRichPresence\u00A76]\u00A7c You are using an Outdated Beta Version. This may contain bugs which are being fixed or are already fixed\n\u00A76Changelog of newer Beta:"+ForgeVersion.getSpec()));
-						DRPCLog.Fatal("UpdateCheck: Bata_outdated");
-						checkedUpdate = true;
-					} else {
-						DRPCLog.Info("UpdateCheck: "+result.toString());
-						checkedUpdate = true;
-					}
-				}
+				//Update checker is currently not working as expected...
+//				if(checkedUpdate == false){
+//					Status result = ForgeVersion.getStatus();
+//					DRPCLog.Info(result.toString());
+//					if (result == Status.OUTDATED)
+//					{
+//						event.player.sendMessage(new TextComponentString("\u00A76[\u00A75DiscordRichPresence\u00A76]\u00A7c Update available!\n\u00A7cCurrent version: \u00A74"+DRPC.VERSION+"\u00A7c, Newest: \u00A7a"+ForgeVersion.getTarget()+"\n\u00A7cChangelog:\n\u00A76"+ForgeVersion.getSpec()).setStyle(new Style().setClickEvent(new ClickEvent(Action.OPEN_URL, "https://minecraft.curseforge.com/projects/discordrpc")).setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString("Click to get newer Version")))));
+//						DRPCLog.Fatal("UpdateCheck: Update Available. Download it here: https://minecraft.curseforge.com/projects/discordrichpresence/files");
+//						checkedUpdate = true;
+//					}else if(result == Status.AHEAD){
+//						event.player.sendMessage(new TextComponentString("\u00A76[\u00A75DiscordRichPresence\u00A76]\u00A77 It looks like you are using an Development version... \n\u00A77Your version: \u00A76"+DRPC.VERSION).setStyle(new Style().setClickEvent(new ClickEvent(Action.OPEN_URL, "https://minecraft.curseforge.com/projects/discordrpc")).setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString("Click to get current stable Version")))));
+//						DRPCLog.Fatal("UpdateCheck: Unreleased version... Assuming Development Version");
+//						checkedUpdate = true;
+//					}else if(result == Status.FAILED){
+//						event.player.sendMessage(new TextComponentString("\u00A76[\u00A75DiscordRichPresence\u00A76]\u00A7c FAILED TO CHECK FOR UPDATES"));
+//						DRPCLog.Fatal("UpdateCheck: Unable to check for updates");
+//						checkedUpdate = true;
+//					}else if(result == Status.BETA){
+//						event.player.sendMessage(new TextComponentString("\u00A76[\u00A75DiscordRichPresence\u00A76]\u00A7a You are using an Beta Version. This may contain bugs which are being fixed."));
+//						DRPCLog.Fatal("UpdateCheck: Beta");
+//						checkedUpdate = true;
+//					}else if(result == Status.BETA_OUTDATED){
+//						event.player.sendMessage(new TextComponentString("\u00A76[\u00A75DiscordRichPresence\u00A76]\u00A7c You are using an Outdated Beta Version. This may contain bugs which are being fixed or are already fixed\n\u00A76Changelog of newer Beta:"+ForgeVersion.getSpec()));
+//						DRPCLog.Fatal("UpdateCheck: Bata_outdated");
+//						checkedUpdate = true;
+//					} else {
+//						DRPCLog.Info("UpdateCheck: "+result.toString());
+//						checkedUpdate = true;
+//					}
+//				}
                 if(DRPC.isEnabled){
 			try{
 				
