@@ -3,10 +3,8 @@ package de.erdbeerbaerlp.discordrpc;
 import java.time.Instant;
 
 import com.google.common.base.Predicate;
-import com.mojang.brigadier.CommandDispatcher;
 
-import net.arikia.dev.drpc.DiscordRPC;
-import net.minecraft.client.Minecraft;
+import club.minnced.discord.rpc.DiscordRPC;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -22,7 +20,6 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
-import net.minecraftforge.server.command.ForgeCommand;
 @Mod("discordrpc")
 public class DRPC {
 	/**
@@ -53,8 +50,7 @@ public class DRPC {
     	MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
     	ICON.<Message_Icon>registerMessage(1, Message_Icon.class,(a, b) -> a.encode(a,b), (a) -> {a.readInt();return new Message_Icon(a.readString(300));}, (a, b) -> a.onMessageReceived(a,b));
     	REQUEST.<RequestMessage>registerMessage(0, RequestMessage.class, (a, b) -> a.encode(a,b), (a) -> {a.readInt();return new RequestMessage(a.readString(300));}, (a, b) -> a.onMessageReceived(a,b));
-    	MSG.<Message_Message>registerMessage(1, Message_Message.class, (a, b) -> a.encode(a,b), (a) -> {a.readInt();return new Message_Message(a.readString(300));}, (a, b) -> a.onMessageReceived(a,b));
-    	
+
     	DistExecutor.runWhenOn(Dist.CLIENT, ()->()->{
     		ModLoadingContext.get().registerConfig(Type.COMMON, ClientConfig.CONFIG_SPEC, "DiscordRPC.toml");
     		MinecraftForge.EVENT_BUS.register(ClientConfig.class);
@@ -70,7 +66,7 @@ public class DRPC {
     	MinecraftForge.EVENT_BUS.register(DRPCEventHandler.class);
     	Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			DRPCLog.Info("Shutting down DiscordHook.");
-			DiscordRPC.discordShutdown();
+			DiscordRPC.INSTANCE.Discord_Shutdown();
 		}));
     	if(isEnabled) Discord.initDiscord();
         if(isEnabled) Discord.setPresence(ClientConfig.NAME.get(), "Starting game...", "34565655649643693", false);

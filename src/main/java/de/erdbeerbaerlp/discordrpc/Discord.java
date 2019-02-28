@@ -1,8 +1,8 @@
 package de.erdbeerbaerlp.discordrpc;
 
-import net.arikia.dev.drpc.DiscordEventHandlers;
-import net.arikia.dev.drpc.DiscordRPC;
-import net.arikia.dev.drpc.DiscordRichPresence;
+import club.minnced.discord.rpc.DiscordEventHandlers;
+import club.minnced.discord.rpc.DiscordRPC;
+import club.minnced.discord.rpc.DiscordRichPresence;
 import net.minecraft.client.Minecraft;
 
 public class Discord {
@@ -37,7 +37,7 @@ public class Discord {
 	 */
 	public static void initDiscord() {
 		if(initialized) return;
-		DiscordRPC.discordInitialize("511106082366554122", handlers, true);
+		DiscordRPC.INSTANCE.Discord_Initialize("511106082366554122", handlers, true,null);
 		DRPCLog.Info("Starting Discord");
 		Discord.initialized  = true;
 	}
@@ -47,7 +47,7 @@ public class Discord {
 	 */
 	public static void customDiscordInit(String clientID) {
 		if(initialized) return;
-		DiscordRPC.discordInitialize(clientID, handlers, true);
+		DiscordRPC.INSTANCE.Discord_Initialize(clientID, handlers, true, null);
 		DRPCLog.Info("Starting Discord with cliend ID "+clientID);
 		Discord.initialized  = true;
 	}
@@ -67,7 +67,7 @@ public class Discord {
 			isDev = true;
 		}
 		}
-		DiscordRPC.discordUpdatePresence(presence);
+		DiscordRPC.INSTANCE.Discord_UpdatePresence(presence);
 		}
 	/**
 	 * Sets the DiscordRichPresence

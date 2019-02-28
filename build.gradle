@@ -62,7 +62,7 @@ dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-    minecraft 'net.minecraftforge:forge:1.13.2-25.0.42'
+    minecraft 'net.minecraftforge:forge:1.13.2-25.0.59'
 
     // you may put jars on which you depend on in ./libs
     // or you may define them like so..
@@ -82,7 +82,7 @@ dependencies {
     // for more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
-        shade 'com.github.Vatuu:discord-rpc:1.6.1'
+        shade 'com.github.Vatuu:discord-rpc:master'
 		shade 'com.github.NukerHD:hive-java-api:1.0-snapshot'
 }
 
