@@ -99,7 +99,7 @@ public class DRPCEventHandler {
                 if(DRPC.isEnabled){
 			try{
 				
-				int maxPlayers = Minecraft.getInstance().player.getServer().getMaxPlayers();
+				int maxPlayers = -1;
 				int online = Minecraft.getInstance().getConnection().getPlayerInfoMap().size();
 				if(usingCustomMsg == false && serverCustomMessage.equals("") == false){
 					DRPCLog.Debug("CustomMSG Applied");
@@ -166,6 +166,7 @@ public class DRPCEventHandler {
 									if(gameO.equals("BEDT")) gameO = "BedWars";
 									  Discord.setPresence("TheHive", "Playing "+gameO+" on hivemc.com", "38462896734683686");
 								} catch (IllegalStateException | MalformedJsonException e) {
+									
 								}
 									
 								
@@ -179,7 +180,7 @@ public class DRPCEventHandler {
 					else tickAmount--;
 				}
 			}catch(Throwable e){
-//				e.printStackTrace();
+				e.printStackTrace();
 				
 			}
                 }

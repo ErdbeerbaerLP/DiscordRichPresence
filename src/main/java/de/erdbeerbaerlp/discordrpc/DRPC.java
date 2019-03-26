@@ -4,7 +4,6 @@ import java.time.Instant;
 
 import com.google.common.base.Predicate;
 
-import club.minnced.discord.rpc.DiscordRPC;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -41,8 +40,9 @@ public class DRPC {
 	 * The timestamp when the game was launched
 	 */
 	public static final long gameStarted = Instant.now().getEpochSecond();
+
+	
     public DRPC() {
-    	System.out.println(System.getProperty("java.class.path"));
     	FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
     	FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
     	FMLJavaModLoadingContext.get().getModEventBus().addListener(this::serverSetup);
@@ -66,7 +66,7 @@ public class DRPC {
     	MinecraftForge.EVENT_BUS.register(DRPCEventHandler.class);
     	Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			DRPCLog.Info("Shutting down DiscordHook.");
-			DiscordRPC.INSTANCE.Discord_Shutdown();
+			Discord.shutdown();
 		}));
     	if(isEnabled) Discord.initDiscord();
         if(isEnabled) Discord.setPresence(ClientConfig.NAME.get(), "Starting game...", "34565655649643693", false);
@@ -91,4 +91,5 @@ public class DRPC {
     		});
     	
     }
+
 }
