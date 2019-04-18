@@ -39,7 +39,7 @@ public class DRPC {
 	/**
 	 * The timestamp when the game was launched
 	 */
-	public static final long gameStarted = Instant.now().getEpochSecond();
+	public static final long gameStarted = Instant.now().toEpochMilli();
 
 	
     public DRPC() {

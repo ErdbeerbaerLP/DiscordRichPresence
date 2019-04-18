@@ -1,16 +1,12 @@
 package de.erdbeerbaerlp.discordrpc;
 
-import com.github.psnrigner.discordrpcjava.DiscordEventHandler;
-import com.github.psnrigner.discordrpcjava.DiscordJoinRequest;
-import com.github.psnrigner.discordrpcjava.DiscordRichPresence;
-import com.github.psnrigner.discordrpcjava.DiscordRpc;
-import com.github.psnrigner.discordrpcjava.ErrorCode;
-
+import club.minnced.discord.rpc.DiscordEventHandlers;
+import club.minnced.discord.rpc.DiscordRPC;
+import club.minnced.discord.rpc.DiscordRichPresence;
 import net.minecraft.client.Minecraft;
 
 public class Discord {
 	private static DiscordRichPresence presence = new DiscordRichPresence();
-	private static DiscordRpc discord = new DiscordRpc();
 	
 	public static long now = DRPC.gameStarted;
 	
@@ -18,44 +14,7 @@ public class Discord {
 	private static String currentSubtitle;
 	private static String currentImgKey;
 	private static boolean isDev = false;
-    private static DiscordEventHandler handlers = new DiscordEventHandler()
-    {
-        @Override
-        public void ready()
-        {
-            System.err.println("READY");
-        }
-
-        @Override
-        public void disconnected(ErrorCode errorCode, String message)
-        {
-            System.err.println("DISCONNECTED : " + errorCode + " " + message);
-        }
-
-        @Override
-        public void errored(ErrorCode errorCode, String message)
-        {
-            System.err.println("ERRORED : " + errorCode + " " + message);
-        }
-
-        @Override
-        public void joinGame(String joinSecret)
-        {
-            System.err.println("JOIN GAME : " + joinSecret);
-        }
-
-        @Override
-        public void spectateGame(String spectateSecret)
-        {
-            System.err.println("SPECTATE GAME : " + spectateSecret);
-        }
-
-        @Override
-        public void joinRequest(DiscordJoinRequest joinRequest)
-        {
-            System.err.println("JOIN REQUEST : " + joinRequest);
-        }
-    };
+    private static DiscordEventHandlers handlers = new DiscordEventHandlers();
 
 	private static boolean initialized = false;
 	/**
@@ -77,7 +36,7 @@ public class Discord {
 	 */
 	public static void initDiscord() {
 		if(initialized) return;
-		discord.init("511106082366554122", handlers, true,null);
+		DiscordRPC.INSTANCE.Discord_Initialize("511106082366554122", handlers, true, null);
 		DRPCLog.Info("Starting Discord");
 		Discord.initialized  = true;
 	}
@@ -87,27 +46,27 @@ public class Discord {
 	 */
 	public static void customDiscordInit(String clientID) {
 		if(initialized) return;
-		discord.init(clientID, handlers, true, null);
+		DiscordRPC.INSTANCE.Discord_Initialize(clientID, handlers, true, null);
 		DRPCLog.Info("Starting Discord with cliend ID "+clientID);
 		Discord.initialized  = true;
 	}
 	public static void setPresence(String title, String subtitle, String iconKey, boolean useUUID){
 		
-		presence.setDetails(title);
+		presence.details = title;
 		currentTitle = title;
-		presence.setState(subtitle);
+		presence.state = subtitle;
 		currentSubtitle = subtitle;
-		presence.setLargeImageKey(iconKey);
+		presence.largeImageKey = iconKey;
 		currentImgKey = iconKey;
-		presence.setStartTimestamp(now);
+		presence.startTimestamp = now;
 		if(useUUID){
 		if(Minecraft.getInstance().getSession().getPlayerID().contains("210f7275c79f44f8a7a07da71c751bb9")){
-			presence.setSmallImageKey("4865346365834586");
-			presence.setSmallImageText("The Developer of this Mod");
+			presence.smallImageKey = "4865346365834586";
+			presence.smallImageText = "The Developer of this Mod";
 			isDev = true;
 		}
 		}
-		discord.updatePresence(presence);
+		DiscordRPC.INSTANCE.Discord_UpdatePresence(presence);
 		}
 	/**
 	 * Sets the DiscordRichPresence
@@ -139,6 +98,6 @@ public class Discord {
 		return presence;
 	}
 	protected static void shutdown() {
-		discord.shutdown();
+		DiscordRPC.INSTANCE.Discord_Shutdown();
 	}
 }

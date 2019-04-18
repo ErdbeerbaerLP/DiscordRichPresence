@@ -63,13 +63,21 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 configurations {
-    shade
-    compile.extendsFrom shade
+    shade {
+    	transitive = false
+    }
 }
 dependencies {
+	//Forge
     minecraft 'net.minecraftforge:forge:1.13.2-25.0.147'
+    //Hive MC Libs
     shade 'com.github.NukerHD:hive-java-api:1.0-snapshot'
-    shade "com.github.psnrigner:discord-rpc-java:1.0.4"
+    compile 'com.github.NukerHD:hive-java-api:1.0-snapshot'
+    //Discord RichPresence
+    shade 'com.github.MinnDevelopment:java-discord-rpc:v2.0.2'
+    compile 'com.github.MinnDevelopment:java-discord-rpc:v2.0.2'
+    shade 'com.github.MinnDevelopment:discord-rpc-release:v3.3.0'
+    compile 'com.github.MinnDevelopment:discord-rpc-release:v3.3.0'
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
