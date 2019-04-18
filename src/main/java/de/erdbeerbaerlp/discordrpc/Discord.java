@@ -12,47 +12,47 @@ public class Discord {
 	private static DiscordRichPresence presence = new DiscordRichPresence();
 	private static DiscordRpc rpc = new DiscordRpc();
 	public static long now = DRPC.gameStarted;
-	
+
 	private static String currentTitle;
 	private static String currentSubtitle;
 	private static String currentImgKey;
 	private static boolean isDev = false;
-    private static DiscordEventHandler handlers = new DiscordEventHandler() {
-		
+	private static DiscordEventHandler handlers = new DiscordEventHandler() {
+
 		@Override
 		public void spectateGame(String spectateSecret) {
 			// TODO Auto-generated method stub
-			
+
 		}
-		
+
 		@Override
 		public void ready() {
 			// TODO Auto-generated method stub
-			
+
 		}
-		
+
 		@Override
 		public void joinRequest(DiscordJoinRequest joinRequest) {
 			// TODO Auto-generated method stub
-			
+
 		}
-		
+
 		@Override
 		public void joinGame(String joinSecret) {
 			// TODO Auto-generated method stub
-			
+
 		}
-		
+
 		@Override
 		public void errored(ErrorCode errorCode, String message) {
 			// TODO Auto-generated method stub
-			
+
 		}
-		
+
 		@Override
 		public void disconnected(ErrorCode errorCode, String message) {
 			// TODO Auto-generated method stub
-			
+
 		}
 	};
 
@@ -91,7 +91,7 @@ public class Discord {
 		Discord.initialized  = true;
 	}
 	public static void setPresence(String title, String subtitle, String iconKey, boolean useUUID){
-		
+
 		presence.setDetails(title);
 		currentTitle = title;
 		presence.setState(subtitle);
@@ -100,14 +100,14 @@ public class Discord {
 		currentImgKey = iconKey;
 		presence.setStartTimestamp(now);
 		if(useUUID){
-		if(Minecraft.getInstance().getSession().getPlayerID().contains("210f7275c79f44f8a7a07da71c751bb9")){
-			presence.setSmallImageKey("4865346365834586");
-			presence.setSmallImageText("The Developer of this Mod");
-			isDev = true;
-		}
+			if(Minecraft.getInstance().getSession().getPlayerID().contains("210f7275c79f44f8a7a07da71c751bb9")){
+				presence.setSmallImageKey("4865346365834586");
+				presence.setSmallImageText("The Developer of this Mod");
+				isDev = true;
+			}
 		}
 		rpc.updatePresence(presence);
-		}
+	}
 	/**
 	 * Sets the DiscordRichPresence
 	 * @param title The first line of the RichPresence (Below "Minecraft")
@@ -117,11 +117,11 @@ public class Discord {
 	public static void setPresence(String title,String subtitle, String iconKey){
 		setPresence(title, subtitle, iconKey, true);
 	}
-	
+
 	protected static void reloadPresence() {
 		setPresence(ClientConfig.NAME.get(), currentSubtitle, currentImgKey);
 	}
-	
+
 	protected static String getTitle(){
 		return currentTitle;
 	}

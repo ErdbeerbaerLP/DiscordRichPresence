@@ -8,7 +8,7 @@ import net.minecraft.util.text.TextComponentString;
 
 public class DRPCLog {
 	private static Logger Log = LogManager.getLogger(DRPC.MODID);
-	
+
 	public static void Debug(String msg){
 
 		Log.debug(msg);
