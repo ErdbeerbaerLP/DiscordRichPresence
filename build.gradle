@@ -73,11 +73,10 @@ dependencies {
     //Hive MC Libs
     shade 'com.github.NukerHD:hive-java-api:1.0-snapshot'
     compile 'com.github.NukerHD:hive-java-api:1.0-snapshot'
-    //Discord RichPresence
-    shade 'com.github.MinnDevelopment:java-discord-rpc:v2.0.2'
-    compile 'com.github.MinnDevelopment:java-discord-rpc:v2.0.2'
-    shade 'com.github.MinnDevelopment:discord-rpc-release:v3.3.0'
-    compile 'com.github.MinnDevelopment:discord-rpc-release:v3.3.0'
+    //Dependencies for DiscrodRichPresence
+    shade 'com.github.jnr:jnr-unixsocket:0.18'
+    compile 'com.github.jnr:jnr-unixsocket:0.18'
+
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
@@ -94,6 +93,7 @@ jar {
                     "Implementation-Title": project.name,
                     "Implementation-Version": "${version}",
                     "Implementation-Vendor" :"discordrpc",
+                    'Target-Platforms': 'win32-x86-64, win32-x86, linux-x86-64, darwin',
                     "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")],)
     }
 }

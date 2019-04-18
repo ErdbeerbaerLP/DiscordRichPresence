@@ -1,8 +1,12 @@
 package de.erdbeerbaerlp.discordrpc;
 
+import java.io.File;
+import java.net.URLDecoder;
+import java.security.CodeSource;
 import java.time.Instant;
 
 import com.google.common.base.Predicate;
+import com.sun.jna.NativeLibrary;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -40,8 +44,6 @@ public class DRPC {
 	 * The timestamp when the game was launched
 	 */
 	public static final long gameStarted = Instant.now().toEpochMilli();
-
-	
     public DRPC() {
     	FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
     	FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
