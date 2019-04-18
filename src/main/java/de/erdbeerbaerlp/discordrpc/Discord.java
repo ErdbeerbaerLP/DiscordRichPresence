@@ -1,5 +1,7 @@
 package de.erdbeerbaerlp.discordrpc;
 
+import java.util.concurrent.TimeUnit;
+
 import com.github.psnrigner.discordrpcjava.DiscordEventHandler;
 import com.github.psnrigner.discordrpcjava.DiscordJoinRequest;
 import com.github.psnrigner.discordrpcjava.DiscordRichPresence;
@@ -12,7 +14,21 @@ public class Discord {
 	private static DiscordRichPresence presence = new DiscordRichPresence();
 	private static DiscordRpc rpc = new DiscordRpc();
 	public static long now = DRPC.gameStarted;
-
+	private static Thread discordUpdater = new Thread() {
+		public void run() {
+			while(true) {
+				rpc.updateConnection();
+				rpc.runCallbacks();
+				try {
+					sleep(TimeUnit.SECONDS.toMillis(1));
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return;
+				}
+			}
+		};
+	};
 	private static String currentTitle;
 	private static String currentSubtitle;
 	private static String currentImgKey;
@@ -46,7 +62,7 @@ public class Discord {
 		@Override
 		public void errored(ErrorCode errorCode, String message) {
 			// TODO Auto-generated method stub
-
+			System.err.println(message);
 		}
 
 		@Override
@@ -76,6 +92,7 @@ public class Discord {
 	 */
 	public static void initDiscord() {
 		if(initialized) return;
+		if(!discordUpdater.isAlive()) discordUpdater.start();
 		rpc.init("511106082366554122", handlers, true, null);
 		DRPCLog.Info("Starting Discord");
 		Discord.initialized  = true;
@@ -86,12 +103,12 @@ public class Discord {
 	 */
 	public static void customDiscordInit(String clientID) {
 		if(initialized) return;
+		if(!discordUpdater.isAlive()) discordUpdater.start();
 		rpc.init(clientID, handlers, true, null);
-		DRPCLog.Info("Starting Discord with cliend ID "+clientID);
+		DRPCLog.Info("Starting Discord with client ID "+clientID);
 		Discord.initialized  = true;
 	}
 	public static void setPresence(String title, String subtitle, String iconKey, boolean useUUID){
-
 		presence.setDetails(title);
 		currentTitle = title;
 		presence.setState(subtitle);
@@ -107,6 +124,7 @@ public class Discord {
 			}
 		}
 		rpc.updatePresence(presence);
+		rpc.updateConnection();
 	}
 	/**
 	 * Sets the DiscordRichPresence
@@ -138,6 +156,7 @@ public class Discord {
 		return presence;
 	}
 	protected static void shutdown() {
+		discordUpdater.interrupt();
 		rpc.shutdown();
 	}
 }

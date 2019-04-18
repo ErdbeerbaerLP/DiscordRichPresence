@@ -38,7 +38,7 @@ public class DRPC {
 	protected static final SimpleChannel MSG = NetworkRegistry.newSimpleChannel(new ResourceLocation(DRPC.MODID, "discord-msg"), ()->{return protVersion;}, pred, pred);
 	protected static final SimpleChannel ICON = NetworkRegistry.newSimpleChannel(new ResourceLocation(DRPC.MODID, "discord-icon"), ()->{return protVersion;}, pred, pred);
 	protected static boolean isClient = true;
-	protected static boolean logtochat = false;
+	protected static boolean logtochat = true;
 	protected static boolean preventConfigLoad = false;
 	/**
 	 * The timestamp when the game was launched
