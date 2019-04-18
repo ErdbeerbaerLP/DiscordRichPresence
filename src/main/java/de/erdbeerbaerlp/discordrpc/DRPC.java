@@ -54,7 +54,7 @@ public class DRPC {
     	DistExecutor.runWhenOn(Dist.CLIENT, ()->()->{
     		ModLoadingContext.get().registerConfig(Type.COMMON, ClientConfig.CONFIG_SPEC, "DiscordRPC.toml");
     		MinecraftForge.EVENT_BUS.register(ClientConfig.class);
-    		});//GuiMultiplayer
+    		});
     	DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, ()-> ()->{
     		ModLoadingContext.get().registerConfig(Type.COMMON, ServerConfig.CONFIG_SPEC, "DiscordRPC-Server.toml");
         	MinecraftForge.EVENT_BUS.register(ServerConfig.class);
