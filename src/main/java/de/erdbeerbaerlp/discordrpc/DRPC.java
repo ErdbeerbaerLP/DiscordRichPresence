@@ -33,7 +33,7 @@ public class DRPC {
 	protected static final String COMMAND_MESSAGE_PREFIX = "\u00A78[\u00A76DiscordRPC\u00A78] ";
 	protected static boolean isEnabled = true;
 	private static final String protVersion = "1.0.0";
-	private static final Predicate<String> pred = (ver) -> {System.out.println(protVersion);return ver.equals(protVersion);};
+	private static final Predicate<String> pred = (ver) -> {return ver.equals(protVersion);};
 	protected static final SimpleChannel REQUEST = NetworkRegistry.newSimpleChannel(new ResourceLocation(DRPC.MODID, "discord-req"), ()->{return protVersion;}, pred, pred);
 	protected static final SimpleChannel MSG = NetworkRegistry.newSimpleChannel(new ResourceLocation(DRPC.MODID, "discord-msg"), ()->{return protVersion;}, pred, pred);
 	protected static final SimpleChannel ICON = NetworkRegistry.newSimpleChannel(new ResourceLocation(DRPC.MODID, "discord-icon"), ()->{return protVersion;}, pred, pred);

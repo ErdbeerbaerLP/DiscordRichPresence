@@ -1,76 +1,31 @@
 package de.erdbeerbaerlp.discordrpc;
 
-import java.util.concurrent.TimeUnit;
-
-import com.github.psnrigner.discordrpcjava.DiscordEventHandler;
-import com.github.psnrigner.discordrpcjava.DiscordJoinRequest;
-import com.github.psnrigner.discordrpcjava.DiscordRichPresence;
-import com.github.psnrigner.discordrpcjava.DiscordRpc;
-import com.github.psnrigner.discordrpcjava.ErrorCode;
-
-import net.minecraft.client.Minecraft;
+import net.arikia.dev.drpc.DiscordEventHandlers;
+import net.arikia.dev.drpc.DiscordRPC;
+import net.arikia.dev.drpc.DiscordRichPresence;
 
 public class Discord {
 	private static DiscordRichPresence presence = new DiscordRichPresence();
-	private static DiscordRpc rpc = new DiscordRpc();
 	public static long now = DRPC.gameStarted;
-	private static Thread discordUpdater = new Thread() {
-		public void run() {
-			while(true) {
-				rpc.updateConnection();
-				rpc.runCallbacks();
-				try {
-					sleep(TimeUnit.SECONDS.toMillis(1));
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					return;
-				}
-			}
-		};
-	};
+//	private static Thread discordUpdater = new Thread() {
+//		public void run() {
+//			while(true) {
+//				rpc.runCallbacks();
+//				try {
+//					sleep(TimeUnit.SECONDS.toMillis(1));
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//					return;
+//				}
+//			}
+//		};
+//	};
 	private static String currentTitle;
 	private static String currentSubtitle;
 	private static String currentImgKey;
 	private static boolean isDev = false;
-	private static DiscordEventHandler handlers = new DiscordEventHandler() {
-
-		@Override
-		public void spectateGame(String spectateSecret) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void ready() {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void joinRequest(DiscordJoinRequest joinRequest) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void joinGame(String joinSecret) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void errored(ErrorCode errorCode, String message) {
-			// TODO Auto-generated method stub
-			System.err.println(message);
-		}
-
-		@Override
-		public void disconnected(ErrorCode errorCode, String message) {
-			// TODO Auto-generated method stub
-
-		}
-	};
+	private static DiscordEventHandlers handlers = new DiscordEventHandlers();
 
 	private static boolean initialized = false;
 	/**
@@ -92,8 +47,8 @@ public class Discord {
 	 */
 	public static void initDiscord() {
 		if(initialized) return;
-		if(!discordUpdater.isAlive()) discordUpdater.start();
-		rpc.init("511106082366554122", handlers, true, null);
+		DiscordRPC.discordInitialize("511106082366554122", handlers, true);
+//		if(!discordUpdater.isAlive()) discordUpdater.start();
 		DRPCLog.Info("Starting Discord");
 		Discord.initialized  = true;
 	}
@@ -103,28 +58,20 @@ public class Discord {
 	 */
 	public static void customDiscordInit(String clientID) {
 		if(initialized) return;
-		if(!discordUpdater.isAlive()) discordUpdater.start();
-		rpc.init(clientID, handlers, true, null);
+		DiscordRPC.discordInitialize(clientID, handlers, true);
+//		if(!discordUpdater.isAlive()) discordUpdater.start();
 		DRPCLog.Info("Starting Discord with client ID "+clientID);
 		Discord.initialized  = true;
 	}
 	public static void setPresence(String title, String subtitle, String iconKey, boolean useUUID){
-		presence.setDetails(title);
+		presence.details = title;
 		currentTitle = title;
-		presence.setState(subtitle);
+		presence.state = subtitle;
 		currentSubtitle = subtitle;
-		presence.setLargeImageKey(iconKey);
+		presence.largeImageKey = iconKey;
 		currentImgKey = iconKey;
-		presence.setStartTimestamp(now);
-		if(useUUID){
-			if(Minecraft.getInstance().getSession().getPlayerID().contains("210f7275c79f44f8a7a07da71c751bb9")){
-				presence.setSmallImageKey("4865346365834586");
-				presence.setSmallImageText("The Developer of this Mod");
-				isDev = true;
-			}
-		}
-		rpc.updatePresence(presence);
-		rpc.updateConnection();
+		presence.startTimestamp = now;
+		DiscordRPC.discordUpdatePresence(presence);
 	}
 	/**
 	 * Sets the DiscordRichPresence
@@ -156,7 +103,7 @@ public class Discord {
 		return presence;
 	}
 	protected static void shutdown() {
-		discordUpdater.interrupt();
-		rpc.shutdown();
+//		discordUpdater.interrupt();
+		DiscordRPC.discordShutdown();
 	}
 }
