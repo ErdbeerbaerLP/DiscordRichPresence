@@ -67,10 +67,9 @@ configurations {
     compile.extendsFrom shade
 }
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.13.2-25.0.100'
+    minecraft 'net.minecraftforge:forge:1.13.2-25.0.147'
     shade 'com.github.NukerHD:hive-java-api:1.0-snapshot'
     shade "com.github.psnrigner:discord-rpc-java:1.0.4"
-    
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

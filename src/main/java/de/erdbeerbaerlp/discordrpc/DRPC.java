@@ -70,7 +70,7 @@ public class DRPC {
 		}));
     	if(isEnabled) Discord.initDiscord();
         if(isEnabled) Discord.setPresence(ClientConfig.NAME.get(), "Starting game...", "34565655649643693", false);
-//        new Command(new CommandDispatcher<>()); //Register command for client
+//        new Command(new CommandDispatcher<>()); //Register command for client XXX Impossible sadly
     }
 
     public void serverSetup(FMLDedicatedServerSetupEvent event) {
