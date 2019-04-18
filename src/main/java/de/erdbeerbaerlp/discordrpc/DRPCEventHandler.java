@@ -99,7 +99,7 @@ public class DRPCEventHandler {
                 if(DRPC.isEnabled){
 			try{
 				
-				int maxPlayers =  Minecraft.getInstance().getIntegratedServer().getMaxPlayers();;
+				int maxPlayers = -1;
 				int online = Minecraft.getInstance().getConnection().getPlayerInfoMap().size();
 				if(usingCustomMsg == false && serverCustomMessage.equals("") == false){
 					DRPCLog.Debug("CustomMSG Applied");
