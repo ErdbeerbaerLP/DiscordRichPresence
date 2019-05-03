@@ -75,8 +75,6 @@ dependencies {
     compile 'com.github.NukerHD:hive-java-api:1.0-snapshot'
     //Dependencies for DiscrodRichPresence
     shade 'com.github.Vatuu:discord-rpc-binaries:3.4.0'
-    shade 'com.github.Vatuu:discord-rpc:1.6.2'
-    compile 'com.github.Vatuu:discord-rpc:1.6.2'
 
 }
 
