@@ -1,23 +1,10 @@
 package de.erdbeerbaerlp.discordrpc;
 
-import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.util.Optional;
-
-import javax.annotation.Nullable;
-
-import org.apache.logging.log4j.Level;
-
-import com.ibm.icu.util.Calendar;
-import com.ibm.icu.util.TimeZone;
-
-import io.netty.buffer.ByteBuf;
 import net.arikia.dev.drpc.DiscordEventHandlers;
 import net.arikia.dev.drpc.DiscordRPC;
 import net.arikia.dev.drpc.DiscordRichPresence;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 public class Discord {
 	private static DiscordRichPresence presence = new DiscordRichPresence();
@@ -111,5 +98,8 @@ public class Discord {
 	}
 	protected static DiscordRichPresence getPresence(){
 		return presence;
+	}
+	public static void enableJoinRequest() {
+		
 	}
 }

@@ -163,14 +163,13 @@ public class DRPCEventHandler {
 					if(tickAmount == 0){
 						currentMax = maxPlayers;
 						currentOnline = online;
-			
+						Discord.enableJoinRequest();
 						if(!serverCustomMessage.isEmpty()){
 							DRPCLog.Debug("CustomMSG Applied");
 							Discord.setPresence(RPCconfig.NAME, serverCustomMessage.replace("%players%", online+"").replace("%otherpl%", (online-1)+""), customIco);
 							usingCustomMsg = true;
 						}else{
 							if(Minecraft.getMinecraft().getCurrentServerData().serverIP.toLowerCase().contains("hypixel.net")){
-//								Log.Fatal("HYPIXEL!!!!!!!!!");
 								String scoreboardTitle = null;
 								try {
 									scoreboardTitle = removeFormatting(Minecraft.getMinecraft().world.getScoreboard().getObjectiveInDisplaySlot(1).getDisplayName());

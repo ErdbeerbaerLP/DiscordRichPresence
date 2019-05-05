@@ -38,6 +38,10 @@ public class RPCconfig {
 	 */
 	public static String MAIN_MENU_TEXT;
 	/**
+	 * Should join requests be shown when playing online?
+	 */
+	public static boolean ENABLE_JOIN_REQUESTS_ON_SERVERS;
+	/**
 	 * Text when playing on a server
 	 */
 	public static String SERVER_MESSAGE;
@@ -45,15 +49,15 @@ public class RPCconfig {
 	 * Text displayed when in singleplayer
 	 */
 	public static String WORLD_MESSAGE;
-	private static FirstLaunchWindow w = new FirstLaunchWindow();
+//	private static FirstLaunchWindow w = new FirstLaunchWindow();
 	
 	protected static boolean DEV_COMMANDS;
 	
 	protected static void loadConfigFromFile(){
 		File configFile = new File(Loader.instance().getConfigDir(), "DiscordRPC.cfg");
-		if(!configFile.exists()) {
-			w.setVisible(true);
-		}
+//		if(!configFile.exists()) {
+//			w.setVisible(true);
+//		}
 		config = new Configuration(configFile);
 		syncConfig(true, true);
 		
@@ -68,12 +72,16 @@ public class RPCconfig {
 		syncConfig(false, true);
 		Discord.reloadPresence();
 	}
+	protected static void saveChanges() {
+		syncConfig(false, false);
+		Discord.reloadPresence();
+	}
 	
 	private static void syncConfig(boolean loadFromConfigFile, boolean readFieldsFromConfig){
 		if(loadFromConfigFile)
 			config.load();
 		
-		Property propertyName = config.get(CATEGORY_PRESENCE, "Client Name", w.getClientName());
+		Property propertyName = config.get(CATEGORY_PRESENCE, "Client Name", "Minecraft 1.12");
 		propertyName.setComment("First line of Rich Presence");
 		
 		Property propertyMultiplayer = config.get(CATEGORY_PRESENCE, "Server Text", "Playing on %ip%");
@@ -91,6 +99,10 @@ public class RPCconfig {
 		propDisableNameChange.setComment("Setting this to true disables name changing through GUI");
 		propDisableNameChange.setShowInGui(false);
 		
+		Property propServerJoinReq = config.get(CATEGORY_PRESENCE, "Server Join Requests", true);
+		propServerJoinReq.setComment("Should join requests be enabled on servers?");
+		
+		
 		Property propEnableDevelopmentCommands = config.get(CATEGORY_PRESENCE, "DevCommands", false);
 		propEnableDevelopmentCommands.setComment("Do you want to use development commands?");
 		
@@ -100,6 +112,7 @@ public class RPCconfig {
 		propOrderPresence.add(propertySingleplayer.getName());
 		propOrderPresence.add(propertyMultiplayer.getName());
 		propOrderPresence.add(propDisableNameChange.getName());
+		propOrderPresence.add(propServerJoinReq.getName());
 		propOrderPresence.add(propEnableDevelopmentCommands.getName());
 		config.setCategoryPropertyOrder(CATEGORY_PRESENCE, propOrderPresence);
 		
@@ -111,6 +124,7 @@ public class RPCconfig {
 			MAIN_MENU_TEXT = propertyInMenu.getString();
 			NAME_CHANGING_ALLOWED = !propDisableNameChange.getBoolean();
 			DEV_COMMANDS = propEnableDevelopmentCommands.getBoolean();
+			ENABLE_JOIN_REQUESTS_ON_SERVERS = propServerJoinReq.getBoolean();
 		}
 		
 		propertyName.set(NAME);
@@ -120,6 +134,7 @@ public class RPCconfig {
 		propertyMultiplayer.set(SERVER_MESSAGE);
 		propertyInMenu.set(MAIN_MENU_TEXT);
 		propEnableDevelopmentCommands.set(DEV_COMMANDS);
+		propServerJoinReq.set(ENABLE_JOIN_REQUESTS_ON_SERVERS);
 		if(config.hasChanged())
 			config.save();
 	}

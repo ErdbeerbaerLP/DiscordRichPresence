@@ -1,71 +1,27 @@
 package de.erdbeerbaerlp.discordrpc;
 
-import java.net.MalformedURLException;
-
-import java.net.URL;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-
-import de.erdbeerbaerlp.discordrpc.RequestMessage.CommunicationMessageHandler;
 import de.erdbeerbaerlp.discordrpc.Message_Icon.ICOReceiveHandler;
 import de.erdbeerbaerlp.discordrpc.Message_Message.MSGReceiveHandler;
-import net.arikia.dev.drpc.DiscordEventHandlers;
+import de.erdbeerbaerlp.discordrpc.RequestMessage.CommunicationMessageHandler;
 import net.arikia.dev.drpc.DiscordRPC;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiDownloadTerrain;
-import net.minecraft.client.gui.GuiIngameMenu;
-import net.minecraft.client.gui.GuiMainMenu;
-import net.minecraft.client.gui.GuiMultiplayer;
-import net.minecraft.command.CommandHandler;
-import net.minecraft.command.ServerCommandManager;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.util.text.event.HoverEvent;
-import net.minecraft.util.text.event.ClickEvent.Action;
 import net.minecraftforge.client.ClientCommandHandler;
-import net.minecraftforge.client.event.GuiOpenEvent;
-import net.minecraftforge.common.ForgeVersion;
-import net.minecraftforge.common.ForgeVersion.CheckResult;
-import net.minecraftforge.common.ForgeVersion.Status;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.DummyModContainer;
-import net.minecraftforge.fml.common.FMLModContainer;
-import net.minecraftforge.fml.common.LoadController;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.ModMetadata;
-import net.minecraftforge.fml.common.discovery.ModCandidate;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
-import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.fml.common.versioning.ArtifactVersion;
-import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
-import net.minecraftforge.fml.common.versioning.VersionRange;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.fml.relauncher.libraries.Artifact;
 
-@Mod(modid = ModClass.MODID, name = ModClass.NAME, version = ModClass.VERSION, canBeDeactivated = false, acceptedMinecraftVersions = "[1.12,1.12.2]", acceptableRemoteVersions = "*", guiFactory = "de.erdbeerbaerlp.discordrpc.CfgGuiFactory", updateJSON = "http://erdbeerbaerapi.tk/discordrpc.json")
+@Mod(modid = ModClass.MODID, name = ModClass.NAME, version = ModClass.VERSION, dependencies = "required-after-client:eguilib", canBeDeactivated = false, acceptedMinecraftVersions = "[1.12,1.12.2]", acceptableRemoteVersions = "*", guiFactory = "de.erdbeerbaerlp.discordrpc.CfgGuiFactory", updateJSON = "http://erdbeerbaerapi.tk/discordrpc.json")
 public class ModClass {
 	/**
 	 * Mod ID
@@ -74,7 +30,7 @@ public class ModClass {
 	/**
 	 * Mod Version
 	 */
-	public static final String VERSION = "1.2.2";
+	public static final String VERSION = "1.3";
 	/**
 	 * Mod Name (What did you expect?)
 	 */
@@ -96,6 +52,7 @@ public class ModClass {
 		System.out.println("Constructing");
 			if(evt.getSide() == Side.CLIENT){
 				DRPCLog.Info("Running on Client side... starting");
+//				if(!Loader.isModLoaded("eguilib")) CrashReport.makeCrashReport(new MissingModsException("eguilib", "Erdbeerbaer´s Gui Lib"), "You did not install all dependencies, see ");
 				isClient = true;
 				if(!preventConfigLoad) RPCconfig.loadConfigFromFile();
 				DRPCLog.Debug("Player UUID is "+ Minecraft.getMinecraft().getSession().getPlayerID());
