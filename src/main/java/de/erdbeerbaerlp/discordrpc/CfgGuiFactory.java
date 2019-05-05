@@ -23,7 +23,7 @@ public class CfgGuiFactory implements IModGuiFactory
 
 	@Override
 	public GuiScreen createConfigGui(GuiScreen parentScreen) {
-		return new CfgGui(parentScreen);
+		return new ConfigGui(parentScreen);
 	}
 
 	@Nullable
