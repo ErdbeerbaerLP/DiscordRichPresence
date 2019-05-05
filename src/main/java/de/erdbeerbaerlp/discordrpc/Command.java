@@ -1,112 +1,148 @@
 package de.erdbeerbaerlp.discordrpc;
 
-import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.builder.ArgumentBuilder;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.entity.player.EntityPlayerMP;
+import java.io.File;
+import java.net.URISyntaxException;
+import java.nio.charset.MalformedInputException;
+import java.util.ArrayList;
+import java.util.List;
+import net.minecraft.command.CommandException;
+import net.minecraft.command.ICommand;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.client.IClientCommand;
 
-public class Command {
+public class Command implements IClientCommand {
+	private final List aliases;
+	private final String[] tabcompletions= new String[]{"help","reload", "dev"};
+	private final String[] devtabs = new String[]{"logtochat", "msg-request"};
+	public Command(){
+		aliases = new ArrayList();
+		aliases.add("discordrichpresence");
+		aliases.add("drpc");
+		
+	}
+	@Override
+	public int compareTo(ICommand arg0) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
-	private static class CommandHelp{
-		static ArgumentBuilder<CommandSource, ?> register()
-		{
-			return Commands.literal("help")
-					.requires(cs->cs.hasPermissionLevel(0))
-					.executes((ctx)->execute(ctx));
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return "discordrpc";
+	}
 
-		}
-		private static TextComponentString helpMsg = new TextComponentString(DRPC.COMMAND_MESSAGE_PREFIX
+	@Override
+	public String getUsage(ICommandSender sender) {
+		// TODO Auto-generated method stub
+		return "/drpc <help|reload|dev>";
+	}
+
+	@Override
+	public List<String> getAliases() {
+		// TODO Auto-generated method stub
+		return this.aliases;
+	}
+	/**
+	 * Chat message prefix
+	 */
+	public static final String prefix = "\u00A78[\u00A76DiscordRPC\u00A78] ";
+	@Override
+	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+		// TODO Auto-generated method stub
+		TextComponentString helpMsg = new TextComponentString(prefix
 				+"\u00A72 Help:\n"
 				+ "\u00A76/drpc help \u00A77   Displays this\n"
 				+ "\u00A76/drpc reload \u00A77  Reloads the config file\n"
 				+ "\u00A76/drpc dev \u00A77   Some debugging functions");
-
-		private static int execute(CommandContext<CommandSource> ctx) {
-			// TODO Auto-generated method stub
-
-			try {
-				ctx.getSource().asPlayer().sendMessage(helpMsg);
-			} catch (CommandSyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return 0;
-			}
-			return 1;
-		}
-	}
-	private static class CommandReload{}
-	private static class CommandDev{
-		private static class CommandLogToChat{
-			static ArgumentBuilder<CommandSource, ?> register()
-			{
-				return Commands.literal("logtochat")
-						.requires(cs->cs.hasPermissionLevel(0))
-						.executes((ctx)->execute(ctx));
-
-			}
-
-			private static int execute(CommandContext<CommandSource> ctx) {
-				try {
-					final EntityPlayerMP sender = ctx.getSource().asPlayer();
-					if(DRPC.logtochat == false){
-						sender.sendMessage(new TextComponentString(DRPC.COMMAND_MESSAGE_PREFIX+"\u00A7aTurned on log in chat!"));
-						DRPC.logtochat = true;
+		
+		if(args.length > 0){
+		switch (args[0]){
+		case "help":
+			sender.sendMessage(helpMsg);
+			
+			break;
+		case "reload":
+			RPCconfig.loadConfigFromFile();
+			sender.sendMessage(new TextComponentString(prefix+"\u00A72 Config reloaded!"));
+			break;
+		case "dev":
+			if(args.length > 1 && RPCconfig.DEV_COMMANDS){
+				switch (args[1]){
+				case "logtochat":
+					if(ModClass.logtochat == false){
+						sender.sendMessage(new TextComponentString(prefix+"\u00A7aTurned on log in chat!"));
+						ModClass.logtochat = true;
 					}else{
-						sender.sendMessage(new TextComponentString(DRPC.COMMAND_MESSAGE_PREFIX+"\u00A7aTurned off log in chat!"));
-						DRPC.logtochat = false;
+						sender.sendMessage(new TextComponentString(prefix+"\u00A7aTurned off log in chat!"));
+						ModClass.logtochat = false;
 					}
 					DRPCLog.Debug("Test");
 					DRPCLog.Info("Test");
 					DRPCLog.Error("Test");
 					DRPCLog.Fatal("Test");
-					return 1;
-				} catch (CommandSyntaxException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					return 0;
-				}
-				
-			}
+					break;
+				case "msg-request":
+					ModClass.REQUEST.sendToServer(new RequestMessage("DRPC-Message-Request"));
+					sender.sendMessage(new TextComponentString(prefix+"\u00A76Sent message request to Server!"));
+					break;
+				default:
+					sender.sendMessage(new TextComponentString(prefix+"\u00A7cInvalid argument!"));
+					break;
+				}	
+			}else if(!(args.length > 1 ) && RPCconfig.DEV_COMMANDS) sender.sendMessage(new TextComponentString(prefix+"\u00A7cNot enough arguments for argument \"dev\""));
+			else if(!RPCconfig.DEV_COMMANDS) sender.sendMessage(new TextComponentString(prefix+"\u00A7cDevelopment commands are disabled in the config!"));
+			break;
+		default:
+			sender.sendMessage(new TextComponentString(prefix+"\u00A7cInvalid argument!"));
+			break;
+		}
+		}else {
+			sender.sendMessage(new TextComponentString(prefix+"\u00A7cNot enough arguments!"));
+			sender.sendMessage(helpMsg);
 		}
 		
-		public static ArgumentBuilder<CommandSource, ?> register() {
-			// TODO Auto-generated method stub
-			return ClientConfig.DEV_COMMANDS.get()?Commands.literal("dev")
-					.requires(cs->cs.hasPermissionLevel(0))
-					.executes((ctx)->CommandHelp.execute(ctx))
-					.then(CommandLogToChat.register())
-					
-					:null;
+	}
+
+	@Override
+	public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
+			BlockPos targetPos) {
+		List tabs = new ArrayList();
+		if(args.length == 1){
+		
+			for(int i = 0; i < tabcompletions.length;i++){
+				if(tabcompletions[i].startsWith(args[0]))
+					tabs.add(tabcompletions[i]);
+			}
+		}else if(args.length == 2){
+			if(args[0].equals("dev") && RPCconfig.DEV_COMMANDS){
+				for(int i = 0; i < devtabs.length;i++){
+					if(devtabs[i].startsWith(args[1]))
+						tabs.add(devtabs[i]);
+				}
+			}
 		}
-
-	}
-	
-	
-	
-	public Command(CommandDispatcher<CommandSource> dispatcher)
-	{
-		if(ClientConfig.DEV_COMMANDS.get())
-			dispatcher.register(
-					LiteralArgumentBuilder.<CommandSource>literal("drpc")
-					.then(CommandHelp.register())
-					.then(CommandDev.register())
-					.executes((ctx)->CommandHelp.execute(ctx))
-					);
-		else
-			dispatcher.register(
-					LiteralArgumentBuilder.<CommandSource>literal("drpc")
-					.then(CommandHelp.register())
-					.executes((ctx)->CommandHelp.execute(ctx))
-					);
-
+		return tabs;
 	}
 
-
+	@Override
+	public boolean isUsernameIndex(String[] args, int index) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public boolean allowUsageWithoutPrefix(ICommandSender sender, String message) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 }

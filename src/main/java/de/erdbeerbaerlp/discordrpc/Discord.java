@@ -1,31 +1,35 @@
 package de.erdbeerbaerlp.discordrpc;
 
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.Optional;
+
+import javax.annotation.Nullable;
+
+import org.apache.logging.log4j.Level;
+
+import com.ibm.icu.util.Calendar;
+import com.ibm.icu.util.TimeZone;
+
+import io.netty.buffer.ByteBuf;
 import net.arikia.dev.drpc.DiscordEventHandlers;
 import net.arikia.dev.drpc.DiscordRPC;
 import net.arikia.dev.drpc.DiscordRichPresence;
+import net.minecraft.client.Minecraft;
+import net.minecraftforge.fml.common.event.FMLConstructionEvent;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 public class Discord {
 	private static DiscordRichPresence presence = new DiscordRichPresence();
-	public static long now = DRPC.gameStarted;
-//	private static Thread discordUpdater = new Thread() {
-//		public void run() {
-//			while(true) {
-//				rpc.runCallbacks();
-//				try {
-//					sleep(TimeUnit.SECONDS.toMillis(1));
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//					return;
-//				}
-//			}
-//		};
-//	};
+	
+	public static long now = ModClass.gameStarted;
+	
 	private static String currentTitle;
 	private static String currentSubtitle;
 	private static String currentImgKey;
 	private static boolean isDev = false;
-	private static DiscordEventHandlers handlers = new DiscordEventHandlers();
+
+	private static DiscordEventHandlers handlers;
 
 	private static boolean initialized = false;
 	/**
@@ -33,8 +37,8 @@ public class Discord {
 	 * @param preventConfigLoad true to prevent loading the config file
 	 */
 	public static void disableModDefault(boolean preventConfigLoad) {
-		DRPC.isEnabled = false;
-		DRPC.preventConfigLoad = preventConfigLoad;
+		ModClass.isEnabled = false;
+		ModClass.preventConfigLoad = preventConfigLoad;
 	}
 	/**
 	 * Disables all calls from this Mod allowing to set custom data from another mod (Still loads configs)
@@ -48,7 +52,6 @@ public class Discord {
 	public static void initDiscord() {
 		if(initialized) return;
 		DiscordRPC.discordInitialize("511106082366554122", handlers, true);
-//		if(!discordUpdater.isAlive()) discordUpdater.start();
 		DRPCLog.Info("Starting Discord");
 		Discord.initialized  = true;
 	}
@@ -59,11 +62,11 @@ public class Discord {
 	public static void customDiscordInit(String clientID) {
 		if(initialized) return;
 		DiscordRPC.discordInitialize(clientID, handlers, true);
-//		if(!discordUpdater.isAlive()) discordUpdater.start();
-		DRPCLog.Info("Starting Discord with client ID "+clientID);
+		DRPCLog.Info("Starting Discord with cliend ID "+clientID);
 		Discord.initialized  = true;
 	}
 	public static void setPresence(String title, String subtitle, String iconKey, boolean useUUID){
+		
 		presence.details = title;
 		currentTitle = title;
 		presence.state = subtitle;
@@ -71,8 +74,15 @@ public class Discord {
 		presence.largeImageKey = iconKey;
 		currentImgKey = iconKey;
 		presence.startTimestamp = now;
+		if(useUUID){
+		if(Minecraft.getMinecraft().getSession().getPlayerID().contains("210f7275c79f44f8a7a07da71c751bb9")){
+			presence.smallImageKey = "4865346365834586";
+			presence.smallImageText = "The Developer";
+			isDev = true;
+		}
+		}
 		DiscordRPC.discordUpdatePresence(presence);
-	}
+		}
 	/**
 	 * Sets the DiscordRichPresence
 	 * @param title The first line of the RichPresence (Below "Minecraft")
@@ -82,11 +92,11 @@ public class Discord {
 	public static void setPresence(String title,String subtitle, String iconKey){
 		setPresence(title, subtitle, iconKey, true);
 	}
-
+	
 	protected static void reloadPresence() {
-		setPresence(ClientConfig.NAME.get(), currentSubtitle, currentImgKey);
+		setPresence(RPCconfig.NAME, currentSubtitle, currentImgKey);
 	}
-
+	
 	protected static String getTitle(){
 		return currentTitle;
 	}
@@ -101,9 +111,5 @@ public class Discord {
 	}
 	protected static DiscordRichPresence getPresence(){
 		return presence;
-	}
-	protected static void shutdown() {
-//		discordUpdater.interrupt();
-		DiscordRPC.discordShutdown();
 	}
 }

@@ -1,45 +1,78 @@
 package de.erdbeerbaerlp.discordrpc;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.LogManager;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.config.ModConfig;
+import org.apache.logging.log4j.Level;
+
+import net.minecraft.client.resources.I18n;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class ServerConfig {
 
-	public static final ForgeConfigSpec CONFIG_SPEC;
-	public static final ServerConfig CONFIG;
+	private static Configuration config = null;
 	
-	public static ConfigValue<String> SERVER_MESSAGE;
-	public static ConfigValue<String> SERVER_ICON;
+	protected static final String CATEGORY_PRESENCE = "RichPresence";
 	
-	static
-	{
-		Pair<ServerConfig,ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(ServerConfig::new);
-		System.out.println("Loading serverside config file...");
-		CONFIG = specPair.getLeft();
-		CONFIG_SPEC = specPair.getRight();
-	}
+	protected static String SERVER_MESSAGE;
+	protected static String SERVER_ICON;
 	
-	ServerConfig(ForgeConfigSpec.Builder builder)
-	{
-		builder.comment("Server RichPresence config").push("RichPresence");
-		SERVER_MESSAGE = builder.comment("The second line you have in the rich presence.\n Placeholders are:\n%players% - Amount of all players\n%otherpl% - Amount of players -1 (except you)").define("Message", "Playing on a random Server with %otherpl% other players");
-		SERVER_ICON = builder.comment("The Icon-Key. Use 'world' or 'cube' if you donï¿½t have an special one.").define("IconKey", "world");
-		builder.pop();
+	protected static void preInit(){
+		DRPCLog.Info("Loading serverside config file...");
+		File configFile = new File(Loader.instance().getConfigDir(), "DiscordRPC_Server.cfg");
+		config = new Configuration(configFile);
+		syncFromFiles();
 		
 	}
-    @SubscribeEvent
-    public static void onLoad(final ModConfig.Loading configEvent) {
-        LogManager.getLogger().info("Loaded drpc config file {}", configEvent.getConfig().getFileName());
-    }
+	
+	protected static Configuration getConfig(){
+		return config;
+	}
+	
+	protected static void syncFromFiles(){
+		syncConfig(true, true);
+	}
+	
+	
+	protected static void syncFromFields(){
+		syncConfig(false, false);
+	}
+	
+	private static void syncConfig(boolean loadFromConfigFile, boolean readFieldsFromConfig){
+		if(loadFromConfigFile)
+			config.load();
+		
+		Property propMSG = config.get(CATEGORY_PRESENCE, "Message", "Playing on a random Server with %otherpl% other players");
+		propMSG.setComment("The second line you have in the rich presence.\n Placeholders are:\n%players% - Amount of all players\n%otherpl% - Amount of players -1 (except you)");
+		
+		Property propIcon = config.get(CATEGORY_PRESENCE, "IconKey", "world");
+		propIcon.setComment("The Icon-Key. Use 'world' or 'cube' if you don´t have an special one.");
+		
+		
+		
+		List<String> propOrderPresence = new ArrayList<String>();
+		propOrderPresence.add(propMSG.getName());
+		propOrderPresence.add(propIcon.getName());
+		config.setCategoryPropertyOrder(CATEGORY_PRESENCE, propOrderPresence);
+		
+		
+		if(readFieldsFromConfig){
+			SERVER_ICON = propIcon.getString();
+			SERVER_MESSAGE = propMSG.getString();
+		}
+		
+		propIcon.set(SERVER_ICON);
+		propMSG.set(SERVER_MESSAGE);
+		if(config.hasChanged())
+			config.save();
+	}
 
-    @SubscribeEvent
-    public static void onFileChange(final ModConfig.ConfigReloading configEvent) {
-        System.out.println("DRPC config just got changed on the file system!");
-    }
 	
 }
