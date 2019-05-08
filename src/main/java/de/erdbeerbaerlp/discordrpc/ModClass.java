@@ -5,7 +5,6 @@ import java.time.Instant;
 import de.erdbeerbaerlp.discordrpc.Message_Icon.ICOReceiveHandler;
 import de.erdbeerbaerlp.discordrpc.Message_Message.MSGReceiveHandler;
 import de.erdbeerbaerlp.discordrpc.RequestMessage.CommunicationMessageHandler;
-import net.arikia.dev.drpc.DiscordRPC;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
@@ -52,7 +51,6 @@ public class ModClass {
 		System.out.println("Constructing");
 			if(evt.getSide() == Side.CLIENT){
 				DRPCLog.Info("Running on Client side... starting");
-//				if(!Loader.isModLoaded("eguilib")) CrashReport.makeCrashReport(new MissingModsException("eguilib", "Erdbeerbaer´s Gui Lib"), "You did not install all dependencies, see ");
 				isClient = true;
 				if(!preventConfigLoad) RPCconfig.loadConfigFromFile();
 				DRPCLog.Debug("Player UUID is "+ Minecraft.getMinecraft().getSession().getPlayerID());
@@ -63,11 +61,10 @@ public class ModClass {
 				if(!preventConfigLoad) RPCconfig.loadConfigFromFile();
 				Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 					DRPCLog.Info("Shutting down DiscordHook.");
-					DiscordRPC.discordShutdown();
+					Discord.shutdown();
 				}));
 				
 				if(isEnabled)Discord.setPresence(RPCconfig.NAME, "Starting game...", "34565655649643693");
-				DRPCLog.Debug("Is player developer of this mod? "+Discord.isPlayerDev() != null ? "Yes":"No");
 			}else{
 				isClient = false;
 				DRPCLog.Info("Loading serverside stuff...");

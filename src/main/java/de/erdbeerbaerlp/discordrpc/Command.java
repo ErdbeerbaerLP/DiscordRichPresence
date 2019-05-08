@@ -1,10 +1,8 @@
 package de.erdbeerbaerlp.discordrpc;
 
-import java.io.File;
-import java.net.URISyntaxException;
-import java.nio.charset.MalformedInputException;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
@@ -14,11 +12,11 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.IClientCommand;
 
 public class Command implements IClientCommand {
-	private final List aliases;
+	private final List<String> aliases;
 	private final String[] tabcompletions= new String[]{"help","reload", "dev"};
 	private final String[] devtabs = new String[]{"logtochat", "msg-request"};
 	public Command(){
-		aliases = new ArrayList();
+		aliases = new ArrayList<String>();
 		aliases.add("discordrichpresence");
 		aliases.add("drpc");
 		
@@ -116,7 +114,7 @@ public class Command implements IClientCommand {
 	@Override
 	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
 			BlockPos targetPos) {
-		List tabs = new ArrayList();
+		List<String> tabs = new ArrayList<String>();
 		if(args.length == 1){
 		
 			for(int i = 0; i < tabcompletions.length;i++){

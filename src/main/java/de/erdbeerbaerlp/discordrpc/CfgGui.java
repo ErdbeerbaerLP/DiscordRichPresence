@@ -1,7 +1,5 @@
 package de.erdbeerbaerlp.discordrpc;
 
-import net.minecraft.client.gui.GuiScreen;
-
 import java.util.ArrayList;
 import java.util.List;
 

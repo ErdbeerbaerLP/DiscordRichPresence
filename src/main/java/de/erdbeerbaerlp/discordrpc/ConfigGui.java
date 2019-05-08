@@ -1,7 +1,9 @@
 package de.erdbeerbaerlp.discordrpc;
 
+import static de.erdbeerbaerlp.guilib.components.Button.DefaultButtonIcons.DELETE;
+import static de.erdbeerbaerlp.guilib.components.Button.DefaultButtonIcons.SAVE;
+
 import de.erdbeerbaerlp.guilib.components.Button;
-import static de.erdbeerbaerlp.guilib.components.Button.DefaultButtonIcons.*;
 import de.erdbeerbaerlp.guilib.components.Button.DefaultButtonIcons;
 import de.erdbeerbaerlp.guilib.components.CheckBox;
 import de.erdbeerbaerlp.guilib.components.Label;

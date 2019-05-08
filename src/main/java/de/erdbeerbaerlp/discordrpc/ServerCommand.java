@@ -1,18 +1,14 @@
 package de.erdbeerbaerlp.discordrpc;
 
-import java.io.File;
-import java.net.URISyntaxException;
-import java.nio.charset.MalformedInputException;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraftforge.client.IClientCommand;
-import net.minecraftforge.energy.IEnergyStorage;
 
 public class ServerCommand implements ICommand {
 	private final List aliases;

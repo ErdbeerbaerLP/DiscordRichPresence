@@ -1,13 +1,14 @@
 package de.erdbeerbaerlp.discordrpc;
 
-import javax.swing.JDialog;
-import javax.swing.JButton;
-import javax.swing.JTextField;
-import javax.swing.JLabel;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
 
 /**
  * Window which gets called when mod is first used (will be prevented when another mod disables this mod first)

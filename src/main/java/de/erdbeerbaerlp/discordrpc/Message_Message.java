@@ -1,13 +1,8 @@
 package de.erdbeerbaerlp.discordrpc;
 
-import java.io.File;
 import java.nio.charset.StandardCharsets;
 
-import org.apache.logging.log4j.Level;
-
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufUtil;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
