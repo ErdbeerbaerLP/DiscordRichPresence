@@ -1,11 +1,11 @@
 package de.erdbeerbaerlp.discordrpc;
 
+import java.util.concurrent.TimeUnit;
+
 import net.arikia.dev.drpc.DiscordEventHandlers;
 import net.arikia.dev.drpc.DiscordRPC;
 import net.arikia.dev.drpc.DiscordRPC.DiscordReply;
-import net.arikia.dev.drpc.callbacks.ReadyCallback;
 import net.arikia.dev.drpc.DiscordRichPresence;
-import net.arikia.dev.drpc.DiscordUser;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 
@@ -17,36 +17,9 @@ public class Discord {
 	private static String currentTitle;
 	private static String currentSubtitle;
 	private static String currentImgKey;
-	private static boolean joinRequestEnabled = false;
 
-	private static DiscordEventHandlers handlers = new DiscordEventHandlers.Builder().setReadyEventHandler(new ReadyCallback() {
-		
-		@Override
-		public void apply(DiscordUser user) {
-			System.out.println("READY, Logged in as "+user.username);
-		}
-	}).setDisconnectedEventHandler((error,message)->{
-		System.out.println(error);
-		System.out.println(message);
-	}).setJoinRequestEventHandler((usr)->{
-		System.out.println(usr.username+" Wants to join! (Accepting as test)");
-		new Thread() {
-			public void run() {
-				
-				try {
-					sleep(1000);
-				} catch (InterruptedException e) {
-				}
-				DiscordRPC.discordRespond(usr.userId, DiscordReply.YES);
-			}
-		}.start();
-		
-	}).setJoinGameEventHandler((secret)->{
-		System.out.println(secret);
-	}).setDisconnectedEventHandler((error, msg)->{
-		System.out.println("DISCONNECTED! "+error+" "+msg);
-	}).build();
-	
+	private static DiscordEventHandlers handlers;
+
 	
 	private static Thread dcUpdateThread = new Thread() {
 		{
@@ -78,11 +51,43 @@ public class Discord {
 	public static void disableModDefault() {
 		disableModDefault(false);
 	}
+	private static void initHandlers() {
+		DiscordEventHandlers.Builder builder = new DiscordEventHandlers.Builder();
+		builder.setReadyEventHandler((usr)->{
+			DRPCLog.Info("READY! Logged in as "+usr.username);
+		});
+		builder.setDisconnectedEventHandler((error,message)->{
+			DRPCLog.Error(error+"");
+			DRPCLog.Error(message);
+		});
+		builder.setJoinRequestEventHandler((usr)->{
+			DRPCLog.Info(usr.username+" Wants to join! (Accepting as test)");
+			new Thread() {
+				public void run() {
+					
+					try {
+						sleep(TimeUnit.SECONDS.toMillis(1));
+					} catch (InterruptedException e) {
+					}
+					DiscordRPC.discordRespond(usr.userId, DiscordReply.YES);
+				}
+			}.start();
+			
+		});
+		builder.setJoinGameEventHandler((secret)->{
+			DRPCLog.Info(secret);
+		});
+		builder.setDisconnectedEventHandler((error, msg)->{
+			DRPCLog.Error("DISCONNECTED! "+error+" "+msg);
+		});
+		handlers = builder.build();
+	}
 	/**
 	 * Starts up the discord rich presence service (call in {@link FMLConstructionEvent} or earlier!)
 	 */
 	public static void initDiscord() {
 		if(initialized) return;
+		initHandlers();
 		DiscordRPC.discordInitialize("511106082366554122", handlers, true);
 		DRPCLog.Info("Starting Discord");
 		Discord.initialized  = true;
@@ -94,9 +99,11 @@ public class Discord {
 	 */
 	public static void customDiscordInit(String clientID) {
 		if(initialized) return;
+		initHandlers();
 		DiscordRPC.discordInitialize(clientID, handlers, true);
 		DRPCLog.Info("Starting Discord with cliend ID "+clientID);
 		Discord.initialized  = true;
+		
 		if(!dcUpdateThread.isAlive()) dcUpdateThread.start();
 	}
 	
@@ -136,11 +143,5 @@ public class Discord {
 		dcUpdateThread.interrupt();
 		DiscordRPC.discordShutdown();
 		initialized = false;
-	}
-	public static void enableJoinRequest() {
-		joinRequestEnabled = true;
-	}
-	public static void disableJoinRequest() {
-		joinRequestEnabled = false;
 	}
 }

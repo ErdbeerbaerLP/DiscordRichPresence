@@ -140,7 +140,6 @@ public class DRPCEventHandler {
 					if(tickAmount == 0){
 						currentMax = maxPlayers;
 						currentOnline = online;
-						Discord.enableJoinRequest();
 						if(!serverCustomMessage.isEmpty()){
 							DRPCLog.Debug("CustomMSG Applied");
 							Discord.setPresence(RPCconfig.NAME, serverCustomMessage.replace("%players%", online+"").replace("%otherpl%", (online-1)+""), customIco);

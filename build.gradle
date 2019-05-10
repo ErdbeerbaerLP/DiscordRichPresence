@@ -43,7 +43,7 @@ configurations {
 dependencies {
         shade 'com.github.Vatuu:discord-rpc-binaries:master'
 		shade 'com.github.NukerHD:hive-java-api:1.0-snapshot'
-		compile 'com.github.ErdbeerbaerLP:ErdbeerbaerGuiLib:4e5f461167'
+		compile 'com.github.ErdbeerbaerLP:ErdbeerbaerGuiLib:a20cc7adfd'
 }
 
 processResources {

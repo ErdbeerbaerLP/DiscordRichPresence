@@ -1,9 +1,9 @@
 package net.arikia.dev.drpc;
 
-import com.sun.jna.Structure;
-
 import java.util.Arrays;
 import java.util.List;
+
+import com.sun.jna.Structure;
 
 /**
  * @author Nicolas "Vatuu" Adamoglou
