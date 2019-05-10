@@ -1,0 +1,15 @@
+[
+{
+  "modid": "discordrpc",
+  "name": "DiscordRichPresence",
+  "description": "Another Discord Rich Presence mod for Minecraft",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "http://erdbeerbaerapi.tk/discordrpc.json",
+  "authorList": ["ErdbeerbaerLP"],
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
