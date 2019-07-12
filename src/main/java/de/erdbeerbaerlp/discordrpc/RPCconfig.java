@@ -1,28 +1,23 @@
 package de.erdbeerbaerlp.discordrpc;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.Loader;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Config Class for Discord RichPresence
  */
 public class RPCconfig {
 
-	protected static Configuration config;
-	
 	protected static final String CATEGORY_PRESENCE = "RichPresence";
-	
-	
 	/**
 	 * First line of Rich Presence
 	 */
 	public static String NAME;
-	protected static boolean NAME_CHANGING_ALLOWED;
 	/**
 	 * Text displayed when in main menu
 	 */
@@ -39,64 +34,66 @@ public class RPCconfig {
 	 * Text displayed when in singleplayer
 	 */
 	public static String WORLD_MESSAGE;
+	protected static Configuration config;
+	protected static boolean NAME_CHANGING_ALLOWED;
 //	private static FirstLaunchWindow w = new FirstLaunchWindow();
-	
-	protected static boolean DEV_COMMANDS;
-	
-	protected static void loadConfigFromFile(){
+protected static boolean DEV_COMMANDS;
+
+	protected static void loadConfigFromFile() {
 		File configFile = new File(Loader.instance().getConfigDir(), "DiscordRPC.cfg");
 //		if(!configFile.exists()) {
 //			w.setVisible(true);
 //		}
 		config = new Configuration(configFile);
 		syncConfig(true, true);
-		
+
 	}
-	
-	private static Configuration getConfig(){
+
+	private static Configuration getConfig() {
 		return config;
 	}
 
 
-	protected static void reloadConfig(){
+	protected static void reloadConfig() {
 		syncConfig(false, true);
 		Discord.reloadPresence();
 	}
+
 	protected static void saveChanges() {
 		syncConfig(false, false);
 		Discord.reloadPresence();
 	}
-	
-	private static void syncConfig(boolean loadFromConfigFile, boolean readFieldsFromConfig){
-		if(loadFromConfigFile)
+
+	private static void syncConfig(boolean loadFromConfigFile, boolean readFieldsFromConfig) {
+		if (loadFromConfigFile)
 			config.load();
-		
+
 		Property propertyName = config.get(CATEGORY_PRESENCE, "Client Name", "Minecraft 1.12");
 		propertyName.setComment("First line of Rich Presence");
-		
+
 		Property propertyMultiplayer = config.get(CATEGORY_PRESENCE, "Server Text", "Playing on %ip%");
 		propertyMultiplayer.setComment("Placeholders:\n%ip%  Server IP");
 		propertyMultiplayer.setRequiresWorldRestart(true);
-		
+
 		Property propertyInMenu = config.get(CATEGORY_PRESENCE, "MainMenu", "In Main Menu");
 		propertyInMenu.setComment("No placeholders supported, Text that shows when you are in the main menu");
-		
+
 		Property propertySingleplayer = config.get(CATEGORY_PRESENCE, "Singleplayer Text", "Playing in %world% (%coords%)");
 		propertySingleplayer.setComment("Placeholders:\n%coords% (X:??? Y:??? Z:???)\n%world% World name");
 		propertySingleplayer.setRequiresWorldRestart(true);
-		
+
 		Property propDisableNameChange = config.get(CATEGORY_PRESENCE, "Disable Name changing", false);
 		propDisableNameChange.setComment("Setting this to true disables name changing through GUI");
 		propDisableNameChange.setShowInGui(false);
-		
+
 		Property propServerJoinReq = config.get(CATEGORY_PRESENCE, "Server Join Requests", true);
 		propServerJoinReq.setComment("Should join requests be enabled on servers?");
-		
-		
+
+
 		Property propEnableDevelopmentCommands = config.get(CATEGORY_PRESENCE, "DevCommands", false);
 		propEnableDevelopmentCommands.setComment("Do you want to use development commands?");
-		
-		List<String> propOrderPresence = new ArrayList<String>();
+
+		List<String> propOrderPresence = new ArrayList<>();
 		propOrderPresence.add(propertyName.getName());
 		propOrderPresence.add(propertyInMenu.getName());
 		propOrderPresence.add(propertySingleplayer.getName());
@@ -105,9 +102,9 @@ public class RPCconfig {
 		propOrderPresence.add(propServerJoinReq.getName());
 		propOrderPresence.add(propEnableDevelopmentCommands.getName());
 		config.setCategoryPropertyOrder(CATEGORY_PRESENCE, propOrderPresence);
-		
-		
-		if(readFieldsFromConfig){
+
+
+		if (readFieldsFromConfig) {
 			NAME = propertyName.getString();
 			SERVER_MESSAGE = propertyMultiplayer.getString();
 			WORLD_MESSAGE = propertySingleplayer.getString();
@@ -116,7 +113,7 @@ public class RPCconfig {
 			DEV_COMMANDS = propEnableDevelopmentCommands.getBoolean();
 			ENABLE_JOIN_REQUESTS_ON_SERVERS = propServerJoinReq.getBoolean();
 		}
-		
+
 		propertyName.set(NAME);
 		propertyName.setDefaultValue(NAME);
 		propertyName.setShowInGui(NAME_CHANGING_ALLOWED);
@@ -125,9 +122,9 @@ public class RPCconfig {
 		propertyInMenu.set(MAIN_MENU_TEXT);
 		propEnableDevelopmentCommands.set(DEV_COMMANDS);
 		propServerJoinReq.set(ENABLE_JOIN_REQUESTS_ON_SERVERS);
-		if(config.hasChanged())
+		if (config.hasChanged())
 			config.save();
 	}
 
-	
+
 }
