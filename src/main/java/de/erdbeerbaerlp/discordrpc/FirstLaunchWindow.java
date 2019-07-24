@@ -1,6 +1,8 @@
 package de.erdbeerbaerlp.discordrpc;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -8,7 +10,7 @@ import java.awt.event.KeyEvent;
  * Window which gets called when mod is first used (will be prevented when another mod disables this mod first)
  */
 public class FirstLaunchWindow extends JDialog {
-    private final JTextField textField = new JTextField();
+    private JTextField textField = new JTextField();
 
     protected FirstLaunchWindow() {
         setModal(true);
@@ -30,10 +32,12 @@ public class FirstLaunchWindow extends JDialog {
         lblEmpty.setBounds(37, 128, 148, 14);
         getContentPane().add(lblEmpty);
         textField.setColumns(10);
-        btnOk.addActionListener(arg0 -> {
-            if (textField.getText().isEmpty()) lblEmpty.setVisible(true);
-            else {
-                setVisible(false);
+        btnOk.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                if (textField.getText().isEmpty()) lblEmpty.setVisible(true);
+                else {
+                    setVisible(false);
+                }
             }
         });
         textField.addKeyListener(new KeyAdapter() {
@@ -50,6 +54,7 @@ public class FirstLaunchWindow extends JDialog {
     }
 
     protected String getClientName() {
+
         if (this.textField.getText().isEmpty()) return "Vanilla";
         else return this.textField.getText();
     }

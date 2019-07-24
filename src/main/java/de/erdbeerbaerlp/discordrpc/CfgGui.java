@@ -20,7 +20,9 @@ public class CfgGui extends GuiConfig {
     }
 
     private static List<IConfigElement> getConfigElements() {
-        return new ArrayList<>(new ConfigElement(RPCconfig.config.getCategory(RPCconfig.CATEGORY_PRESENCE)).getChildElements());
+        List<IConfigElement> elements = new ArrayList<IConfigElement>();
+        elements.addAll(new ConfigElement(RPCconfig.config.getCategory(RPCconfig.CATEGORY_PRESENCE)).getChildElements());
+        return elements;
     }
 
 

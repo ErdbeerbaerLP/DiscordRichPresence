@@ -1,5 +1,6 @@
 package de.erdbeerbaerlp.discordrpc;
 
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -20,7 +21,7 @@ public class Command implements IClientCommand {
     private final String[] devtabs = new String[]{"logtochat", "msg-request"};
 
     public Command() {
-        aliases = new ArrayList<>();
+        aliases = new ArrayList<String>();
         aliases.add("discordrichpresence");
         aliases.add("drpc");
 
@@ -38,17 +39,19 @@ public class Command implements IClientCommand {
 
     @Override
     public String getUsage(ICommandSender sender) {
+
         return "/drpc <help|reload|dev>";
     }
 
     @Override
     public List<String> getAliases() {
+
         return this.aliases;
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+
         TextComponentString helpMsg = new TextComponentString(prefix
                 + "\u00A72 Help:\n"
                 + "\u00A76/drpc help \u00A77   Displays this\n"
@@ -69,7 +72,7 @@ public class Command implements IClientCommand {
                     if (args.length > 1 && RPCconfig.DEV_COMMANDS) {
                         switch (args[1]) {
                             case "logtochat":
-                                if (!ModClass.logtochat) {
+                                if (ModClass.logtochat == false) {
                                     sender.sendMessage(new TextComponentString(prefix + "\u00A7aTurned on log in chat!"));
                                     ModClass.logtochat = true;
                                 } else {
@@ -107,13 +110,14 @@ public class Command implements IClientCommand {
 
     @Override
     public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
+
         return true;
     }
 
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
                                           BlockPos targetPos) {
-        List<String> tabs = new ArrayList<>();
+        List<String> tabs = new ArrayList<String>();
         if (args.length == 1) {
 
             for (String tabcompletion : tabcompletions) {
@@ -133,11 +137,13 @@ public class Command implements IClientCommand {
 
     @Override
     public boolean isUsernameIndex(String[] args, int index) {
+
         return false;
     }
 
     @Override
     public boolean allowUsageWithoutPrefix(ICommandSender sender, String message) {
+
         return false;
     }
 

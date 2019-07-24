@@ -9,17 +9,14 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.ModMetadata;
-import net.minecraftforge.fml.common.event.FMLConstructionEvent;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
 import java.time.Instant;
 
-@Mod(modid = ModClass.MODID, name = ModClass.NAME, version = ModClass.VERSION, dependencies = "required-after-client:eguilib", acceptedMinecraftVersions = "[1.12,1.12.2]", acceptableRemoteVersions = "*", guiFactory = "de.erdbeerbaerlp.discordrpc.CfgGuiFactory", updateJSON = "http://erdbeerbaerapi.tk/discordrpc.json")
+@Mod(modid = ModClass.MODID, name = ModClass.NAME, version = ModClass.VERSION, dependencies = "required-after-client:eguilib", canBeDeactivated = false, acceptedMinecraftVersions = "[1.12,1.12.2]", acceptableRemoteVersions = "*", guiFactory = "de.erdbeerbaerlp.discordrpc.CfgGuiFactory", updateJSON = "http://erdbeerbaerapi.tk/discordrpc.json")
 public class ModClass {
     /**
      * Mod ID
@@ -108,4 +105,7 @@ public class ModClass {
         e.registerServerCommand(new ServerCommand());
     }
 
+    @EventHandler
+    public void postInit(FMLPostInitializationEvent evt) {
+    }
 }

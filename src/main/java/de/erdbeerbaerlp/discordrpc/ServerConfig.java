@@ -44,10 +44,10 @@ public class ServerConfig {
         propMSG.setComment("The second line you have in the rich presence.\n Placeholders are:\n%players% - Amount of all players\n%otherpl% - Amount of players -1 (except you)");
 
         Property propIcon = config.get(CATEGORY_PRESENCE, "IconKey", "world");
-        propIcon.setComment("The Icon-Key. Use 'world' or 'cube' if you don´t have an special one.");
+        propIcon.setComment("The Icon-Key. Use 'world' or 'cube' if you don�t have an special one.");
 
 
-        List<String> propOrderPresence = new ArrayList<>();
+        List<String> propOrderPresence = new ArrayList<String>();
         propOrderPresence.add(propMSG.getName());
         propOrderPresence.add(propIcon.getName());
         config.setCategoryPropertyOrder(CATEGORY_PRESENCE, propOrderPresence);

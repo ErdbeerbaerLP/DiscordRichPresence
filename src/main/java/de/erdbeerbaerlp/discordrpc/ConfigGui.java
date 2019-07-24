@@ -6,10 +6,9 @@ import de.erdbeerbaerlp.guilib.components.CheckBox;
 import de.erdbeerbaerlp.guilib.components.Label;
 import de.erdbeerbaerlp.guilib.components.TextField;
 import de.erdbeerbaerlp.guilib.gui.BetterGuiScreen;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-
-import static de.erdbeerbaerlp.guilib.components.Button.DefaultButtonIcons.DELETE;
-import static de.erdbeerbaerlp.guilib.components.Button.DefaultButtonIcons.SAVE;
+import net.minecraft.util.ResourceLocation;
 
 public class ConfigGui extends BetterGuiScreen {
 
@@ -21,11 +20,18 @@ public class ConfigGui extends BetterGuiScreen {
 
     //Page 0 Components
     private Button general;
+    private Button developers;
+    private Button serverIntegrations;
 
     //Page 1 Components
-    private TextField gameName;
-    private Label gameNameLabel;
-    private CheckBox joinReqOnServers;
+    private TextField gameName, singleplayerText, multiplayerText;
+    private Label gameNameLabel, singleplayerLabel, multiplayerLabel;
+
+    //Page 2 Components
+    private CheckBox devCommands;
+
+    //Page 3 Components
+    private CheckBox hypixel, hive, customMsg;
 
     public ConfigGui(GuiScreen parentScreen) {
         super();
@@ -36,66 +42,127 @@ public class ConfigGui extends BetterGuiScreen {
     @Override
     public void buildGui() {
         title = new Label("Discord RPC Config", 0, 5);
-        cancel = new Button(0, 0, 65, "Cancel", DELETE);
-        save = new Button(0, 0, 65, "Save", SAVE);
-        general = new Button(0, 0, "General Settings");
+        cancel = new Button(0, 0, 65, "Cancel", DefaultButtonIcons.DELETE);
+        save = new Button(0, 0, 65, "Save", DefaultButtonIcons.SAVE);
         backToMenu = new Button(0, 0, 130, "Back", DefaultButtonIcons.ARROW_LEFT);
 
-        gameName = new TextField(0, 0, 100);
+        general = new Button(0, 0, 120, "General Settings", new ResourceLocation(ModClass.MODID, "textures/gui/buttonicons/discord.png"));
+        developers = new Button(0, 0, 140, "Developer Settings", DefaultButtonIcons.FILE);
+        serverIntegrations = new Button(0, 0, 270, "Server Integration Settings", new ResourceLocation(ModClass.MODID, "textures/gui/buttonicons/server.png"));
+
         gameNameLabel = new Label("Game Name", 0, 0);
-        joinReqOnServers = new CheckBox(0, 0, "Enable join requests on servers");
+        singleplayerLabel = new Label("Singleplayer Message", 0, 0);
+        multiplayerLabel = new Label("Multiplayer Message", 0, 0);
+        gameName = new TextField(0, 0, 200);
+        singleplayerText = new TextField(0, 0, 200);
+        multiplayerText = new TextField(0, 0, 200);
+
+        devCommands = new CheckBox(0, 0, "Enable Developer Subcommand", RPCconfig.DEV_COMMANDS);
+
+        hypixel = new CheckBox(0, 0, "Enable Hypixel Integration", RPCconfig.ENABLE_HYPIXEL_INTEGRATION);
+        hive = new CheckBox(0, 0, "Enable HiveMC Integration", RPCconfig.ENABLE_HIVEMC_INTEGRATION);
+        customMsg = new CheckBox(0, 0, "Enable Custom Server Integration", RPCconfig.ENABLE_CUSTOM_INTEGRATION);
+
 
         backToMenu.setTooltips("Back to main config menu");
+
         general.setTooltips("Some basic settings");
         gameName.setTooltips("The first line of your Rich Presence", "Default: Minecraft 1.12");
-        joinReqOnServers.setTooltips("Should other discord users be able to send join requests when you are on a server?");
+        singleplayerText.setTooltips("The second line of the Rich Presence when in singleplayer", "", "PLACEHOLDERS: ", "%coords% - Coordinates (X:??? Y:??? Z:???)", "%world% World name");
+        multiplayerText.setTooltips("The default second line of the Rich Presence when in multiplayer", "", "PLACEHOLDERS: ", "%ip%  Server IP");
+
+        developers.setTooltips("Some config entries for developers / modpack creators");
+
+        serverIntegrations.setTooltips("Configurate how some servers will show up");
+        hypixel.setTooltips("When enabled, this mod will show details about your current game if available");
+        hive.setTooltips("When enabled, the discord rich presence will show your current game using HiveMCs API");
+        customMsg.setTooltips("When enabled, every server can define custom messages using this mod or an spigot plugin", "Also disables hardcoded custom icons and text of not fully integrated servers like mineplex");
+
 
         general.assignToPage(0);
+        developers.assignToPage(0);
+        serverIntegrations.assignToPage(0);
         save.assignToPage(0);
         cancel.assignToPage(0);
         gameName.assignToPage(1);
         gameNameLabel.assignToPage(1);
-        joinReqOnServers.assignToPage(1);
+        singleplayerText.assignToPage(1);
+        singleplayerLabel.assignToPage(1);
+        multiplayerText.assignToPage(1);
+        multiplayerLabel.assignToPage(1);
+        devCommands.assignToPage(2);
+        hypixel.assignToPage(3);
+        hive.assignToPage(3);
+        customMsg.assignToPage(3);
 
         save.setClickListener(() -> {
-            RPCconfig.ENABLE_JOIN_REQUESTS_ON_SERVERS = joinReqOnServers.isChecked();
+            RPCconfig.DEV_COMMANDS = devCommands.isChecked();
             RPCconfig.NAME = gameName.getText();
+            RPCconfig.ENABLE_HIVEMC_INTEGRATION = hive.isChecked();
+            RPCconfig.ENABLE_HYPIXEL_INTEGRATION = hypixel.isChecked();
+            RPCconfig.ENABLE_CUSTOM_INTEGRATION = customMsg.isChecked();
+            RPCconfig.WORLD_MESSAGE = singleplayerText.getText();
+            RPCconfig.SERVER_MESSAGE = multiplayerText.getText();
             RPCconfig.saveChanges();
             openGui(parentScreen);
         });
 
         cancel.setClickListener(() -> openGui(parentScreen));
         general.setClickListener(() -> this.setPage(1));
+        developers.setClickListener(() -> this.setPage(2));
+        serverIntegrations.setClickListener(() -> this.setPage(3));
         backToMenu.setClickListener(() -> this.setPage(0));
-
 
         title.setCentered();
         backToMenu.setVisible(false);
         gameName.setText(RPCconfig.NAME);
-        joinReqOnServers.setIsChecked(RPCconfig.ENABLE_JOIN_REQUESTS_ON_SERVERS);
+        singleplayerText.setText(RPCconfig.WORLD_MESSAGE);
+        multiplayerText.setText(RPCconfig.SERVER_MESSAGE);
 
-        addAllComponents(title, cancel, save, general, backToMenu, gameName, gameNameLabel, joinReqOnServers);
+
+        addAllComponents(title, cancel, save, general, developers, serverIntegrations, backToMenu, gameName, gameNameLabel, singleplayerLabel, singleplayerText, multiplayerLabel, multiplayerText, devCommands, hypixel, hive, customMsg);
 
     }
 
     @Override
     public void updateGui() {
-        title.setX(width / 2 - 80);
+        singleplayerText.setEnabled(Minecraft.getMinecraft().world == null);
+        multiplayerText.setEnabled(Minecraft.getMinecraft().world == null);
+        title.setX(width / 2);
+        title.setY(10);
         save.setX(width / 2 - 65);
         save.setY(height - 40);
         cancel.setY(save.getY());
         cancel.setX(save.getX() + 66);
-        general.setX(width / 8);
-        general.setY(height / 3);
         backToMenu.setY(save.getY());
         backToMenu.setX(save.getX());
-        gameName.setX(width / 7);
-        gameName.setY(height / 3);
-        gameNameLabel.setX(gameName.getX());
-        gameNameLabel.setY(gameName.getY() - 15);
-        joinReqOnServers.setX(gameName.getX());
-        joinReqOnServers.setY(gameName.getY() + 30);
         backToMenu.setVisible(getCurrentPage() > 0);
+
+
+        general.setX(width / 5);
+        general.setY(height / 3);
+        developers.setX(general.getX() + general.getWidth() + 10);
+        developers.setY(general.getY());
+        serverIntegrations.setX(general.getX());
+        serverIntegrations.setY(general.getY() + general.getHeight() + 5);
+
+        gameName.setX(width / 8);
+        gameName.setY(height / 5);
+        gameNameLabel.setX(gameName.getX());
+        gameNameLabel.setY(gameName.getY() - 12);
+        singleplayerText.setPosition(gameName.getX(), gameName.getY() + 55);
+        singleplayerLabel.setX(singleplayerText.getX());
+        singleplayerLabel.setY(singleplayerText.getY() - 12);
+        multiplayerText.setPosition(singleplayerText.getX(), singleplayerText.getY() + 55);
+        multiplayerLabel.setX(multiplayerText.getX());
+        multiplayerLabel.setY(multiplayerText.getY() - 12);
+
+        devCommands.setX(width / 8);
+        devCommands.setY(height / 3);
+
+        hypixel.setPosition(width / 8, height / 4);
+        hive.setPosition(hypixel.getX(), hypixel.getY() + 15);
+        customMsg.setPosition(hypixel.getX(), hive.getY() + 15);
     }
 
     @Override

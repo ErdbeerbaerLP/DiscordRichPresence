@@ -13,118 +13,126 @@ import java.util.List;
  */
 public class RPCconfig {
 
-	protected static final String CATEGORY_PRESENCE = "RichPresence";
-	/**
-	 * First line of Rich Presence
-	 */
-	public static String NAME;
-	/**
-	 * Text displayed when in main menu
-	 */
-	public static String MAIN_MENU_TEXT;
-	/**
-	 * Should join requests be shown when playing online?
-	 */
-	public static boolean ENABLE_JOIN_REQUESTS_ON_SERVERS;
-	/**
-	 * Text when playing on a server
-	 */
-	public static String SERVER_MESSAGE;
-	/**
-	 * Text displayed when in singleplayer
-	 */
-	public static String WORLD_MESSAGE;
-	protected static Configuration config;
-	protected static boolean NAME_CHANGING_ALLOWED;
-//	private static FirstLaunchWindow w = new FirstLaunchWindow();
-protected static boolean DEV_COMMANDS;
+    protected static final String CATEGORY_PRESENCE = "RichPresence";
+    /**
+     * First line of Rich Presence
+     */
+    public static String NAME;
+    /**
+     * Text displayed when in main menu
+     */
+    public static String MAIN_MENU_TEXT;
+    /**
+     * Text when playing on a server
+     */
+    public static String SERVER_MESSAGE;
+    /**
+     * Text displayed when in singleplayer
+     */
+    public static String WORLD_MESSAGE;
+    protected static Configuration config;
+    protected static boolean CONFIG_GUI_ENABLED;
+    protected static boolean DEV_COMMANDS;
 
-	protected static void loadConfigFromFile() {
-		File configFile = new File(Loader.instance().getConfigDir(), "DiscordRPC.cfg");
-//		if(!configFile.exists()) {
-//			w.setVisible(true);
-//		}
-		config = new Configuration(configFile);
-		syncConfig(true, true);
-
-	}
-
-	private static Configuration getConfig() {
-		return config;
-	}
+    static boolean ENABLE_HYPIXEL_INTEGRATION;
+    static boolean ENABLE_HIVEMC_INTEGRATION;
+    static boolean ENABLE_CUSTOM_INTEGRATION;
 
 
-	protected static void reloadConfig() {
-		syncConfig(false, true);
-		Discord.reloadPresence();
-	}
+    protected static void loadConfigFromFile() {
+        File configFile = new File(Loader.instance().getConfigDir(), "DiscordRPC.cfg");
+        config = new Configuration(configFile);
+        syncConfig(true, true);
+    }
 
-	protected static void saveChanges() {
-		syncConfig(false, false);
-		Discord.reloadPresence();
-	}
+    private static Configuration getConfig() {
+        return config;
+    }
 
-	private static void syncConfig(boolean loadFromConfigFile, boolean readFieldsFromConfig) {
-		if (loadFromConfigFile)
-			config.load();
+    protected static void reloadConfig() {
+        syncConfig(false, true);
+        Discord.reloadPresence();
+    }
 
-		Property propertyName = config.get(CATEGORY_PRESENCE, "Client Name", "Minecraft 1.12");
-		propertyName.setComment("First line of Rich Presence");
+    protected static void saveChanges() {
+        syncConfig(false, false);
+        Discord.reloadPresence();
+    }
 
-		Property propertyMultiplayer = config.get(CATEGORY_PRESENCE, "Server Text", "Playing on %ip%");
-		propertyMultiplayer.setComment("Placeholders:\n%ip%  Server IP");
-		propertyMultiplayer.setRequiresWorldRestart(true);
+    private static void syncConfig(boolean loadFromConfigFile, boolean readFieldsFromConfig) {
+        if (loadFromConfigFile)
+            config.load();
 
-		Property propertyInMenu = config.get(CATEGORY_PRESENCE, "MainMenu", "In Main Menu");
-		propertyInMenu.setComment("No placeholders supported, Text that shows when you are in the main menu");
+        Property propertyName = config.get(CATEGORY_PRESENCE, "Client Name", "Minecraft 1.12");
+        propertyName.setComment("First line of Rich Presence");
 
-		Property propertySingleplayer = config.get(CATEGORY_PRESENCE, "Singleplayer Text", "Playing in %world% (%coords%)");
-		propertySingleplayer.setComment("Placeholders:\n%coords% (X:??? Y:??? Z:???)\n%world% World name");
-		propertySingleplayer.setRequiresWorldRestart(true);
+        Property propertyMultiplayer = config.get(CATEGORY_PRESENCE, "Server Text", "Playing on %ip%");
+        propertyMultiplayer.setComment("Placeholders:\n%ip%  Server IP");
+        propertyMultiplayer.setRequiresWorldRestart(true);
 
-		Property propDisableNameChange = config.get(CATEGORY_PRESENCE, "Disable Name changing", false);
-		propDisableNameChange.setComment("Setting this to true disables name changing through GUI");
-		propDisableNameChange.setShowInGui(false);
+        Property propertyInMenu = config.get(CATEGORY_PRESENCE, "MainMenu", "In Main Menu");
+        propertyInMenu.setComment("No placeholders supported, Text that shows when you are in the main menu");
 
-		Property propServerJoinReq = config.get(CATEGORY_PRESENCE, "Server Join Requests", true);
-		propServerJoinReq.setComment("Should join requests be enabled on servers?");
+        Property propertySingleplayer = config.get(CATEGORY_PRESENCE, "Singleplayer Text", "Playing in %world% (%coords%)");
+        propertySingleplayer.setComment("Placeholders:\n%coords% (X:??? Y:??? Z:???)\n%world% World name");
+        propertySingleplayer.setRequiresWorldRestart(true);
 
-
-		Property propEnableDevelopmentCommands = config.get(CATEGORY_PRESENCE, "DevCommands", false);
-		propEnableDevelopmentCommands.setComment("Do you want to use development commands?");
-
-		List<String> propOrderPresence = new ArrayList<>();
-		propOrderPresence.add(propertyName.getName());
-		propOrderPresence.add(propertyInMenu.getName());
-		propOrderPresence.add(propertySingleplayer.getName());
-		propOrderPresence.add(propertyMultiplayer.getName());
-		propOrderPresence.add(propDisableNameChange.getName());
-		propOrderPresence.add(propServerJoinReq.getName());
-		propOrderPresence.add(propEnableDevelopmentCommands.getName());
-		config.setCategoryPropertyOrder(CATEGORY_PRESENCE, propOrderPresence);
+        Property propDisableNameChange = config.get(CATEGORY_PRESENCE, "Disable-Config-GUI", false);
+        propDisableNameChange.setComment("Disables config GUI\nRequires config file editing to enable again");
 
 
-		if (readFieldsFromConfig) {
-			NAME = propertyName.getString();
-			SERVER_MESSAGE = propertyMultiplayer.getString();
-			WORLD_MESSAGE = propertySingleplayer.getString();
-			MAIN_MENU_TEXT = propertyInMenu.getString();
-			NAME_CHANGING_ALLOWED = !propDisableNameChange.getBoolean();
-			DEV_COMMANDS = propEnableDevelopmentCommands.getBoolean();
-			ENABLE_JOIN_REQUESTS_ON_SERVERS = propServerJoinReq.getBoolean();
-		}
+        Property propEnableDevelopmentCommands = config.get(CATEGORY_PRESENCE, "DevCommands", false);
+        propEnableDevelopmentCommands.setComment("Do you want to use development commands?");
 
-		propertyName.set(NAME);
-		propertyName.setDefaultValue(NAME);
-		propertyName.setShowInGui(NAME_CHANGING_ALLOWED);
-		propertySingleplayer.set(WORLD_MESSAGE);
-		propertyMultiplayer.set(SERVER_MESSAGE);
-		propertyInMenu.set(MAIN_MENU_TEXT);
-		propEnableDevelopmentCommands.set(DEV_COMMANDS);
-		propServerJoinReq.set(ENABLE_JOIN_REQUESTS_ON_SERVERS);
-		if (config.hasChanged())
-			config.save();
-	}
+
+        Property propEnableHypixel = config.get(CATEGORY_PRESENCE, "Hypixel-Integration", true);
+        propEnableHypixel.setComment("Do you want to use custom Hypixel integration (show what game you are playing and such)?");
+
+        Property propEnableHive = config.get(CATEGORY_PRESENCE, "Hivemc-Integration", true);
+        propEnableHive.setComment("Do you want to use custom Hivemc integration (show what game you are playing)?");
+
+        Property propEnableCustomMSG = config.get(CATEGORY_PRESENCE, "Custom-Messages-From-Server", true);
+        propEnableCustomMSG.setComment("Do you want servers to send you a customized rich presence text?\nAlso toggles hardcoded custom icons and text of not fully integrated servers like mineplex");
+
+
+        List<String> order = new ArrayList<String>();
+        order.add(propertyName.getName());
+        order.add(propertyInMenu.getName());
+        order.add(propertySingleplayer.getName());
+        order.add(propertyMultiplayer.getName());
+        order.add(propEnableHypixel.getName());
+        order.add(propEnableHive.getName());
+        order.add(propEnableCustomMSG.getName());
+        order.add(propDisableNameChange.getName());
+        order.add(propEnableDevelopmentCommands.getName());
+        config.setCategoryPropertyOrder(CATEGORY_PRESENCE, order);
+
+
+        if (readFieldsFromConfig) {
+            NAME = propertyName.getString();
+            SERVER_MESSAGE = propertyMultiplayer.getString();
+            WORLD_MESSAGE = propertySingleplayer.getString();
+            MAIN_MENU_TEXT = propertyInMenu.getString();
+            CONFIG_GUI_ENABLED = !propDisableNameChange.getBoolean();
+            DEV_COMMANDS = propEnableDevelopmentCommands.getBoolean();
+            ENABLE_CUSTOM_INTEGRATION = propEnableCustomMSG.getBoolean();
+            ENABLE_HYPIXEL_INTEGRATION = propEnableHypixel.getBoolean();
+            ENABLE_HIVEMC_INTEGRATION = propEnableHive.getBoolean();
+        }
+
+        propertyName.set(NAME);
+        propertyName.setDefaultValue(NAME);
+        propertyName.setShowInGui(CONFIG_GUI_ENABLED);
+        propertySingleplayer.set(WORLD_MESSAGE);
+        propertyMultiplayer.set(SERVER_MESSAGE);
+        propEnableCustomMSG.set(ENABLE_CUSTOM_INTEGRATION);
+        propEnableHive.set(ENABLE_HIVEMC_INTEGRATION);
+        propEnableHypixel.set(ENABLE_HYPIXEL_INTEGRATION);
+        propertyInMenu.set(MAIN_MENU_TEXT);
+        propEnableDevelopmentCommands.set(DEV_COMMANDS);
+        if (config.hasChanged())
+            config.save();
+    }
 
 
 }

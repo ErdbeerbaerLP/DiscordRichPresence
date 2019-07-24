@@ -1,37 +1,17 @@
 package de.erdbeerbaerlp.discordrpc;
 
-import net.arikia.dev.drpc.DiscordEventHandlers;
-import net.arikia.dev.drpc.DiscordRPC;
-import net.arikia.dev.drpc.DiscordRPC.DiscordReply;
-import net.arikia.dev.drpc.DiscordRichPresence;
-import net.minecraft.client.Minecraft;
+import club.minnced.discord.rpc.DiscordEventHandlers;
+import club.minnced.discord.rpc.DiscordRPC;
+import club.minnced.discord.rpc.DiscordRichPresence;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 
-import java.util.concurrent.TimeUnit;
-
 public class Discord {
-    private static final DiscordRichPresence presence = new DiscordRichPresence();
-    private static final Thread dcUpdateThread = new Thread() {
-        {
-            setName("Discord Update Thread");
-        }
-
-        public void run() {
-            while (true) {
-                DiscordRPC.discordRunCallbacks();
-//			System.out.println("Callback");
-                try {
-                    sleep(500);
-                } catch (InterruptedException ignored) {
-                }
-            }
-        }
-    };
+    private static final DiscordEventHandlers handlers = new DiscordEventHandlers();
     public static long now = ModClass.gameStarted;
+    private static DiscordRichPresence presence = new DiscordRichPresence();
     private static String currentTitle;
     private static String currentSubtitle;
     private static String currentImgKey;
-    private static DiscordEventHandlers handlers;
     private static boolean initialized = false;
 
     /**
@@ -51,40 +31,14 @@ public class Discord {
         disableModDefault(false);
     }
 
-    private static void initHandlers() {
-        DiscordEventHandlers.Builder builder = new DiscordEventHandlers.Builder();
-        builder.setReadyEventHandler((usr) -> DRPCLog.Info("READY! Logged in as " + usr.username));
-        builder.setDisconnectedEventHandler((error, message) -> {
-            DRPCLog.Error(error + "");
-            DRPCLog.Error(message);
-        });
-        builder.setJoinRequestEventHandler((usr) -> {
-            DRPCLog.Info(usr.username + " Wants to join! (Accepting as test)");
-            new Thread(() -> {
-
-                try {
-                    Thread.sleep(TimeUnit.SECONDS.toMillis(1));
-                } catch (InterruptedException ignored) {
-                }
-                DiscordRPC.discordRespond(usr.userId, DiscordReply.YES);
-            }).start();
-
-        });
-        builder.setJoinGameEventHandler(DRPCLog::Info);
-        builder.setDisconnectedEventHandler((error, msg) -> DRPCLog.Error("DISCONNECTED! " + error + " " + msg));
-        handlers = builder.build();
-    }
-
     /**
      * Starts up the discord rich presence service (call in {@link FMLConstructionEvent} or earlier!)
      */
     public static void initDiscord() {
         if (initialized) return;
-        initHandlers();
-        DiscordRPC.discordInitialize("511106082366554122", handlers, true);
+        DiscordRPC.INSTANCE.Discord_Initialize("511106082366554122", handlers, true, "");
         DRPCLog.Info("Starting Discord");
         Discord.initialized = true;
-        if (!dcUpdateThread.isAlive()) dcUpdateThread.start();
     }
 
     /**
@@ -94,12 +48,9 @@ public class Discord {
      */
     public static void customDiscordInit(String clientID) {
         if (initialized) return;
-        initHandlers();
-        DiscordRPC.discordInitialize(clientID, handlers, true);
-        DRPCLog.Info("Starting Discord with cliend ID " + clientID);
+        DiscordRPC.INSTANCE.Discord_Initialize(clientID, handlers, true, "");
+        DRPCLog.Info("Starting Discord with client ID " + clientID);
         Discord.initialized = true;
-
-        if (!dcUpdateThread.isAlive()) dcUpdateThread.start();
     }
 
     public static void setPresence(String title, String subtitle, String iconKey) {
@@ -111,12 +62,9 @@ public class Discord {
         currentImgKey = iconKey;
         presence.startTimestamp = now;
 
-        if (Minecraft.getMinecraft().getCurrentServerData() != null && !Minecraft.getMinecraft().getCurrentServerData().serverIP.equals("localhost"))
-            presence.joinSecret = genSecret();
-        DiscordRPC.discordUpdatePresence(presence);
+        DiscordRPC.INSTANCE.Discord_UpdatePresence(presence);
     }
 
-    @SuppressWarnings("SameReturnValue")
     private static String genSecret() {
         return "drpc-test";
     }
@@ -142,8 +90,7 @@ public class Discord {
     }
 
     protected static void shutdown() {
-        dcUpdateThread.interrupt();
-        DiscordRPC.discordShutdown();
+        DiscordRPC.INSTANCE.Discord_Shutdown();
         initialized = false;
     }
 }

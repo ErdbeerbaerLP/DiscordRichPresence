@@ -2,7 +2,6 @@ package de.erdbeerbaerlp.discordrpc;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.google.gson.stream.MalformedJsonException;
 import fr.nukerhd.hiveapi.response.games.Games;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -25,6 +24,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -33,6 +33,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.time.Instant;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class DRPCEventHandler {
@@ -81,6 +82,7 @@ public class DRPCEventHandler {
     }
 
     @SubscribeEvent
+    @SuppressWarnings("ConstantConditions")
     public static void onTick(PlayerTickEvent event) {
 
         if (ModClass.isClient) {
@@ -113,15 +115,13 @@ public class DRPCEventHandler {
             }
             if (ModClass.isEnabled) {
                 try {
-
                     int maxPlayers = Minecraft.getMinecraft().getConnection().currentServerMaxPlayers;
                     int online = Minecraft.getMinecraft().getConnection().getPlayerInfoMap().size();
-                    if (!usingCustomMsg && !serverCustomMessage.equals("")) {
+                    if (!usingCustomMsg && !serverCustomMessage.equals("") && RPCconfig.ENABLE_CUSTOM_INTEGRATION) {
                         DRPCLog.Debug("CustomMSG Applied");
                         Discord.setPresence(RPCconfig.NAME, serverCustomMessage.replace("%players%", online + "").replace("%otherpl%", (online - 1) + ""), customIco);
                         usingCustomMsg = true;
                     }
-//				System.out.println(Minecraft.getMinecraft().getCurrentServerData());
                     if (Minecraft.getMinecraft().getCurrentServerData() == null) {
                         if (tickAmount <= 0) {
                             World world = Minecraft.getMinecraft().world;
@@ -135,7 +135,9 @@ public class DRPCEventHandler {
                         } else
                             tickAmount--;
                     } else {
+                        //System.out.println("Tick #"+tickAmount);
                         if (tickAmount == 0) {
+                            tickAmount = 500;
                             currentMax = maxPlayers;
                             currentOnline = online;
                             if (!serverCustomMessage.isEmpty()) {
@@ -143,7 +145,7 @@ public class DRPCEventHandler {
                                 Discord.setPresence(RPCconfig.NAME, serverCustomMessage.replace("%players%", online + "").replace("%otherpl%", (online - 1) + ""), customIco);
                                 usingCustomMsg = true;
                             } else {
-                                if (Minecraft.getMinecraft().getCurrentServerData().serverIP.toLowerCase().contains("hypixel.net")) {
+                                if (Minecraft.getMinecraft().getCurrentServerData().serverIP.toLowerCase().contains("hypixel.net") && RPCconfig.ENABLE_HYPIXEL_INTEGRATION) {
                                     String scoreboardTitle;
                                     try {
                                         scoreboardTitle = removeFormatting(Minecraft.getMinecraft().world.getScoreboard().getObjectiveInDisplaySlot(1).getDisplayName());
@@ -151,17 +153,87 @@ public class DRPCEventHandler {
                                         scoreboardTitle = "";
                                     }
                                     if (scoreboardTitle.equals("HYPIXEL") || scoreboardTitle.equals("PROTOTYPE") || scoreboardTitle.equals("THE TNT GAMES") || scoreboardTitle.equals("ARCADE GAMES") || scoreboardTitle.equals("CLASSIC GAMES"))
-                                        scoreboardTitle = "HUB";
-                                    if (scoreboardTitle.equals("")) scoreboardTitle = "AFK";
+                                        scoreboardTitle = "In hub";
+                                    if (scoreboardTitle.equals("")) {
+                                        Discord.setPresence("Hypixel", "In Limbo", "49tz49873897485");
+                                        return;
+                                    }
                                     if (!scoreboardTitle.equals(Hypixel_LastGame))
                                         Discord.now = Instant.now().getEpochSecond();
                                     Hypixel_LastGame = scoreboardTitle;
-                                    Discord.setPresence(RPCconfig.NAME, "Hypixel [" + scoreboardTitle + "] with " + (online - 1) + " other players", "49tz49873897485");
-                                } else if (Minecraft.getMinecraft().getCurrentServerData().serverIP.toLowerCase().contains("mineplex.com")) {
+                                    final List<String> scoreboardLines = ScoreboardUtils.getSidebarScores(Minecraft.getMinecraft().world.getScoreboard());
+                                    if (scoreboardTitle.startsWith("SKYBLOCK")) {
+                                        for (String line : ScoreboardUtils.getSidebarScores(Minecraft.getMinecraft().world.getScoreboard())) {
+                                            line = removeFormatting(line).trim();
+//											System.out.println(line);
+                                            if (removeFormatting(line).startsWith("\u23E3")) {
+                                                line = line.replace("\u23E3", "").trim();
+                                                if (line.equalsIgnoreCase("none"))
+                                                    Discord.setPresence("Hypixel", "Skyblock - Unknown place", "49tz49873897485");
+                                                else if (line.equalsIgnoreCase("Your island"))
+                                                    Discord.setPresence("Hypixel", "Skyblock - Private Island", "49tz49873897485");
+                                                else
+                                                    Discord.setPresence("Hypixel", "Skyblock - " + line + " (with " + (online - 1) + " players)", "49tz49873897485");
+                                                break;
+                                            }
+
+                                        }
+                                        return;
+                                    }
+                                    if (scoreboardTitle.equals("BED WARS")) {
+                                        String text = "BedWars - Unknown state! Report to mod author!";
+                                        int i = 0;
+
+                                        for (String line : scoreboardLines) {
+                                            line = removeFormatting(line).trim();
+                                            i++;
+                                            if (line.contains("Loot Chests:")) {
+                                                text = "BedWars Hub";
+                                                break;
+                                            } else if (line.contains("Mode:")) {
+                                                text = "BedWars Lobby - Mode: " + line.replace("Mode:", "").trim() + " - " + removeFormatting(scoreboardLines.get(5));
+                                                break;
+                                            } else if (line.contains("YOU")) {
+                                                final boolean hasBed = line.contains("✓");
+                                                final boolean loose = line.contains("✗");
+                                                if (loose)
+                                                    text = "Bedwars - Game Over";
+                                                else {
+                                                    final String t = StringUtils.substringBetween(line, ": ", " YOU");
+                                                    text = "BedWars - Team " + line.substring(2).replace(": ", "").replace(" YOU", "").replace(t, "").trim() + " - Bed: " + (hasBed ? "Standing" : "Destroyed") + " - " + removeFormatting(scoreboardLines.get(4));
+                                                }
+                                                break;
+                                            } else if (line.contains("Beds Broken"))
+                                                text = "Bedwars - Game Over";
+
+                                        }
+                                        DRPCLog.Debug(text);
+                                        if (text.equals("BedWars - Unknown state! Report to mod author!")) {
+                                            DRPCLog.Fatal("Unknown State!!!");
+                                            for (final String l : scoreboardLines) {
+                                                DRPCLog.Fatal(removeFormatting(l));
+                                            }
+                                        }
+                                        Discord.setPresence("Hypixel", text, "49tz49873897485");
+                                        return;
+                                    }
+                                    if (scoreboardTitle.equals("THE HYPIXEL PIT")) {
+                                        String text = "";
+                                        for (final String s : scoreboardLines) {
+                                            if (s.contains("Status:")) {
+                                                final int level = removeFormatting(s).equalsIgnoreCase("Status: Event") ? 6 : 7;
+                                                text = removeFormatting(s + " - " + scoreboardLines.get(level).replace("[", "").replace("]", "")).trim();
+                                            }
+                                        }
+                                        Discord.setPresence("Hypixel", "The Pit - " + text, "49tz49873897485");
+                                        return;
+                                    }
+                                    Discord.setPresence("Hypixel", scoreboardTitle + " with " + (online - 1) + " other players", "49tz49873897485");
+                                } else if (Minecraft.getMinecraft().getCurrentServerData().serverIP.toLowerCase().contains("mineplex.com") && RPCconfig.ENABLE_CUSTOM_INTEGRATION) {
                                     Discord.setPresence(RPCconfig.NAME, "Playing on Mineplex with " + (online - 1) + " other players", "23498365347867869");
-                                } else if (Minecraft.getMinecraft().getCurrentServerData().serverIP.toLowerCase().contains("wynncraft.com")) {
+                                } else if (Minecraft.getMinecraft().getCurrentServerData().serverIP.toLowerCase().contains("wynncraft.com") && RPCconfig.ENABLE_CUSTOM_INTEGRATION) {
                                     Discord.setPresence(RPCconfig.NAME, "Playing on Wynncraft, The Minecraft MMORPG", "4878hz4389634tz987");
-                                } else if (Minecraft.getMinecraft().getCurrentServerData().serverIP.toLowerCase().contains("hivemc.com")) {
+                                } else if (Minecraft.getMinecraft().getCurrentServerData().serverIP.toLowerCase().contains("hivemc.com") && RPCconfig.ENABLE_HIVEMC_INTEGRATION) {
                                     try {
                                         JsonParser parse = new JsonParser();
                                         URL gameURL = new URL("https://api.hivemc.com/v1/player/" + Minecraft.getMinecraft().player.getName() + "/status/raw?v=1");
@@ -182,7 +254,7 @@ public class DRPCEventHandler {
                                         if (gameO.equals("HUB")) gameO = "in HUB";
                                         if (gameO.equals("BEDT")) gameO = "BedWars";
                                         Discord.setPresence("TheHive", "Playing " + gameO + " on hivemc.com", "38462896734683686");
-                                    } catch (IllegalStateException | MalformedJsonException ignored) {
+                                    } catch (Exception ignored) {
                                     }
 
 
@@ -190,11 +262,10 @@ public class DRPCEventHandler {
                                     Discord.setPresence(RPCconfig.NAME, RPCconfig.SERVER_MESSAGE.replace("%ip%", Minecraft.getMinecraft().getCurrentServerData().serverIP) + "(" + online + "/" + maxPlayers + " players)", "cube");
                                 }
                             }
-                            tickAmount = 2000;
                         } else if (tickAmount < 0) tickAmount = 2000;
                         else tickAmount--;
                     }
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     DRPCLog.Error("(Usually not a bug) ERROR in onPlayerTick... " + e);
 
                 }
@@ -226,10 +297,9 @@ public class DRPCEventHandler {
                 resetVars();
                 checkedUpdate = false;
                 Discord.setPresence(RPCconfig.NAME, "In Main Menu", "cube");
-                //new RPCCrash("MANUAL INITIATED CRASH", new NullPointerException("TEST"));
             } else if (event.getGui() instanceof GuiDownloadTerrain) {
-
-                ModClass.REQUEST.sendToServer(new RequestMessage("DRPC-Message-Request"));
+                if (RPCconfig.ENABLE_CUSTOM_INTEGRATION)
+                    ModClass.REQUEST.sendToServer(new RequestMessage("DRPC-Message-Request"));
                 currentOnline = -1;
                 currentMax = -1;
                 if (Minecraft.getMinecraft().getCurrentServerData() != null) {

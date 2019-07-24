@@ -1,5 +1,6 @@
 package de.erdbeerbaerlp.discordrpc;
 
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -13,7 +14,6 @@ public class ServerCommand implements ICommand {
     private static final String prefix = "\u00A78[\u00A76DiscordRPC\u00A78] ";
     private final List aliases;
 
-    @SuppressWarnings("unchecked")
     public ServerCommand() {
         aliases = new ArrayList();
         aliases.add("discordrichpresencereload");
@@ -23,26 +23,30 @@ public class ServerCommand implements ICommand {
 
     @Override
     public int compareTo(ICommand arg0) {
+
         return 0;
     }
 
     @Override
     public String getName() {
+
         return "discordrpcreload";
     }
 
     @Override
     public String getUsage(ICommandSender sender) {
+
         return "/drpcreload";
     }
 
     @Override
     public List<String> getAliases() {
+
         return this.aliases;
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 
         ServerConfig.preInit();
         sender.sendMessage(new TextComponentString(prefix + "\u00A72 Config reloaded!"));
@@ -51,18 +55,21 @@ public class ServerCommand implements ICommand {
 
     @Override
     public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
+
         return sender instanceof MinecraftServer;
     }
 
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
                                           BlockPos targetPos) {
+        List tabs = new ArrayList();
 
-        return (List) new ArrayList();
+        return tabs;
     }
 
     @Override
     public boolean isUsernameIndex(String[] args, int index) {
+
         return false;
     }
 
