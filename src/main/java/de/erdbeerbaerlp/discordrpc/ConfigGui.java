@@ -69,8 +69,8 @@ public class ConfigGui extends BetterGuiScreen {
 
         general.setTooltips("Some basic settings");
         gameName.setTooltips("The first line of your Rich Presence", "Default: Minecraft 1.12");
-        singleplayerText.setTooltips("The second line of the Rich Presence when in singleplayer", "", "PLACEHOLDERS: ", "%coords% - Coordinates (X:??? Y:??? Z:???)", "%world% World name");
-        multiplayerText.setTooltips("The default second line of the Rich Presence when in multiplayer", "", "PLACEHOLDERS: ", "%ip%  Server IP");
+        singleplayerText.setTooltips("The second line of the Rich Presence when in singleplayer", "", "PLACEHOLDERS: ", "%coords% - Coordinates (X:??? Y:??? Z:???)", "%world% World name", "%dimensionName% - The name of the dimension", "%dimensionID% - The ID of the current dimension", "%biome% - The current Biome");
+        multiplayerText.setTooltips("The default second line of the Rich Presence when in multiplayer", "", "PLACEHOLDERS: ", "%ip%  Server IP", "%online% - Online players", "%coords% - Coordinates (X:??? Y:??? Z:???)", "%max% - Server´s maximum amount of players (unless bungeecord!)", "%otherpl% - Amount of players -1 (except you)", "%dimensionName% - The name of the dimension", "%dimensionID% - The ID of the current dimension", "%biome% - The current Biome");
 
         developers.setTooltips("Some config entries for developers / modpack creators");
         disableConfigMenu.setTooltips("§cWARNING:", "§cThis disables the config menu!", "§cOnly use when you really want to disable it!");

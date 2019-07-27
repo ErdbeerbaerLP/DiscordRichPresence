@@ -41,13 +41,13 @@ public class ServerConfig {
             config.load();
 
         Property propMSG = config.get(CATEGORY_PRESENCE, "Message", "Playing on a random Server with %otherpl% other players");
-        propMSG.setComment("The second line you have in the rich presence.\n Placeholders are:\n%players% - Amount of all players\n%otherpl% - Amount of players -1 (except you)");
+        propMSG.setComment("The second line you have in the rich presence.\n Placeholders are:\n%players% - Amount of all players\n%otherpl% - Amount of players -1 (except you)\n%dimensionName% - The name of the dimension\n%dimensionID% - The ID of the current dimension\n%biome% - The current Biome");
 
         Property propIcon = config.get(CATEGORY_PRESENCE, "IconKey", "world");
         propIcon.setComment("The Icon-Key. Use 'world' or 'cube' if you don�t have an special one.");
 
 
-        List<String> propOrderPresence = new ArrayList<String>();
+        List<String> propOrderPresence = new ArrayList<>();
         propOrderPresence.add(propMSG.getName());
         propOrderPresence.add(propIcon.getName());
         config.setCategoryPropertyOrder(CATEGORY_PRESENCE, propOrderPresence);

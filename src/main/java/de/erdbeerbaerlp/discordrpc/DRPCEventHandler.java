@@ -121,7 +121,14 @@ public class DRPCEventHandler {
                     int online = Minecraft.getMinecraft().getConnection().getPlayerInfoMap().size();
                     if (!usingCustomMsg && !serverCustomMessage.equals("") && RPCconfig.ENABLE_CUSTOM_INTEGRATION) {
                         DRPCLog.Debug("CustomMSG Applied");
-                        Discord.setPresence(RPCconfig.NAME, serverCustomMessage.replace("%players%", online + "").replace("%otherpl%", (online - 1) + ""), customIco);
+                        Discord.setPresence(RPCconfig.NAME,
+                                serverCustomMessage
+                                        .replace("%players%", online + "")
+                                        .replace("%otherpl%", (online - 1) + "")
+                                        .replace("%dimensionName%", Minecraft.getMinecraft().world.provider.getDimensionType().getName())
+                                        .replace("%dimensionID%", Minecraft.getMinecraft().world.provider.getDimensionType().getId() + "")
+                                        .replace("%biome%", Minecraft.getMinecraft().player.world.getBiomeForCoordsBody(Minecraft.getMinecraft().player.getPosition()).getBiomeName())
+                                , customIco);
                         usingCustomMsg = true;
                     }
                     if (Minecraft.getMinecraft().getCurrentServerData() == null) {
@@ -132,7 +139,15 @@ public class DRPCEventHandler {
                             int posX = Double.valueOf(player.posX).intValue();
                             int posY = Double.valueOf(player.posY).intValue();
                             int posZ = Double.valueOf(player.posZ).intValue();
-                            Discord.setPresence(RPCconfig.NAME, RPCconfig.WORLD_MESSAGE.replace("%world%", iServer.getFolderName()).replace("%coords%", "X:" + posX + " Y:" + posY + " Z:" + posZ), "world");
+                            Discord.setPresence(RPCconfig.NAME,
+                                    RPCconfig.WORLD_MESSAGE
+                                            .replace("%world%", iServer.getFolderName())
+                                            .replace("%coords%", "X:" + posX + " Y:" + posY + " Z:" + posZ)
+                                            .replace("%dimensionName%", Minecraft.getMinecraft().world.provider.getDimensionType().getName())
+                                            .replace("%dimensionID%", Minecraft.getMinecraft().world.provider.getDimensionType().getId() + "")
+                                            .replace("%biome%", player.world.getBiomeForCoordsBody(player.getPosition()).getBiomeName())
+
+                                    , "world");
                             tickAmount = 100;
                         } else
                             tickAmount--;
@@ -271,7 +286,65 @@ public class DRPCEventHandler {
                                                 }
                                             }
                                         }
-
+                                    }
+                                    if (scoreboardTitle.equals("SKYWARS")) {
+                                        for (String s : scoreboardLines) {
+                                            s = removeFormatting(s).trim();
+                                            if (s.contains("Loot Chests:")) {
+                                                Discord.setPresence("Hypixel", "SkyWars - Hub", "49tz49873897485");
+                                                return;
+                                            }
+                                            if (s.contains("Players:")) {
+                                                Discord.setPresence("Hypixel", "SkyWars - Lobby", "49tz49873897485");
+                                                return;
+                                            }
+                                            if (s.contains("Kills:")) {
+                                                Discord.setPresence("Hypixel", "SkyWars - In Game - " + s, "49tz49873897485");
+                                                return;
+                                            }
+                                        }
+                                    }
+                                    if (scoreboardTitle.equals("MEGA WALLS")) {
+                                        for (String s : scoreboardLines) {
+                                            s = removeFormatting(s).trim();
+                                            if (s.contains("Coins:")) {
+                                                Discord.setPresence("Hypixel", "Mega Walls - Hub", "49tz49873897485");
+                                                return;
+                                            }
+                                            if (s.contains("Players:")) {
+                                                Discord.setPresence("Hypixel", "Mega Walls - Lobby", "49tz49873897485");
+                                                return;
+                                            }
+                                            if (s.contains("Kills / Assists:")) {
+                                                Discord.setPresence("Hypixel", "Mega Walls - In Game - " + s, "49tz49873897485");
+                                                return;
+                                            }
+                                        }
+                                    }
+                                    if (scoreboardTitle.equals("BUILD BATTLE")) {
+                                        for (String s : scoreboardLines) {
+                                            s = removeFormatting(s).trim();
+                                            if (s.contains("Coins:")) {
+                                                Discord.setPresence("Hypixel", "Build Battle - Hub", "49tz49873897485");
+                                                return;
+                                            }
+                                            if (s.contains("Starting in") || s.contains("Waiting...")) {
+                                                Discord.setPresence("Hypixel", "Build Battle - Lobby", "49tz49873897485");
+                                                return;
+                                            }
+                                            if (s.contains("Vote Now")) {
+                                                Discord.setPresence("Hypixel", "Build Battle - Voting Theme", "49tz49873897485");
+                                                return;
+                                            }
+                                            if (s.contains("Time:")) {
+                                                Discord.setPresence("Hypixel", "Build Battle - In Game - " + s, "49tz49873897485");
+                                                return;
+                                            }
+                                            if (s.contains("Vote:")) {
+                                                Discord.setPresence("Hypixel", "Build Battle - Voting", "49tz49873897485");
+                                                return;
+                                            }
+                                        }
                                     }
                                     if (scoreboardTitle.equals("MURDER MYSTERY")) {
                                         for (String s : scoreboardLines) {
@@ -333,7 +406,22 @@ public class DRPCEventHandler {
 
 
                                 } else {
-                                    Discord.setPresence(RPCconfig.NAME, RPCconfig.SERVER_MESSAGE.replace("%ip%", Minecraft.getMinecraft().getCurrentServerData().serverIP) + "(" + online + "/" + maxPlayers + " players)", "cube");
+
+                                    int posX = Double.valueOf(Minecraft.getMinecraft().player.posX).intValue();
+                                    int posY = Double.valueOf(Minecraft.getMinecraft().player.posY).intValue();
+                                    int posZ = Double.valueOf(Minecraft.getMinecraft().player.posZ).intValue();
+                                    Discord.setPresence(RPCconfig.NAME,
+                                            RPCconfig.SERVER_MESSAGE
+                                                    .replace("%ip%", Minecraft.getMinecraft().getCurrentServerData().serverIP)
+                                                    .replace("%dimensionName%", Minecraft.getMinecraft().world.provider.getDimensionType().getName())
+                                                    .replace("%dimensionID%", Minecraft.getMinecraft().world.provider.getDimensionType().getId() + "")
+                                                    .replace("%biome%", Minecraft.getMinecraft().player.world.getBiomeForCoordsBody(Minecraft.getMinecraft().player.getPosition()).getBiomeName())
+                                                    .replace("%online%", online + "")
+                                                    .replace("%max%", maxPlayers + "")
+                                                    .replace("%otherpl%", (online - 1) + "")
+                                                    .replace("%coords%", "X:" + posX + " Y:" + posY + " Z:" + posZ)
+
+                                            , "cube");
                                 }
                             }
                         } else if (tickAmount < 0) tickAmount = 2000;

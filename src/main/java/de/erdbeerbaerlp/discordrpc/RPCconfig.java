@@ -66,15 +66,15 @@ public class RPCconfig {
         Property propertyName = config.get(CATEGORY_PRESENCE, "Client Name", "Minecraft 1.12");
         propertyName.setComment("First line of Rich Presence");
 
-        Property propertyMultiplayer = config.get(CATEGORY_PRESENCE, "Server Text", "Playing on %ip%");
-        propertyMultiplayer.setComment("Placeholders:\n%ip%  Server IP");
+        Property propertyMultiplayer = config.get(CATEGORY_PRESENCE, "Server Text", "Playing on %ip% (%online% + / %max% players)");
+        propertyMultiplayer.setComment("Placeholders:\n%ip%  Server IP\n%coords% - Coordinates (X:??? Y:??? Z:???)\n%online% - Online players\n%max% - Server´s maximum amount of players (unless bungeecord!)\n%otherpl% - Amount of players -1 (except you)\n%dimensionName% - The name of the dimension\n%dimensionID% - The ID of the current dimension\n%biome% - The current Biome");
         propertyMultiplayer.setRequiresWorldRestart(true);
 
         Property propertyInMenu = config.get(CATEGORY_PRESENCE, "MainMenu", "In Main Menu");
         propertyInMenu.setComment("No placeholders supported, Text that shows when you are in the main menu");
 
         Property propertySingleplayer = config.get(CATEGORY_PRESENCE, "Singleplayer Text", "Playing in %world% (%coords%)");
-        propertySingleplayer.setComment("Placeholders:\n%coords% (X:??? Y:??? Z:???)\n%world% World name");
+        propertySingleplayer.setComment("Placeholders:\n%coords% (X:??? Y:??? Z:???)\n%world% World name\n%dimensionName% - The name of the dimension\n%dimensionID% - The ID of the current dimension\n%biome% - The current Biome");
         propertySingleplayer.setRequiresWorldRestart(true);
 
         Property propDisableConfigGui = config.get(CATEGORY_PRESENCE, "Disable-Config-GUI", false);

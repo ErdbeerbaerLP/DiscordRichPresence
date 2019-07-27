@@ -6,7 +6,7 @@
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
-  "updateUrl": "http://erdbeerbaerapi.tk/discordrpc.json",
+  "updateUrl": "https://raw.githubusercontent.com/ErdbeerbaerLP/DiscordRichPresence/1.12/discordrpc.json",
   "authorList": ["ErdbeerbaerLP"],
   "logoFile": "",
   "screenshots": [],

@@ -16,7 +16,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import java.time.Instant;
 
-@Mod(modid = ModClass.MODID, name = ModClass.NAME, version = ModClass.VERSION, dependencies = "required-after-client:eguilib", canBeDeactivated = false, acceptedMinecraftVersions = "[1.12,1.12.2]", acceptableRemoteVersions = "*", guiFactory = "de.erdbeerbaerlp.discordrpc.CfgGuiFactory", updateJSON = "http://erdbeerbaerapi.tk/discordrpc.json")
+@Mod(modid = ModClass.MODID, name = ModClass.NAME, version = ModClass.VERSION, dependencies = "required-after-client:eguilib@0.1.0", acceptedMinecraftVersions = "[1.12,1.12.2]", acceptableRemoteVersions = "*", guiFactory = "de.erdbeerbaerlp.discordrpc.CfgGuiFactory", updateJSON = "https://raw.githubusercontent.com/ErdbeerbaerLP/DiscordRichPresence/1.12/discordrpc.json")
 public class ModClass {
     /**
      * Mod ID
