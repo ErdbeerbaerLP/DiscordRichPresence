@@ -1,6 +1,5 @@
 package de.erdbeerbaerlp.discordrpc;
 
-import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -12,10 +11,10 @@ import java.util.List;
 
 public class ServerCommand implements ICommand {
     private static final String prefix = "\u00A78[\u00A76DiscordRPC\u00A78] ";
-    private final List aliases;
+    private final ArrayList<String> aliases;
 
     public ServerCommand() {
-        aliases = new ArrayList();
+        aliases = new ArrayList<>();
         aliases.add("discordrichpresencereload");
         aliases.add("drpcreload");
 
@@ -46,7 +45,7 @@ public class ServerCommand implements ICommand {
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
 
         ServerConfig.preInit();
         sender.sendMessage(new TextComponentString(prefix + "\u00A72 Config reloaded!"));
@@ -62,9 +61,8 @@ public class ServerCommand implements ICommand {
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
                                           BlockPos targetPos) {
-        List tabs = new ArrayList();
 
-        return tabs;
+        return new ArrayList<>();
     }
 
     @Override
