@@ -51,7 +51,7 @@ dependencies {
         exclude module: "gson"
     }
     shade 'com.github.NukerHD:hive-java-api:1.0-snapshot'
-    deobfCompile('com.github.ErdbeerbaerLP:ErdbeerbaerGuiLib:0f36642577'){
+    deobfCompile('com.github.ErdbeerbaerLP:ErdbeerbaerGuiLib:master-SNAPSHOT'){
         changing = true
     }
 }

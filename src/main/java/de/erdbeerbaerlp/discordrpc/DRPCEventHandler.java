@@ -8,6 +8,7 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiDownloadTerrain;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiMultiplayer;
+import net.minecraft.scoreboard.Score;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
@@ -81,6 +82,7 @@ public class DRPCEventHandler {
 
     }
 
+    private static int limboTimes = 0;
     @SubscribeEvent
     @SuppressWarnings("ConstantConditions")
     public static void onTick(PlayerTickEvent event) {
@@ -152,12 +154,15 @@ public class DRPCEventHandler {
                                     } catch (NullPointerException e) {
                                         scoreboardTitle = "";
                                     }
-                                    if (scoreboardTitle.equals("HYPIXEL") || scoreboardTitle.equals("PROTOTYPE") || scoreboardTitle.equals("THE TNT GAMES") || scoreboardTitle.equals("ARCADE GAMES") || scoreboardTitle.equals("CLASSIC GAMES"))
-                                        scoreboardTitle = "In hub";
                                     if (scoreboardTitle.equals("")) {
-                                        Discord.setPresence("Hypixel", "In Limbo", "49tz49873897485");
+                                        if (limboTimes >= 10)
+                                            Discord.setPresence("Hypixel", "In Limbo", "49tz49873897485");
+                                        limboTimes++;
                                         return;
                                     }
+                                    limboTimes = 0;
+                                    if (scoreboardTitle.equals("HYPIXEL") || scoreboardTitle.equals("PROTOTYPE") || scoreboardTitle.equals("THE TNT GAMES") || scoreboardTitle.equals("ARCADE GAMES") || scoreboardTitle.equals("CLASSIC GAMES"))
+                                        scoreboardTitle = "In hub";
                                     if (!scoreboardTitle.equals(Hypixel_LastGame))
                                         Discord.now = Instant.now().getEpochSecond();
                                     Hypixel_LastGame = scoreboardTitle;
@@ -182,11 +187,8 @@ public class DRPCEventHandler {
                                     }
                                     if (scoreboardTitle.equals("BED WARS")) {
                                         String text = "BedWars - Unknown state! Report to mod author!";
-                                        int i = 0;
-
                                         for (String line : scoreboardLines) {
                                             line = removeFormatting(line).trim();
-                                            i++;
                                             if (line.contains("Loot Chests:")) {
                                                 text = "BedWars Hub";
                                                 break;
@@ -215,6 +217,78 @@ public class DRPCEventHandler {
                                             }
                                         }
                                         Discord.setPresence("Hypixel", text, "49tz49873897485");
+                                        return;
+                                    }
+                                    if (scoreboardTitle.equals("FARM HUNT")) {
+                                        for (String s : scoreboardLines) {
+                                            s = removeFormatting(s).trim();
+                                            if (s.contains("Players:")) {
+                                                Discord.setPresence("Hypixel", "Farm Hunt - Lobby", "49tz49873897485");
+                                                return;
+                                            }
+                                            if (s.equals("Hunter")) {
+                                                Discord.setPresence("Hypixel", "Farm Hunt - In Game - Hunter", "49tz49873897485");
+                                                return;
+                                            }
+                                            if (s.contains("Disguise:")) {
+                                                Discord.setPresence("Hypixel", "Farm Hunt - In Game - Animal", "49tz49873897485");
+                                                return;
+                                            }
+                                        }
+                                    }
+                                    if (scoreboardTitle.equals("HOUSING")) {
+                                        for (int i = 0; i < scoreboardLines.size(); i++) {
+                                            final String s = removeFormatting(scoreboardLines.get(i)).trim();
+                                            if (s.equals("House Name:")) {
+                                                Discord.setPresence("Hypixel", "Housing - Visiting " + removeFormatting(scoreboardLines.get(i - 1)), "49tz49873897485");
+                                                return;
+                                            }
+                                            if (s.equals("Visiting Rules:")) {
+                                                Discord.setPresence("Hypixel", "Housing - At Home", "49tz49873897485");
+                                                return;
+                                            }
+                                        }
+
+                                    }
+                                    if (scoreboardTitle.equals("TURBO KART RACERS")) {
+                                        for (String s : scoreboardLines) {
+                                            s = removeFormatting(s).trim();
+                                            if (s.contains("Map:")) {
+                                                Discord.setPresence("Hypixel", "Turbo Kart Racers - Lobby", "49tz49873897485");
+                                                return;
+                                            }
+                                        }
+                                        for (Score s : Minecraft.getMinecraft().world.getScoreboard().getScores()) {
+                                            if (s.getObjective().equals(Minecraft.getMinecraft().world.getScoreboard().getObjectiveInDisplaySlot(1))) {
+                                                System.out.println(removeFormatting(s.getPlayerName()));
+                                                if (removeFormatting(s.getPlayerName()).contains(Minecraft.getMinecraft().player.getDisplayNameString().substring(0, 12).trim())) {
+                                                    Discord.setPresence("Hypixel", "Turbo Kart Racers - In Game - Position: " + removeFormatting(s.getPlayerName()).charAt(0), "49tz49873897485");
+                                                    return;
+                                                }
+                                                if (removeFormatting(s.getPlayerName()).contains("You're")) {
+                                                    Discord.setPresence("Hypixel", "Turbo Kart Racers - Finished - Position: " + removeFormatting(s.getPlayerName()).replace("You're #", "").trim(), "49tz49873897485");
+                                                    return;
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                    if (scoreboardTitle.equals("MURDER MYSTERY")) {
+                                        for (String s : scoreboardLines) {
+                                            s = removeFormatting(s);
+                                            if (s.contains("Loot Chests:")) {
+                                                Discord.setPresence("Hypixel", "Murder Mystery - Hub", "49tz49873897485");
+                                                return;
+                                            }
+                                            if (s.contains("Mode:")) {
+                                                Discord.setPresence("Hypixel", "Murder Mystery - Game Lobby - " + s, "49tz49873897485");
+                                                return;
+                                            }
+                                            if (s.contains("Role:")) {
+                                                Discord.setPresence("Hypixel", "Murder Mystery - In Game - " + s + " - " + removeFormatting(scoreboardLines.get(6)), "49tz49873897485");
+                                                return;
+                                            }
+                                        }
                                         return;
                                     }
                                     if (scoreboardTitle.equals("THE HYPIXEL PIT")) {
@@ -281,7 +355,41 @@ public class DRPCEventHandler {
      * @return Raw text without color codes
      */
     public static String removeFormatting(String formatted) {
-        return formatted.replaceAll("\u00A70", "").replaceAll("\u00A71", "").replaceAll("\u00A72", "").replaceAll("\u00A73", "").replaceAll("\u00A74", "").replaceAll("\u00A75", "").replaceAll("\u00A76", "").replaceAll("\u00A77", "").replaceAll("\u00A78", "").replaceAll("\u00A79", "").replaceAll("\u00A7a", "").replaceAll("\u00A7b", "").replaceAll("\u00A7c", "").replaceAll("\u00A7d", "").replaceAll("\u00A7e", "").replaceAll("\u00A7f", "").replaceAll("\u00A7l", "").replaceAll("\u00A7k", "").replaceAll("\u00A7m", "").replaceAll("\u00A7n", "").replaceAll("\u00A7o", "").replaceAll("\u00A7r", "");
+        return formatted
+                .replaceAll("\u00A70", "")
+                .replaceAll("\u00A71", "")
+                .replaceAll("\u00A72", "")
+                .replaceAll("\u00A73", "")
+                .replaceAll("\u00A74", "")
+                .replaceAll("\u00A75", "")
+                .replaceAll("\u00A76", "")
+                .replaceAll("\u00A77", "")
+                .replaceAll("\u00A78", "")
+                .replaceAll("\u00A79", "")
+                .replaceAll("\u00A7a", "")
+                .replaceAll("\u00A7b", "")
+                .replaceAll("\u00A7c", "")
+                .replaceAll("\u00A7d", "")
+                .replaceAll("\u00A7e", "")
+                .replaceAll("\u00A7f", "")
+                .replaceAll("\u00A7l", "")
+                .replaceAll("\u00A7k", "")
+                .replaceAll("\u00A7m", "")
+                .replaceAll("\u00A7n", "")
+                .replaceAll("\u00A7o", "")
+                .replaceAll("\u00A7r", "")
+                .replaceAll("\u00A7A", "")
+                .replaceAll("\u00A7B", "")
+                .replaceAll("\u00A7C", "")
+                .replaceAll("\u00A7D", "")
+                .replaceAll("\u00A7E", "")
+                .replaceAll("\u00A7F", "")
+                .replaceAll("\u00A7L", "")
+                .replaceAll("\u00A7K", "")
+                .replaceAll("\u00A7M", "")
+                .replaceAll("\u00A7N", "")
+                .replaceAll("\u00A7O", "")
+                .replaceAll("\u00A7R", "");
     }
 
     @SubscribeEvent

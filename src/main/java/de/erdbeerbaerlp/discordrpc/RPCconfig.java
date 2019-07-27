@@ -77,8 +77,8 @@ public class RPCconfig {
         propertySingleplayer.setComment("Placeholders:\n%coords% (X:??? Y:??? Z:???)\n%world% World name");
         propertySingleplayer.setRequiresWorldRestart(true);
 
-        Property propDisableNameChange = config.get(CATEGORY_PRESENCE, "Disable-Config-GUI", false);
-        propDisableNameChange.setComment("Disables config GUI\nRequires config file editing to enable again");
+        Property propDisableConfigGui = config.get(CATEGORY_PRESENCE, "Disable-Config-GUI", false);
+        propDisableConfigGui.setComment("Disables config GUI\nRequires config file editing to enable again");
 
 
         Property propEnableDevelopmentCommands = config.get(CATEGORY_PRESENCE, "DevCommands", false);
@@ -95,7 +95,7 @@ public class RPCconfig {
         propEnableCustomMSG.setComment("Do you want servers to send you a customized rich presence text?\nAlso toggles hardcoded custom icons and text of not fully integrated servers like mineplex");
 
 
-        List<String> order = new ArrayList<String>();
+        List<String> order = new ArrayList<>();
         order.add(propertyName.getName());
         order.add(propertyInMenu.getName());
         order.add(propertySingleplayer.getName());
@@ -103,7 +103,7 @@ public class RPCconfig {
         order.add(propEnableHypixel.getName());
         order.add(propEnableHive.getName());
         order.add(propEnableCustomMSG.getName());
-        order.add(propDisableNameChange.getName());
+        order.add(propDisableConfigGui.getName());
         order.add(propEnableDevelopmentCommands.getName());
         config.setCategoryPropertyOrder(CATEGORY_PRESENCE, order);
 
@@ -113,7 +113,7 @@ public class RPCconfig {
             SERVER_MESSAGE = propertyMultiplayer.getString();
             WORLD_MESSAGE = propertySingleplayer.getString();
             MAIN_MENU_TEXT = propertyInMenu.getString();
-            CONFIG_GUI_ENABLED = !propDisableNameChange.getBoolean();
+            CONFIG_GUI_ENABLED = !propDisableConfigGui.getBoolean();
             DEV_COMMANDS = propEnableDevelopmentCommands.getBoolean();
             ENABLE_CUSTOM_INTEGRATION = propEnableCustomMSG.getBoolean();
             ENABLE_HYPIXEL_INTEGRATION = propEnableHypixel.getBoolean();
@@ -130,6 +130,7 @@ public class RPCconfig {
         propEnableHypixel.set(ENABLE_HYPIXEL_INTEGRATION);
         propertyInMenu.set(MAIN_MENU_TEXT);
         propEnableDevelopmentCommands.set(DEV_COMMANDS);
+        propDisableConfigGui.set(!CONFIG_GUI_ENABLED);
         if (config.hasChanged())
             config.save();
     }
