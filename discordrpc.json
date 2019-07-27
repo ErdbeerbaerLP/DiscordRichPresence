@@ -1,0 +1,18 @@
+{
+  "homepage": "https://minecraft.curseforge.com/projects/discordrpc/files",
+  "1.12.2": {
+    "1.0": "Fixed some bugs, Added more customization",
+    "1.0.0.1": "Hotfix for hypixel compatibility and reduced log output",
+    "1.0.1": "Added /drpc command, Fixed issue #2",
+    "1.0.2": "Added HiveMC support, New commands",
+    "1.1": "Optimized some code and (maybe) fixed an bug.",
+    "1.2": "Added serverside code and cleaned up a little.",
+    "1.2.1": "Added config GUI (Accessible in the mod list)\nRemoved need of being an coremod\nAdded first run window\nFixed and cleaned up code again",
+    "1.2.2": "Added some code needed to integrate with other mods (optional)",
+    "1.3.0": "Added better hypixel integration, new config GUI and more placeholders!\nNow requires mod "
+  },
+  "promos": {
+    "1.12.2-latest": "1.2.2",
+    "1.12.2-recommended": "1.2.2"
+  }
+}
