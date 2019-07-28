@@ -211,8 +211,8 @@ public class DRPCEventHandler {
                                                 text = "BedWars Lobby - Mode: " + line.replace("Mode:", "").trim() + " - " + removeFormatting(scoreboardLines.get(5));
                                                 break;
                                             } else if (line.contains("YOU")) {
-                                                final boolean hasBed = line.contains("✓");
-                                                final boolean loose = line.contains("✗");
+                                                final boolean hasBed = (line.contains("\u2713") || line.contains("\u2714"));
+                                                final boolean loose = line.contains("\u2717");
                                                 if (loose)
                                                     text = "Bedwars - Game Over";
                                                 else {
