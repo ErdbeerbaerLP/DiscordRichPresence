@@ -29,7 +29,7 @@ public class DRPC
 	protected static final String COMMAND_MESSAGE_PREFIX = "\u00A78[\u00A76DiscordRPC\u00A78] ";
 	protected static boolean isEnabled = true;
 	private static final String protVersion = "1.0.0";
-	private static final Predicate<String> pred = (ver) -> {return ver.equals(protVersion) || ver.equals(NetworkRegistry.ACCEPTVANILLA) || ver.equals(NetworkRegistry.ABSENT);};
+	private static final Predicate<String> pred = (ver) -> ver.equals(protVersion) || ver.equals(NetworkRegistry.ACCEPTVANILLA) || ver.equals(NetworkRegistry.ABSENT);
 	protected static final SimpleChannel REQUEST = NetworkRegistry.newSimpleChannel(new ResourceLocation(DRPC.MODID, "discord-req"), () -> {return protVersion;}, pred, pred);
 	protected static final SimpleChannel MSG = NetworkRegistry.newSimpleChannel(new ResourceLocation(DRPC.MODID, "discord-msg"), () -> {return protVersion;}, pred, pred);
 	protected static final SimpleChannel ICON = NetworkRegistry.newSimpleChannel(new ResourceLocation(DRPC.MODID, "discord-icon"), () -> {return protVersion;}, pred, pred);
@@ -48,16 +48,16 @@ public class DRPC
 		MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
 		
 		ICON.registerMessage(1, Message_Icon.class, (a, b) -> a.encode(a, b), (a) -> {
-			a.readInt();
-			return new Message_Icon(a.readString(300));
+			a.readByte();
+			return new Message_Icon(a.readString(500));
 		}, (a, b) -> a.onMessageReceived(a, b));
 		REQUEST.registerMessage(0, RequestMessage.class, (a, b) -> a.encode(a, b), (a) -> {
-			a.readInt();
-			return new RequestMessage(a.readString(300));
+			a.readByte();
+			return new RequestMessage(a.readString(500));
 		}, (a, b) -> a.onMessageReceived(a, b));
-		MSG.registerMessage(0, Message_Message.class, (a, b) -> a.encode(a, b), (a) -> {
-			a.readInt();
-			return new Message_Message(a.readString(300));
+		MSG.registerMessage(1, Message_Message.class, (a, b) -> a.encode(a, b), (a) -> {
+			a.readByte();
+			return new Message_Message(a.readString(500));
 		}, (a, b) -> a.onMessageReceived(a, b));
 		DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
 			ModLoadingContext.get().registerConfig(Type.COMMON, ClientConfig.CONFIG_SPEC, "DiscordRPC.toml");

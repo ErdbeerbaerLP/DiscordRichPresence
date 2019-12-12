@@ -11,7 +11,7 @@ public class Message_Icon
 	
 	private String toSend;
 	
-	public Message_Icon(String toSend) {
+	public Message_Icon(final String toSend) {
 		this.toSend = toSend;
 	}
 

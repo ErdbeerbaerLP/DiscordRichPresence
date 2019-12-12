@@ -14,3 +14,7 @@ Features:
 
 
 
+BUILD INSTRUCTIONS:
+  Run gradlew build
+  Open jar with WinRAR or semilar
+  Delete the "com" directory

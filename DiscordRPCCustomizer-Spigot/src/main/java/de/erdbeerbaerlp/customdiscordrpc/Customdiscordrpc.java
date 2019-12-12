@@ -36,13 +36,13 @@ public class Customdiscordrpc extends JavaPlugin implements PluginMessageListene
         } catch (IOException var2) {
             System.err.println("ERROR READING/CREATING MESSAGE FILE...\n" + var2);
         }
-        
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "discordrpc:discord-msg");
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "discordrpc:discord-icon");
         this.getServer().getMessenger().registerIncomingPluginChannel(this, "discordrpc:discord-req", this);
     }
     
     public void sendMessage(Player p, String PACKET_DATA, String protocol) {
+        int len = PACKET_DATA.length();
         byte[] message = PACKET_DATA.getBytes(StandardCharsets.UTF_8);
         byte[] result = new byte[message.length + 1];
         result[0] = 1;

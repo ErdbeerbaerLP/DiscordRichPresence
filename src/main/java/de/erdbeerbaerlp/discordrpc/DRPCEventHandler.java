@@ -207,6 +207,7 @@ public class DRPCEventHandler {
             if (event.getGui() != null) {
                 guiName = event.getGui().toString().split("@")[0];
                 DRPCLog.Info("GUI: " + guiName);
+				System.out.println(guiName);
             }
             if ((event.getGui() instanceof MainMenuScreen || event.getGui() instanceof MultiplayerScreen) && inWorld == false) {
                 resetVars();
@@ -214,7 +215,7 @@ public class DRPCEventHandler {
                 Discord.setPresence(ClientConfig.NAME.get(), ClientConfig.MENU_TEXT.get(), "cube");
             }
             else if (event.getGui() instanceof DownloadTerrainScreen) {
-                DRPC.REQUEST.sendToServer(new RequestMessage("DRPC-Message-Request"));
+                Minecraft.getInstance().enqueue(()->DRPC.REQUEST.sendToServer(new RequestMessage("DRPC-Message-Request")));
                 currentOnline = -1;
                 currentMax = -1;
                 if (Minecraft.getInstance().getCurrentServerData() != null) {

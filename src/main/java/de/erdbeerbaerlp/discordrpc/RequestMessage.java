@@ -18,7 +18,6 @@ public class RequestMessage
 	
 	public PacketBuffer encode(RequestMessage a, PacketBuffer b) {
 		b.writeInt(0);
-		
 		b.writeString(a.toSend);
 		return b;
 	}
