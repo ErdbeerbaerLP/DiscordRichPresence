@@ -10,7 +10,7 @@ loaderVersion="[25,)" #mandatory (24 is current forge version)
 # A URL to refer people to when problems occur with this mod
 issueTrackerURL="https://github.com/ErdbeerbaerLP/DiscordRichPresence/issues/"
 # A text field displayed in the mod UI
-credits="MinnDevelopment for his java DiscordRPC library"
+credits="Vatuu for his java DiscordRPC library"
 # A text field displayed in the mod UI
 authors="ErdbeerbaerLP"
 # A list of mods - how many allowed here is determined by the individual mod loader
