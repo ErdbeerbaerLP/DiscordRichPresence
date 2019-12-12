@@ -1,0 +1,7 @@
+name: Customdiscordrpc
+version: ${project.version}
+main: de.erdbeerbaerlp.customdiscordrpc.Customdiscordrpc
+api-version: 1.13
+authors: [ErdbeerbaerLP]
+description: A Plugin that sends an Custom RichPresence message to users with the DiscordRichPresence Mod
+website: https://www.spigotmc.org/resources/discordrichpresence-customizer.59796/

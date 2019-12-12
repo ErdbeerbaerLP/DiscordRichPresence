@@ -15,8 +15,6 @@ import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -26,7 +24,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.stream.Collectors;
-@EventBusSubscriber(bus=Bus.MOD)
 public class DRPCEventHandler {
 	protected static int currentOnline = -1;
 	protected static int currentMax = -1;
