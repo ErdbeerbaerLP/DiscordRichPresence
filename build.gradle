@@ -6,17 +6,29 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath "com.github.jengelman.gradle.plugins:shadow:4.0.4"
     }
 }
+apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'net.minecraftforge.gradle'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 
-version = '2.0.0'
+version = '2.0.0-MC1.14'
 group = 'de.erdbeerbaerlp.discordrpc' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'discordrpc'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+configurations {
+    shade
+    compile.extendsFrom(shade)
+}
+shadowJar {
+    classifier = ''
+    configurations = [project.configurations.shade]
+    relocate 'com.sun', 'drpcshadow.com.sun'
+    relocate 'com.google', 'drpcshadow.com.google'
+}
 
 minecraft {
     // the mappings can be changed at any time, and must be in the following format.
@@ -24,7 +36,7 @@ minecraft {
     // stable_#            stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not always work.
     // simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: 'snapshot', version: '20180921-1.13'
+    mappings channel: 'snapshot', version: '20190719-1.14.3'
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
     
     //accessTransformer = file('my_at.cfg')
@@ -62,29 +74,30 @@ repositories {
     jcenter()
     maven { url 'https://jitpack.io' }
 }
-configurations {
-    shade {
-    	transitive = false
-    }
-}
+
 dependencies {
 	//Forge
-    minecraft 'net.minecraftforge:forge:1.13.2-25.0.147'
+    minecraft 'net.minecraftforge:forge:1.14.4-28.1.106'
     //Hive MC Libs
     shade 'com.github.NukerHD:hive-java-api:1.0-snapshot'
     compile 'com.github.NukerHD:hive-java-api:1.0-snapshot'
-    //Dependencies for DiscrodRichPresence
+    //DiscordRichPresence lib
+    shade "com.google.guava:guava:28.1-jre"
+    shade 'com.github.Vatuu:discord-rpc:1.6.2'
     shade 'com.github.Vatuu:discord-rpc-binaries:3.4.0'
 
 }
-
+reobf {
+    shadowJar  {
+        dependsOn tasks.createMcpToSrg
+        mappings = tasks.createMcpToSrg.outputs.files.singleFile
+    }
+}
+artifacts {
+    archives tasks.shadowJar
+}
 // Example for how to get properties into the manifest for reading by the runtime..
 jar {
-    configurations.shade.each { dep ->
-        from(project.zipTree(dep)){
-            exclude 'META-INF', 'META-INF/**'
-        }
-    }
     manifest {
         attributes(["Specification-Title": "discordrpc",
                     "Specification-Vendor": "discordrpc",

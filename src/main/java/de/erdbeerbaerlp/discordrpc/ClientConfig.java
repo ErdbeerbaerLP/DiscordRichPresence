@@ -1,14 +1,12 @@
 package de.erdbeerbaerlp.discordrpc;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.LogManager;
-
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.config.ModConfig;
-
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
 public class ClientConfig {
 	
 	
@@ -36,7 +34,7 @@ public class ClientConfig {
 
 	ClientConfig(ForgeConfigSpec.Builder builder) {
 		builder.comment("Discord RichPresence Config File").push("Rich-Presence");
-		NAME = builder.comment("First line of Rich Presence").define("Client-Name", "Forge 1.13");
+		NAME = builder.comment("First line of Rich Presence").define("Client-Name", "Forge 1.14");
 		SERVER_MESSAGE = builder.comment("Placeholders:\n%ip%  Server IP").define("Server-Text", "Playing on %ip%");
 		MENU_TEXT = builder.comment("No placeholders supported, Text that shows when you are in the main menu").define("Main-Menu", "In Main Menu");
 		WORLD_MESSAGE = builder.comment("Placeholders:\n%coords% (X:??? Y:??? Z:???)\n%world% World name").define("Singleplayer-Text", "Playing in %world% (%coords%)");

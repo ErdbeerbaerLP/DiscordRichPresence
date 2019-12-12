@@ -5,31 +5,26 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.text.StringTextComponent;
 
 public class Command {
-
-	private static class CommandHelp{
-		static ArgumentBuilder<CommandSource, ?> register()
-		{
-			return Commands.literal("help")
-					.requires(cs->cs.hasPermissionLevel(0))
-					.executes((ctx)->execute(ctx));
-
+	
+	private static class CommandHelp
+	{
+		static ArgumentBuilder<CommandSource, ?> register() {
+			return Commands.literal("help").requires(cs -> cs.hasPermissionLevel(0)).executes((ctx) -> execute(ctx));
+			
 		}
-		private static TextComponentString helpMsg = new TextComponentString(DRPC.COMMAND_MESSAGE_PREFIX
-				+"\u00A72 Help:\n"
-				+ "\u00A76/drpc help \u00A77   Displays this\n"
-				+ "\u00A76/drpc reload \u00A77  Reloads the config file\n"
-				+ "\u00A76/drpc dev \u00A77   Some debugging functions");
-
+		
+		private static StringTextComponent helpMsg = new StringTextComponent(
+				DRPC.COMMAND_MESSAGE_PREFIX + "\u00A72 Help:\n" + "\u00A76/drpc help \u00A77   Displays this\n" + "\u00A76/drpc reload \u00A77  Reloads the config file\n" + "\u00A76/drpc dev \u00A77   Some debugging functions");
+		
 		private static int execute(CommandContext<CommandSource> ctx) {
 			// TODO Auto-generated method stub
-
+			
 			try {
 				ctx.getSource().asPlayer().sendMessage(helpMsg);
 			} catch (CommandSyntaxException e) {
@@ -53,12 +48,13 @@ public class Command {
 
 			private static int execute(CommandContext<CommandSource> ctx) {
 				try {
-					final EntityPlayerMP sender = ctx.getSource().asPlayer();
-					if(DRPC.logtochat == false){
-						sender.sendMessage(new TextComponentString(DRPC.COMMAND_MESSAGE_PREFIX+"\u00A7aTurned on log in chat!"));
+					final ServerPlayerEntity sender = ctx.getSource().asPlayer();
+					if (DRPC.logtochat == false) {
+						sender.sendMessage(new StringTextComponent(DRPC.COMMAND_MESSAGE_PREFIX + "\u00A7aTurned on log in chat!"));
 						DRPC.logtochat = true;
-					}else{
-						sender.sendMessage(new TextComponentString(DRPC.COMMAND_MESSAGE_PREFIX+"\u00A7aTurned off log in chat!"));
+					}
+					else {
+						sender.sendMessage(new StringTextComponent(DRPC.COMMAND_MESSAGE_PREFIX + "\u00A7aTurned off log in chat!"));
 						DRPC.logtochat = false;
 					}
 					DRPCLog.Debug("Test");

@@ -1,13 +1,6 @@
 package de.erdbeerbaerlp.discordrpc;
 
-import java.io.File;
-import java.net.URLDecoder;
-import java.security.CodeSource;
-import java.time.Instant;
-
 import com.google.common.base.Predicate;
-import com.sun.jna.NativeLibrary;
-
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -23,6 +16,8 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
+
+import java.time.Instant;
 @Mod("discordrpc")
 public class DRPC {
 	/**
@@ -50,16 +45,27 @@ public class DRPC {
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::serverSetup);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::postInit);
 		MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
-		ICON.<Message_Icon>registerMessage(1, Message_Icon.class,(a, b) -> a.encode(a,b), (a) -> {a.readInt();return new Message_Icon(a.readString(300));}, (a, b) -> a.onMessageReceived(a,b));
-		REQUEST.<RequestMessage>registerMessage(0, RequestMessage.class, (a, b) -> a.encode(a,b), (a) -> {a.readInt();return new RequestMessage(a.readString(300));}, (a, b) -> a.onMessageReceived(a,b));
-
-		DistExecutor.runWhenOn(Dist.CLIENT, ()->()->{
+		
+		ICON.registerMessage(1, Message_Icon.class, (a, b) -> a.encode(a, b), (a) -> {
+			a.readInt();
+			return new Message_Icon(a.readString(300));
+		}, (a, b) -> a.onMessageReceived(a, b));
+		REQUEST.registerMessage(0, RequestMessage.class, (a, b) -> a.encode(a, b), (a) -> {
+			a.readInt();
+			return new RequestMessage(a.readString(300));
+		}, (a, b) -> a.onMessageReceived(a, b));
+		
+		DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
 			ModLoadingContext.get().registerConfig(Type.COMMON, ClientConfig.CONFIG_SPEC, "DiscordRPC.toml");
 			MinecraftForge.EVENT_BUS.register(ClientConfig.class);
+			MinecraftForge.EVENT_BUS.addListener(ClientConfig::onFileChange);
+			MinecraftForge.EVENT_BUS.addListener(ClientConfig::onLoad);
 		});
-		DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, ()-> ()->{
+		DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, () -> () -> {
 			ModLoadingContext.get().registerConfig(Type.COMMON, ServerConfig.CONFIG_SPEC, "DiscordRPC-Server.toml");
 			MinecraftForge.EVENT_BUS.register(ServerConfig.class);
+			MinecraftForge.EVENT_BUS.addListener(ServerConfig::onFileChange);
+			MinecraftForge.EVENT_BUS.addListener(ServerConfig::onLoad);
 		});
 	}
 	private void setup(final FMLCommonSetupEvent event) {} //Unused for now
@@ -73,6 +79,7 @@ public class DRPC {
 		if(isEnabled) Discord.initDiscord();
 		if(isEnabled) Discord.setPresence(ClientConfig.NAME.get(), "Starting game...", "34565655649643693", false);
 		//        new Command(new CommandDispatcher<>()); //Register command for client XXX Impossible sadly
+		
 	}
 
 	public void serverSetup(FMLDedicatedServerSetupEvent event) {

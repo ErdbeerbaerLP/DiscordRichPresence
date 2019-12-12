@@ -1,32 +1,31 @@
 package de.erdbeerbaerlp.discordrpc;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.MalformedJsonException;
+import fr.nukerhd.hiveapi.response.games.Games;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.gui.screen.DownloadTerrainScreen;
+import net.minecraft.client.gui.screen.MainMenuScreen;
+import net.minecraft.client.gui.screen.MultiplayerScreen;
+import net.minecraft.server.integrated.IntegratedServer;
+import net.minecraft.world.World;
+import net.minecraftforge.client.event.GuiOpenEvent;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.stream.Collectors;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.google.gson.stream.MalformedJsonException;
-
-import fr.nukerhd.hiveapi.response.games.Games;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.gui.GuiDownloadTerrain;
-import net.minecraft.client.gui.GuiMainMenu;
-import net.minecraft.client.gui.GuiMultiplayer;
-import net.minecraft.server.integrated.IntegratedServer;
-import net.minecraft.world.World;
-import net.minecraftforge.client.event.GuiOpenEvent;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 @EventBusSubscriber(bus=Bus.MOD)
 public class DRPCEventHandler {
 	protected static int currentOnline = -1;
@@ -64,18 +63,19 @@ public class DRPCEventHandler {
 	}
 
 	protected static int tickAmount = 120;
-	@SubscribeEvent
-	public static void onTick(PlayerTickEvent event){
-
-		if(DRPC.isClient){
-			//Update checker is currently not working as expected...
-			//				if(checkedUpdate == false){
-			//					Status result = ForgeVersion.getStatus();
-			//					DRPCLog.Info(result.toString());
-			//					if (result == Status.OUTDATED)
-			//					{
-			//						event.player.sendMessage(new TextComponentString("\u00A76[\u00A75DiscordRichPresence\u00A76]\u00A7c Update available!\n\u00A7cCurrent version: \u00A74"+DRPC.VERSION+"\u00A7c, Newest: \u00A7a"+ForgeVersion.getTarget()+"\n\u00A7cChangelog:\n\u00A76"+ForgeVersion.getSpec()).setStyle(new Style().setClickEvent(new ClickEvent(Action.OPEN_URL, "https://minecraft.curseforge.com/projects/discordrpc")).setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString("Click to get newer Version")))));
-			//						DRPCLog.Fatal("UpdateCheck: Update Available. Download it here: https://minecraft.curseforge.com/projects/discordrichpresence/files");
+    
+    @SubscribeEvent
+    public static void onTick(TickEvent.PlayerTickEvent event) {
+        
+        if (DRPC.isClient) {
+            //Update checker is currently not working as expected...
+            //				if(checkedUpdate == false){
+            //					Status result = ForgeVersion.getStatus();
+            //					DRPCLog.Info(result.toString());
+            //					if (result == Status.OUTDATED)
+            //					{
+            //						event.player.sendMessage(new TextComponentString("\u00A76[\u00A75DiscordRichPresence\u00A76]\u00A7c Update available!\n\u00A7cCurrent version: \u00A74"+DRPC.VERSION+"\u00A7c, Newest: \u00A7a"+ForgeVersion.getTarget()+"\n\u00A7cChangelog:\n\u00A76"+ForgeVersion.getSpec()).setStyle(new Style().setClickEvent(new ClickEvent(Action.OPEN_URL, "https://minecraft.curseforge.com/projects/discordrpc")).setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString("Click to get newer Version")))));
+            //						DRPCLog.Fatal("UpdateCheck: Update Available. Download it here: https://minecraft.curseforge.com/projects/discordrichpresence/files");
 			//						checkedUpdate = true;
 			//					}else if(result == Status.AHEAD){
 			//						event.player.sendMessage(new TextComponentString("\u00A76[\u00A75DiscordRichPresence\u00A76]\u00A77 It looks like you are using an Development version... \n\u00A77Your version: \u00A76"+DRPC.VERSION).setStyle(new Style().setClickEvent(new ClickEvent(Action.OPEN_URL, "https://minecraft.curseforge.com/projects/discordrpc")).setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString("Click to get current stable Version")))));
@@ -99,26 +99,26 @@ public class DRPCEventHandler {
 			//					}
 			//				}
 			if(DRPC.isEnabled){
-				try{
-
-					int maxPlayers = -1;
-					int online = Minecraft.getInstance().getConnection().getPlayerInfoMap().size();
-					if(usingCustomMsg == false && serverCustomMessage.equals("") == false){
-						DRPCLog.Debug("CustomMSG Applied");
-						Discord.setPresence(ClientConfig.NAME.get(), serverCustomMessage.replace("%players%", online+"").replace("%otherpl%", (online-1)+""), customIco);
-						usingCustomMsg = true;
-					}
-					if(Minecraft.getInstance().getCurrentServerData() == null){
-						if(tickAmount <= 0){
-							World world = Minecraft.getInstance().world;
-							IntegratedServer iServer = Minecraft.getInstance().getIntegratedServer();
-							EntityPlayerSP player = Minecraft.getInstance().player;
-							int posX = Double.valueOf(player.posX).intValue();
-							int posY = Double.valueOf(player.posY).intValue();
-							int posZ = Double.valueOf(player.posZ).intValue();
-							Discord.setPresence(ClientConfig.NAME.get(), ClientConfig.WORLD_MESSAGE.get().replace("%world%", iServer.getFolderName()).replace("%coords%", "X:"+posX+" Y:"+posY+" Z:"+posZ), "world");
-							tickAmount = 100;
-						}else
+				try {
+                    if (Minecraft.getInstance().getCurrentServerData() != null) System.out.println(Minecraft.getInstance().getCurrentServerData().populationInfo);
+                    int maxPlayers = -1;
+                    int online = Minecraft.getInstance().getConnection().getPlayerInfoMap().size();
+                    if (usingCustomMsg == false && serverCustomMessage.equals("") == false) {
+                        DRPCLog.Debug("CustomMSG Applied");
+                        Discord.setPresence(ClientConfig.NAME.get(), serverCustomMessage.replace("%players%", online + "").replace("%otherpl%", (online - 1) + ""), customIco);
+                        usingCustomMsg = true;
+                    }
+                    if (Minecraft.getInstance().getCurrentServerData() == null) {
+                        if (tickAmount <= 0) {
+                            World world = Minecraft.getInstance().world;
+                            IntegratedServer iServer = Minecraft.getInstance().getIntegratedServer();
+                            ClientPlayerEntity player = Minecraft.getInstance().player;
+                            int posX = Double.valueOf(player.posX).intValue();
+                            int posY = Double.valueOf(player.posY).intValue();
+                            int posZ = Double.valueOf(player.posZ).intValue();
+                            Discord.setPresence(ClientConfig.NAME.get(), ClientConfig.WORLD_MESSAGE.get().replace("%world%", iServer.getFolderName()).replace("%coords%", "X:" + posX + " Y:" + posY + " Z:" + posZ), "world");
+                            tickAmount = 100;
+                        }else
 							tickAmount--;
 					}else{
 						if(tickAmount == 0){
@@ -148,22 +148,22 @@ public class DRPCEventHandler {
 									Discord.setPresence(ClientConfig.NAME.get(), "Playing on Wynncraft, The Minecraft MMORPG", "4878hz4389634tz987");		
 								}else if(Minecraft.getInstance().getCurrentServerData().serverIP.toLowerCase().contains("hivemc.com")){
 									try {
-										JsonParser parse = new JsonParser();
-										URL gameURL = new URL("https://api.hivemc.com/v1/player/"+Minecraft.getInstance().player.getName()+"/status/raw?v=1");
-										HttpURLConnection gameConn = (HttpURLConnection) gameURL.openConnection();
-										gameConn.setRequestProperty("User-Agent", "ErdbeerbaerLP-DiscordRichPresence-Mod");
-										InputStream isGame = gameConn.getInputStream();
-										BufferedReader r = new BufferedReader(new InputStreamReader(isGame, Charset.forName("UTF-8")));
-										String result = r.lines().collect(Collectors.joining());
-										JsonElement json = parse.parse(result);
-										gameConn.disconnect();
-										String gameS = json.getAsJsonObject().get("status").getAsString();
-										String gameO;
-										try{
-											gameO = Games.valueOf(gameS).getName();
-										}catch (IllegalArgumentException e){
-											gameO = gameS;
-										}
+                                        JsonParser parse = new JsonParser();
+                                        URL gameURL = new URL("https://api.hivemc.com/v1/player/" + Minecraft.getInstance().player.getName() + "/status/raw?v=1");
+                                        HttpURLConnection gameConn = (HttpURLConnection) gameURL.openConnection();
+                                        gameConn.setRequestProperty("User-Agent", "ErdbeerbaerLP-DiscordRichPresence-Mod");
+                                        InputStream isGame = gameConn.getInputStream();
+                                        BufferedReader r = new BufferedReader(new InputStreamReader(isGame, StandardCharsets.UTF_8));
+                                        String result = r.lines().collect(Collectors.joining());
+                                        JsonElement json = parse.parse(result);
+                                        gameConn.disconnect();
+                                        String gameS = json.getAsJsonObject().get("status").getAsString();
+                                        String gameO;
+                                        try {
+                                            gameO = Games.valueOf(gameS).getName();
+                                        } catch (IllegalArgumentException e) {
+                                            gameO = gameS;
+                                        }
 										if(gameO.equals("HUB")) gameO = "in HUB";
 										if(gameO.equals("BEDT")) gameO = "BedWars";
 										Discord.setPresence("TheHive", "Playing "+gameO+" on hivemc.com", "38462896734683686");
@@ -201,26 +201,27 @@ public class DRPCEventHandler {
 	@SubscribeEvent
 	public static void onMenuOpened(GuiOpenEvent event){
 		System.out.println(inWorld);
-		if(DRPC.isClient && DRPC.isEnabled){
-			String guiName;
-			if(event.getGui() != null){
-				guiName = event.getGui().toString().split("@")[0];
-				DRPCLog.Info("GUI: "+guiName);
-			}
-			if((event.getGui() instanceof GuiMainMenu || event.getGui() instanceof GuiMultiplayer) && inWorld == false){
-				resetVars();
-				checkedUpdate = false;
-				Discord.setPresence(ClientConfig.NAME.get(), ClientConfig.MENU_TEXT.get(), "cube");
-			}else if(event.getGui() instanceof GuiDownloadTerrain){
-				DRPC.REQUEST.sendToServer(new RequestMessage("DRPC-Message-Request"));
-				currentOnline = -1;
-				currentMax = -1;
-				if(Minecraft.getInstance().getCurrentServerData() != null){
-					if(Minecraft.getInstance().getCurrentServerData().serverIP.toLowerCase().contains("hypixel.net")){
-						resetVars();
-					}
-				}
-			}
+		if(DRPC.isClient && DRPC.isEnabled) {
+            String guiName;
+            if (event.getGui() != null) {
+                guiName = event.getGui().toString().split("@")[0];
+                DRPCLog.Info("GUI: " + guiName);
+            }
+            if ((event.getGui() instanceof MainMenuScreen || event.getGui() instanceof MultiplayerScreen) && inWorld == false) {
+                resetVars();
+                checkedUpdate = false;
+                Discord.setPresence(ClientConfig.NAME.get(), ClientConfig.MENU_TEXT.get(), "cube");
+            }
+            else if (event.getGui() instanceof DownloadTerrainScreen) {
+                DRPC.REQUEST.sendToServer(new RequestMessage("DRPC-Message-Request"));
+                currentOnline = -1;
+                currentMax = -1;
+                if (Minecraft.getInstance().getCurrentServerData() != null) {
+                    if (Minecraft.getInstance().getCurrentServerData().serverIP.toLowerCase().contains("hypixel.net")) {
+                        resetVars();
+                    }
+                }
+            }
 		}
 
 	}

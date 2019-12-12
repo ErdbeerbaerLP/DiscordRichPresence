@@ -1,22 +1,22 @@
 package de.erdbeerbaerlp.discordrpc;
 
-import java.util.function.Supplier;
-
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 
-public class RequestMessage {
+import java.util.function.Supplier;
+
+
+public class RequestMessage
+{
 	private String toSend;
+	
 	public RequestMessage(String toSend) {
-		// TODO Auto-generated constructor stub
 		this.toSend = toSend;
 	}
-
-
-
+	
+	
 	public PacketBuffer encode(RequestMessage a, PacketBuffer b) {
-		// TODO Auto-generated method stub
 		b.writeInt(0);
 		
 		b.writeString(a.toSend);

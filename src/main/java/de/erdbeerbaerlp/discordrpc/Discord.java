@@ -43,7 +43,7 @@ public class Discord {
 		disableModDefault(false);
 	}
 	/**
-	 * Starts up the discord rich presence service (call in {@link FMLConstructionEvent} or earlier!)
+	 * Starts up the discord rich presence service (call in Constructor or earlier!)
 	 */
 	public static void initDiscord() {
 		if(initialized) return;
