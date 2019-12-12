@@ -61,7 +61,6 @@ public class DRPCEventHandler {
 		customIco="cube"; 
 
 	}
-
 	protected static int tickAmount = 120;
     
     @SubscribeEvent
@@ -100,19 +99,23 @@ public class DRPCEventHandler {
 			//				}
 			if(DRPC.isEnabled){
 				try {
-                    if (Minecraft.getInstance().getCurrentServerData() != null) System.out.println(Minecraft.getInstance().getCurrentServerData().populationInfo);
-                    int maxPlayers = -1;
-                    int online = Minecraft.getInstance().getConnection().getPlayerInfoMap().size();
-                    if (usingCustomMsg == false && serverCustomMessage.equals("") == false) {
-                        DRPCLog.Debug("CustomMSG Applied");
-                        Discord.setPresence(ClientConfig.NAME.get(), serverCustomMessage.replace("%players%", online + "").replace("%otherpl%", (online - 1) + ""), customIco);
-                        usingCustomMsg = true;
-                    }
-                    if (Minecraft.getInstance().getCurrentServerData() == null) {
-                        if (tickAmount <= 0) {
-                            World world = Minecraft.getInstance().world;
-                            IntegratedServer iServer = Minecraft.getInstance().getIntegratedServer();
-                            ClientPlayerEntity player = Minecraft.getInstance().player;
+					
+					int maxPlayers = -1;
+					if (Minecraft.getInstance().getCurrentServerData() != null) {
+						maxPlayers = Integer.parseInt(removeFormatting(Minecraft.getInstance().getCurrentServerData().populationInfo.split("/")[1].trim()));
+					}
+					int online = Minecraft.getInstance().getConnection().getPlayerInfoMap().size();
+					
+					if (usingCustomMsg == false && serverCustomMessage.equals("") == false) {
+						DRPCLog.Debug("CustomMSG Applied");
+						Discord.setPresence(ClientConfig.NAME.get(), serverCustomMessage.replace("%players%", online + "").replace("%otherpl%", (online - 1) + ""), customIco);
+						usingCustomMsg = true;
+					}
+					if (Minecraft.getInstance().getCurrentServerData() == null) {
+						if (tickAmount <= 0) {
+							World world = Minecraft.getInstance().world;
+							IntegratedServer iServer = Minecraft.getInstance().getIntegratedServer();
+							ClientPlayerEntity player = Minecraft.getInstance().player;
                             int posX = Double.valueOf(player.posX).intValue();
                             int posY = Double.valueOf(player.posY).intValue();
                             int posZ = Double.valueOf(player.posZ).intValue();
@@ -189,9 +192,11 @@ public class DRPCEventHandler {
 		}
 
 	}
+	
 	/**
 	 * Removes Color code formatting
-	 * @param formatted Formatted text with �2 color codes
+	 *
+	 * @param formatted Formatted text with §2 color codes
 	 * @return Raw text without color codes
 	 */
 	public static String removeFormatting(String formatted){
@@ -200,7 +205,6 @@ public class DRPCEventHandler {
 	
 	@SubscribeEvent
 	public static void onMenuOpened(GuiOpenEvent event){
-		System.out.println(inWorld);
 		if(DRPC.isClient && DRPC.isEnabled) {
             String guiName;
             if (event.getGui() != null) {
