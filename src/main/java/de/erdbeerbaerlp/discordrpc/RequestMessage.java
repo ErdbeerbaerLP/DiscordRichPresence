@@ -4,6 +4,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 
+import java.nio.charset.StandardCharsets;
 import java.util.function.Supplier;
 
 
@@ -17,8 +18,8 @@ public class RequestMessage
 	
 	
 	public PacketBuffer encode(RequestMessage a, PacketBuffer b) {
-		b.writeInt(0);
-		b.writeString(a.toSend);
+		b.writeByte(0x00);
+		b.writeBytes(toSend.getBytes(StandardCharsets.UTF_8));
 		return b;
 	}
 

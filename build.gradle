@@ -26,7 +26,7 @@ configurations {
 shadowJar {
     classifier = ''
     configurations = [project.configurations.shade]
-    exclude 'com.sun.jna'
+    exclude 'com/sun/jna/**'
     relocate 'com.google', 'drpcshadow.com.google'
 }
 
@@ -98,7 +98,7 @@ artifacts {
 }
 // Example for how to get properties into the manifest for reading by the runtime..
 jar {
-    exclude 'com/sun/jna/**'
+
     manifest {
         attributes(["Specification-Title": "discordrpc",
                     "Specification-Vendor": "discordrpc",

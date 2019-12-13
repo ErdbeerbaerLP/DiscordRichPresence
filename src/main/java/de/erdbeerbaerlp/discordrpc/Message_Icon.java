@@ -3,6 +3,7 @@ package de.erdbeerbaerlp.discordrpc;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 
+import java.nio.charset.StandardCharsets;
 import java.util.function.Supplier;
 
 
@@ -18,8 +19,8 @@ public class Message_Icon
 
 
 	public Object encode(Message_Icon a, PacketBuffer b) {
-		b.writeInt(0);
-		b.writeString(toSend);
+		b.writeByte(0x00);
+		b.writeBytes(toSend.getBytes(StandardCharsets.UTF_8));
 		return b;
 	}
 	

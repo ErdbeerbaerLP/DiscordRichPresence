@@ -45,7 +45,6 @@ public class Customdiscordrpc extends JavaPlugin implements PluginMessageListene
     }
     
     public void sendMessage(Player p, String PACKET_DATA, String protocol) {
-        int len = PACKET_DATA.length();
         byte[] message = PACKET_DATA.getBytes(StandardCharsets.UTF_8);
         byte[] result = new byte[message.length + 1];
         result[0] = 1;

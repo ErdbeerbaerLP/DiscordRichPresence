@@ -1,6 +1,7 @@
 package de.erdbeerbaerlp.discordrpc;
 
 import com.google.common.base.Predicate;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -17,7 +18,11 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.ArrayList;
+
+
 @Mod("discordrpc")
 public class DRPC
 {
@@ -34,7 +39,7 @@ public class DRPC
 	protected static final SimpleChannel MSG = NetworkRegistry.newSimpleChannel(new ResourceLocation(DRPC.MODID, "discord-msg"), () -> {return protVersion;}, pred, pred);
 	protected static final SimpleChannel ICON = NetworkRegistry.newSimpleChannel(new ResourceLocation(DRPC.MODID, "discord-icon"), () -> {return protVersion;}, pred, pred);
 	protected static boolean isClient = true;
-	protected static boolean logtochat = true;
+	protected static boolean logtochat = false;
 	protected static boolean preventConfigLoad = false;
 	/**
 	 * The timestamp when the game was launched
@@ -48,16 +53,13 @@ public class DRPC
 		MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
 		
 		ICON.registerMessage(1, Message_Icon.class, (a, b) -> a.encode(a, b), (a) -> {
-			a.readByte();
-			return new Message_Icon(a.readString(500));
+			return new Message_Icon(readString(a));
 		}, (a, b) -> a.onMessageReceived(a, b));
 		REQUEST.registerMessage(0, RequestMessage.class, (a, b) -> a.encode(a, b), (a) -> {
-			a.readByte();
-			return new RequestMessage(a.readString(500));
-		}, (a, b) -> a.onMessageReceived(a, b));
+			return new RequestMessage(readString(a));
+			}, (a, b) -> a.onMessageReceived(a, b));
 		MSG.registerMessage(1, Message_Message.class, (a, b) -> a.encode(a, b), (a) -> {
-			a.readByte();
-			return new Message_Message(a.readString(500));
+			return new Message_Message(readString(a));
 		}, (a, b) -> a.onMessageReceived(a, b));
 		DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
 			ModLoadingContext.get().registerConfig(Type.COMMON, ClientConfig.CONFIG_SPEC, "DiscordRPC.toml");
@@ -72,6 +74,17 @@ public class DRPC
 			MinecraftForge.EVENT_BUS.addListener(ServerConfig::onFileChange);
 			MinecraftForge.EVENT_BUS.addListener(ServerConfig::onLoad);
 		});
+	}
+	private static String readString(ByteBuf b){
+		final ArrayList<Byte> list = new ArrayList<>();
+		while(b.isReadable()){
+			list.add(b.readByte());
+		}
+		final byte[] out = new byte[list.size()];
+		for(int i=0;i<list.size();i++) {
+			out[i] = list.get(i);
+		}
+		return new String(out, StandardCharsets.UTF_8);
 	}
 	private void setup(final FMLCommonSetupEvent event) {} //Unused for now
 	private void clientSetup(final FMLClientSetupEvent event) {

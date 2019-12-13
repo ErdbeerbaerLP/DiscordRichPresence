@@ -11,10 +11,3 @@ Features:
     Supports serverside custom messages
     Hypixel support without extra plugins
     HiveMC support using thier API (updating the current game can take up to two minutes)
-
-
-
-BUILD INSTRUCTIONS:
-  Run gradlew build
-  Open jar with WinRAR or semilar
-  Delete the "com" directory
