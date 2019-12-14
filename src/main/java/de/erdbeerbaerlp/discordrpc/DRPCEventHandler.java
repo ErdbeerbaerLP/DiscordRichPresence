@@ -98,7 +98,7 @@ public class DRPCEventHandler {
 				try {
 					
 					int maxPlayers = -1;
-					if (Minecraft.getInstance().getCurrentServerData() != null) {
+					if (Minecraft.getInstance().getCurrentServerData() != null && Minecraft.getInstance().getCurrentServerData().populationInfo != null) {
 						maxPlayers = Integer.parseInt(removeFormatting(Minecraft.getInstance().getCurrentServerData().populationInfo.split("/")[1].trim()));
 					}
 					int online = Minecraft.getInstance().getConnection().getPlayerInfoMap().size();
@@ -124,7 +124,6 @@ public class DRPCEventHandler {
 						if(tickAmount == 0){
 							currentMax = maxPlayers;
 							currentOnline = online;
-
 							if(!serverCustomMessage.isEmpty()){
 								DRPCLog.Debug("CustomMSG Applied");
 								Discord.setPresence(ClientConfig.NAME.get(), serverCustomMessage.replace("%players%", online+"").replace("%otherpl%", (online-1)+""), customIco);
