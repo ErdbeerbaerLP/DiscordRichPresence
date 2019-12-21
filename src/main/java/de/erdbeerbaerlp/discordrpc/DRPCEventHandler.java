@@ -113,12 +113,12 @@ public class DRPCEventHandler {
 							World world = Minecraft.getInstance().world;
 							IntegratedServer iServer = Minecraft.getInstance().getIntegratedServer();
 							ClientPlayerEntity player = Minecraft.getInstance().player;
-                            int posX = Double.valueOf(player.posX).intValue();
-                            int posY = Double.valueOf(player.posY).intValue();
-                            int posZ = Double.valueOf(player.posZ).intValue();
-                            Discord.setPresence(ClientConfig.NAME.get(), ClientConfig.WORLD_MESSAGE.get().replace("%world%", iServer.getFolderName()).replace("%coords%", "X:" + posX + " Y:" + posY + " Z:" + posZ), "world");
-                            tickAmount = 100;
-                        }else
+							int posX = Double.valueOf(player.lastTickPosX).intValue();
+							int posY = Double.valueOf(player.lastTickPosY).intValue();
+							int posZ = Double.valueOf(player.lastTickPosZ).intValue();
+							Discord.setPresence(ClientConfig.NAME.get(), ClientConfig.WORLD_MESSAGE.get().replace("%world%", iServer.getFolderName()).replace("%coords%", "X:" + posX + " Y:" + posY + " Z:" + posZ), "world");
+							tickAmount = 100;
+						}else
 							tickAmount--;
 					}else{
 						if(tickAmount == 0){

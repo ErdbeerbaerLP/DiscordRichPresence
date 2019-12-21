@@ -9,12 +9,15 @@ buildscript {
         classpath "com.github.jengelman.gradle.plugins:shadow:4.0.4"
     }
 }
+plugins {
+    id "com.matthewprenger.cursegradle" version "1.1.0"
+}
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'net.minecraftforge.gradle'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 
-version = '2.0.1-MC1.14'
+version = '2.0.1-MC1.15'
 group = 'de.erdbeerbaerlp.discordrpc' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'discordrpc'
 
@@ -77,7 +80,7 @@ repositories {
 
 dependencies {
 	//Forge
-    minecraft 'net.minecraftforge:forge:1.14.4-28.1.106'
+    minecraft 'net.minecraftforge:forge:1.15.1-30.0.15'
     //Hive MC Libs
     shade 'com.github.NukerHD:hive-java-api:1.0-snapshot'
     compile 'com.github.NukerHD:hive-java-api:1.0-snapshot'
@@ -110,3 +113,22 @@ jar {
                     "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")],)
     }
 }
+curseforge {
+    // $GRADLE_USER_HOME/gradle.properties
+    apiKey = getProperty("curseforge.apikey")
+    project {
+        id = '300569'
+        changelog = project.changelog
+        releaseType = 'beta'
+        addGameVersion '1.15.1'
+        mainArtifact(jar) {
+            displayName = "DiscordRichPresence-$version (MC 1.15)"
+        }
+        relations{
+            optionalDependency 'ftb-utilities'
+            optionalDependency 'emojicord'
+            optionalDependency 'voting'
+        }
+    }
+}
+tasks.curseforge.dependsOn(build)
