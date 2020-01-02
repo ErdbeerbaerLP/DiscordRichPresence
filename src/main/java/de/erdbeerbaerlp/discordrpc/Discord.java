@@ -36,7 +36,7 @@ public class Discord {
      */
     public static void initDiscord() {
         if (initialized) return;
-        DiscordRPC.INSTANCE.Discord_Initialize("511106082366554122", handlers, true, "");
+        DiscordRPC.INSTANCE.Discord_Initialize(RPCconfig.CLIENT_ID, handlers, true, "");
         DRPCLog.Info("Starting Discord");
         Discord.initialized = true;
     }

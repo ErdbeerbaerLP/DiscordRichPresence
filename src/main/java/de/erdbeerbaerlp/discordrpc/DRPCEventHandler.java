@@ -32,7 +32,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -387,7 +387,7 @@ public class DRPCEventHandler {
                                         HttpURLConnection gameConn = (HttpURLConnection) gameURL.openConnection();
                                         gameConn.setRequestProperty("User-Agent", "ErdbeerbaerLP-DiscordRichPresence-Mod");
                                         InputStream isGame = gameConn.getInputStream();
-                                        BufferedReader r = new BufferedReader(new InputStreamReader(isGame, Charset.forName("UTF-8")));
+                                        BufferedReader r = new BufferedReader(new InputStreamReader(isGame, StandardCharsets.UTF_8));
                                         String result = r.lines().collect(Collectors.joining());
                                         JsonElement json = parse.parse(result);
                                         gameConn.disconnect();
@@ -492,7 +492,7 @@ public class DRPCEventHandler {
             if ((event.getGui() instanceof GuiMainMenu || event.getGui() instanceof GuiMultiplayer) && !inWorld) {
                 resetVars();
                 checkedUpdate = false;
-                Discord.setPresence(RPCconfig.NAME, "In Main Menu", "cube");
+                Discord.setPresence(RPCconfig.NAME, RPCconfig.MAIN_MENU_TEXT, "cube");
             } else if (event.getGui() instanceof GuiDownloadTerrain) {
                 if (RPCconfig.ENABLE_CUSTOM_INTEGRATION)
                     ModClass.REQUEST.sendToServer(new RequestMessage("DRPC-Message-Request"));

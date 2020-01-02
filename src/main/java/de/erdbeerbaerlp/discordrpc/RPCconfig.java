@@ -33,6 +33,7 @@ public class RPCconfig {
     protected static Configuration config;
     protected static boolean CONFIG_GUI_ENABLED;
     protected static boolean DEV_COMMANDS;
+    protected static String CLIENT_ID;
 
     static boolean ENABLE_HYPIXEL_INTEGRATION;
     static boolean ENABLE_HIVEMC_INTEGRATION;
@@ -80,6 +81,8 @@ public class RPCconfig {
         Property propDisableConfigGui = config.get(CATEGORY_PRESENCE, "Disable-Config-GUI", false);
         propDisableConfigGui.setComment("Disables config GUI\nRequires config file editing to enable again");
 
+        Property propCliID = config.get(CATEGORY_PRESENCE, "Client ID", "511106082366554122");
+        propCliID.setComment("Client ID allowing custom icons to show up");
 
         Property propEnableDevelopmentCommands = config.get(CATEGORY_PRESENCE, "DevCommands", false);
         propEnableDevelopmentCommands.setComment("Do you want to use development commands?");
@@ -104,6 +107,7 @@ public class RPCconfig {
         order.add(propEnableHive.getName());
         order.add(propEnableCustomMSG.getName());
         order.add(propDisableConfigGui.getName());
+        order.add(propCliID.getName());
         order.add(propEnableDevelopmentCommands.getName());
         config.setCategoryPropertyOrder(CATEGORY_PRESENCE, order);
 
@@ -114,6 +118,7 @@ public class RPCconfig {
             WORLD_MESSAGE = propertySingleplayer.getString();
             MAIN_MENU_TEXT = propertyInMenu.getString();
             CONFIG_GUI_ENABLED = !propDisableConfigGui.getBoolean();
+            CLIENT_ID = propCliID.getString();
             DEV_COMMANDS = propEnableDevelopmentCommands.getBoolean();
             ENABLE_CUSTOM_INTEGRATION = propEnableCustomMSG.getBoolean();
             ENABLE_HYPIXEL_INTEGRATION = propEnableHypixel.getBoolean();
@@ -131,6 +136,7 @@ public class RPCconfig {
         propertyInMenu.set(MAIN_MENU_TEXT);
         propEnableDevelopmentCommands.set(DEV_COMMANDS);
         propDisableConfigGui.set(!CONFIG_GUI_ENABLED);
+        propCliID.set(CLIENT_ID);
         if (config.hasChanged())
             config.save();
     }

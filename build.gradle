@@ -7,11 +7,15 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
+
+plugins {
+    id "com.matthewprenger.cursegradle" version "1.1.0"
+}
 apply plugin: 'net.minecraftforge.gradle.forge'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 
-version = "1.3.2"
+version = "1.3.3"
 group = "de.erdbeerbaerlp.discordrpc" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "discordrpc"
 
@@ -75,7 +79,7 @@ processResources {
     }
 }
 jar {
-
+    classifier = "1.12"
     configurations.shade.each { dep ->
         from(project.zipTree(dep)) {
             exclude 'META-INF', 'META-INF/**'
@@ -88,3 +92,24 @@ jar {
         ])
     }
 }
+curseforge {
+    // $GRADLE_USER_HOME/gradle.properties
+    apiKey = getProperty("curseforge.apikey")
+    project {
+        id = '300569'
+        changelog = project.changelog
+        releaseType = 'beta'
+        addGameVersion '1.12'
+        addGameVersion '1.12.1'
+        addGameVersion '1.12.2'
+        mainArtifact(jar) {
+            displayName = "DiscordRichPresence-$version (MC 1.12)"
+        }
+        relations{
+            optionalDependency 'ftb-utilities'
+            optionalDependency 'emojicord'
+            optionalDependency 'voting'
+        }
+    }
+}
+tasks.curseforge.dependsOn(build)
