@@ -50,12 +50,12 @@ configurations.all {
     }
 }
 dependencies {
-    shade('club.minnced:java-discord-rpc:2.0.2'){
+    shade('club.minnced:java-discord-rpc:2.0.2') {
         exclude module: "jna"
         exclude module: "gson"
     }
     shade 'com.github.NukerHD:hive-java-api:1.0-snapshot'
-    deobfCompile('com.github.ErdbeerbaerLP:ErdbeerbaerGuiLib:master-SNAPSHOT'){
+    deobfCompile('com.github.ErdbeerbaerLP:ErdbeerbaerGuiLib:master-SNAPSHOT') {
         changing = true
     }
 }
@@ -94,21 +94,23 @@ jar {
 }
 curseforge {
     // $GRADLE_USER_HOME/gradle.properties
-    apiKey = getProperty("curseforge.apikey")
-    project {
-        id = '300569'
-        changelog = project.changelog
-        releaseType = 'beta'
-        addGameVersion '1.12'
-        addGameVersion '1.12.1'
-        addGameVersion '1.12.2'
-        mainArtifact(jar) {
-            displayName = "DiscordRichPresence-$version (MC 1.12)"
-        }
-        relations{
-            optionalDependency 'ftb-utilities'
-            optionalDependency 'emojicord'
-            optionalDependency 'voting'
+    if (project.hasProperty('curseforge.apikey')) {
+        apiKey = getProperty("curseforge.apikey")
+        project {
+            id = '300569'
+            changelog = project.changelog
+            releaseType = 'beta'
+            addGameVersion '1.12'
+            addGameVersion '1.12.1'
+            addGameVersion '1.12.2'
+            mainArtifact(jar) {
+                displayName = "DiscordRichPresence-$version (MC 1.12)"
+            }
+            relations {
+                optionalDependency 'ftb-utilities'
+                optionalDependency 'emojicord'
+                optionalDependency 'voting'
+            }
         }
     }
 }
