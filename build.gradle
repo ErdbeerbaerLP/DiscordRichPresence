@@ -115,19 +115,22 @@ jar {
 }
 curseforge {
     // $GRADLE_USER_HOME/gradle.properties
-    apiKey = getProperty("curseforge.apikey")
-    project {
-        id = '300569'
-        changelog = project.changelog
-        releaseType = 'beta'
-        addGameVersion '1.15.1'
-        mainArtifact(jar) {
-            displayName = "DiscordRichPresence-$version (MC 1.15)"
-        }
-        relations{
-            optionalDependency 'ftb-utilities'
-            optionalDependency 'emojicord'
-            optionalDependency 'voting'
+
+    if (project.hasProperty('curseforge.apikey')) {
+        apiKey = getProperty("curseforge.apikey")
+        project {
+            id = '300569'
+            changelog = project.changelog
+            releaseType = 'beta'
+            addGameVersion '1.15.1'
+            mainArtifact(jar) {
+                displayName = "DiscordRichPresence-$version (MC 1.15)"
+            }
+            relations {
+                optionalDependency 'ftb-utilities'
+                optionalDependency 'emojicord'
+                optionalDependency 'voting'
+            }
         }
     }
 }
