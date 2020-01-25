@@ -80,7 +80,7 @@ repositories {
 
 dependencies {
 	//Forge
-    minecraft 'net.minecraftforge:forge:1.15.1-30.0.15'
+    minecraft 'net.minecraftforge:forge:1.15.2-31.0.1'
     //Hive MC Libs
     shade 'com.github.NukerHD:hive-java-api:1.0-snapshot'
     compile 'com.github.NukerHD:hive-java-api:1.0-snapshot'
@@ -122,7 +122,7 @@ curseforge {
             id = '300569'
             changelog = project.changelog
             releaseType = 'beta'
-            addGameVersion '1.15.1'
+            addGameVersion '1.15.2'
             mainArtifact(jar) {
                 displayName = "DiscordRichPresence-$version (MC 1.15)"
             }
@@ -130,6 +130,9 @@ curseforge {
                 optionalDependency 'ftb-utilities'
                 optionalDependency 'emojicord'
                 optionalDependency 'voting'
+            }
+            options {
+                forgeGradleIntegration = false // defaults to true
             }
         }
     }

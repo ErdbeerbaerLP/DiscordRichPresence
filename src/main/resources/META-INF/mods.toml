@@ -41,6 +41,6 @@ Adds Discord Rich Presence to the game
 [[dependencies.discordrpc]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.15.1,1.15.5]" # Assuming Mojang does not make an 1.16
+    versionRange="[1.15.2,1.15.5]" # Assuming Mojang does not make an 1.16
     ordering="NONE"
     side="BOTH"

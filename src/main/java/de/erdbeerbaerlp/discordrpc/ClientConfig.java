@@ -48,7 +48,7 @@ public class ClientConfig {
     }
 
     @SubscribeEvent
-    public static void onFileChange(final ModConfig.ConfigReloading configEvent) {
-        System.out.println("DRPC config just got changed on the file system!");
-    }
+	public static void onFileChange(final ModConfig.Reloading configEvent) {
+		System.out.println("DRPC config just got changed on the file system!");
+	}
 }
