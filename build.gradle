@@ -14,7 +14,7 @@ apply plugin: 'net.minecraftforge.gradle'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 
-version = '2.0.1-MC1.14'
+version = '2.0.2-MC1.14'
 group = 'de.erdbeerbaerlp.discordrpc' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'discordrpc'
 
@@ -27,7 +27,7 @@ shadowJar {
     classifier = ''
     configurations = [project.configurations.shade]
     exclude 'com/sun/jna/**'
-    relocate 'com.google', 'drpcshadow.com.google'
+    relocate 'com.google.gson', 'drpcshadow.com.google.gson'
 }
 
 minecraft {
@@ -77,7 +77,7 @@ repositories {
 
 dependencies {
 	//Forge
-    minecraft 'net.minecraftforge:forge:1.14.4-28.1.106'
+    minecraft 'net.minecraftforge:forge:1.14.4-28.1.116'
     //Hive MC Libs
     shade 'com.github.NukerHD:hive-java-api:1.0-snapshot'
     compile 'com.github.NukerHD:hive-java-api:1.0-snapshot'

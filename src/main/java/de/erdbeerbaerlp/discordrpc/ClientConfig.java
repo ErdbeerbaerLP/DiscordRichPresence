@@ -8,24 +8,23 @@ import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 public class ClientConfig {
-	
-	
+
+
 	public static final ForgeConfigSpec CONFIG_SPEC;
 
 	public static final ClientConfig CONFIG;
-	
+
 	public static ConfigValue<String> NAME;
 	public static ConfigValue<String> SERVER_MESSAGE;
 	public static BooleanValue DEV_COMMANDS;
 	public static ConfigValue<String> MENU_TEXT;
 	public static ConfigValue<String> WORLD_MESSAGE;
 	public static BooleanValue PREVENT_CLIENT_NAME_CHANGE;
-	
-	
-	
-	static
-	{
-		Pair<ClientConfig,ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(ClientConfig::new);
+	public static ConfigValue<String> CLIENT_ID;
+
+
+	static {
+		Pair<ClientConfig, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(ClientConfig::new);
 		System.out.println("Loading clientside config file...");
 		CONFIG = specPair.getLeft();
 		CONFIG_SPEC = specPair.getRight();
@@ -40,6 +39,7 @@ public class ClientConfig {
 		WORLD_MESSAGE = builder.comment("Placeholders:\n%coords% (X:??? Y:??? Z:???)\n%world% World name").define("Singleplayer-Text", "Playing in %world% (%coords%)");
 		PREVENT_CLIENT_NAME_CHANGE = builder.comment("Setting this to true disables name changing through GUI").define("Disable-Name-changing", false);
 		DEV_COMMANDS = builder.comment("Do you want to use development commands?").define("Dev-Commands", false);
+		CLIENT_ID = builder.comment("Setting for client id, see https://github.com/ErdbeerbaerLP/DiscordRichPresence/wiki/Set-up-custom-Icons-(for-Modpacks) for more info").define("client-id", "511106082366554122");
 		builder.pop();
 	}
     @SubscribeEvent
