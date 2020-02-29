@@ -46,11 +46,11 @@ public class Discord {
 	 * Starts up the discord rich presence service (call in Constructor or earlier!)
 	 */
 	public static void initDiscord() {
-		if(initialized) return;
-		DiscordRPC.discordInitialize("511106082366554122", handlers, true);
+		if (initialized) return;
+		DiscordRPC.discordInitialize(ClientConfig.CLIENT_ID.get(), handlers, true);
 //		if(!discordUpdater.isAlive()) discordUpdater.start();
 		DRPCLog.Info("Starting Discord");
-		Discord.initialized  = true;
+		Discord.initialized = true;
 	}
 	/**
 	 * Same as {@link #initDiscord initDiscord} but allowing you to set an custom Client ID
