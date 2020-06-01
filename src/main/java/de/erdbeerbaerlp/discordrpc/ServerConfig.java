@@ -26,9 +26,9 @@ public class ServerConfig {
 	{
 		builder.comment("Server RichPresence config").push("RichPresence");
 		SERVER_MESSAGE = builder.comment("The second line you have in the rich presence.\n Placeholders are:\n%players% - Amount of all players\n%otherpl% - Amount of players -1 (except you)").define("Message", "Playing on a random Server with %otherpl% other players");
-		SERVER_ICON = builder.comment("The Icon-Key. Use 'world' or 'cube' if you don�t have an special one.").define("IconKey", "world");
+		SERVER_ICON = builder.comment("The Icon-Key. Use 'world' or 'cube' if you don't have an special one.").define("IconKey", "world");
 		builder.pop();
-		
+
 	}
     @SubscribeEvent
     public static void onLoad(final ModConfig.Loading configEvent) {

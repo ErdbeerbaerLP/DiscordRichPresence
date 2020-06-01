@@ -25,8 +25,8 @@ public class Message_Message
 
 
 	public Object onMessageReceived(Message_Message a, Supplier<Context> b) {
-		DRPCLog.Info("Message-packet received: \""+a.toSend+"\"! Applying message...");
-	    DRPCEventHandler.serverCustomMessage = toSend;
-	    return null;
+		DRPCEventHandler.serverCustomMessage = toSend;
+		b.get().setPacketHandled(true);
+		return null;
 	}
 }

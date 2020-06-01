@@ -26,6 +26,7 @@ public class Message_Icon
 	
 	public Object onMessageReceived(Message_Icon a, Supplier<Context> b) {
 		DRPCEventHandler.customIco = a.toSend;
+		b.get().setPacketHandled(true);
 		return null;
 	}
 

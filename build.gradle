@@ -4,6 +4,7 @@ buildscript {
         jcenter()
         mavenCentral()
     }
+
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
         classpath "com.github.jengelman.gradle.plugins:shadow:4.0.4"
@@ -15,7 +16,6 @@ plugins {
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'net.minecraftforge.gradle'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
-apply plugin: 'eclipse'
 
 version = '2.0.3'
 group = 'de.erdbeerbaerlp.discordrpc' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -76,6 +76,10 @@ minecraft {
 repositories {
     jcenter()
     maven { url 'https://jitpack.io' }
+    maven {
+        name = 'sponge'
+        url = 'https://repo.spongepowered.org/maven'
+    }
 }
 
 dependencies {
@@ -88,7 +92,6 @@ dependencies {
     shade "com.google.guava:guava:28.1-jre"
     shade 'com.github.Vatuu:discord-rpc:1.6.2'
     shade 'com.github.Vatuu:discord-rpc-binaries:3.4.0'
-
 }
 reobf {
     shadowJar  {
@@ -125,11 +128,6 @@ curseforge {
             addGameVersion '1.15.2'
             mainArtifact(jar) {
                 displayName = "DiscordRichPresence-$version (MC 1.15)"
-            }
-            relations {
-                optionalDependency 'ftb-utilities'
-                optionalDependency 'emojicord'
-                optionalDependency 'voting'
             }
             options {
                 forgeGradleIntegration = false // defaults to true
