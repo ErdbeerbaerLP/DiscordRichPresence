@@ -33,7 +33,7 @@ public class ClientConfig {
 
 	ClientConfig(ForgeConfigSpec.Builder builder) {
 		builder.comment("Discord RichPresence Config File").push("Rich-Presence");
-		NAME = builder.comment("First line of Rich Presence").define("Client-Name", "Forge 1.15");
+		NAME = builder.comment("First line of Rich Presence").define("Client-Name", "Forge 1.16");
 		SERVER_MESSAGE = builder.comment("Placeholders:\n%ip%  Server IP").define("Server-Text", "Playing on %ip%");
 		MENU_TEXT = builder.comment("No placeholders supported, Text that shows when you are in the main menu").define("Main-Menu", "In Main Menu");
 		WORLD_MESSAGE = builder.comment("Placeholders:\n%coords% (X:??? Y:??? Z:???)\n%world% World name").define("Singleplayer-Text", "Playing in %world% (%coords%)");

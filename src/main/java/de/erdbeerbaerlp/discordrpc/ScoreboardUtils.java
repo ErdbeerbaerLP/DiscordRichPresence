@@ -66,7 +66,7 @@ public class ScoreboardUtils {
         String suffix = null;
         for (ScorePlayerTeam team : scoreboard.getTeams()) {
             if (team.getMembershipCollection().contains(member)) {
-                suffix = TextFormatting.getTextWithoutFormattingCodes(team.getSuffix().getFormattedText());
+                suffix = TextFormatting.getTextWithoutFormattingCodes(team.getSuffix().getString());
                 break;
             }
         }
@@ -78,7 +78,7 @@ public class ScoreboardUtils {
         String suffix = null;
         for (ScorePlayerTeam team : scoreboard.getTeams()) {
             if (team.getMembershipCollection().contains(member)) {
-                suffix = TextFormatting.getTextWithoutFormattingCodes(team.getPrefix().getFormattedText());
+                suffix = TextFormatting.getTextWithoutFormattingCodes(team.getPrefix().getString());
                 break;
             }
         }

@@ -100,8 +100,8 @@ public class DRPCEventHandler {
                 try {
 
                     int maxPlayers = -1;
-                    if (Minecraft.getInstance().getCurrentServerData() != null && Minecraft.getInstance().getCurrentServerData().populationInfo != null && !Minecraft.getInstance().getCurrentServerData().populationInfo.isEmpty() && Minecraft.getInstance().getCurrentServerData().populationInfo.split("/")[1] != null) {
-                        maxPlayers = Integer.parseInt(removeFormatting(Minecraft.getInstance().getCurrentServerData().populationInfo.split("/")[1].trim()));
+                    if (Minecraft.getInstance().getCurrentServerData() != null && Minecraft.getInstance().getCurrentServerData().populationInfo != null && !Minecraft.getInstance().getCurrentServerData().populationInfo.getString().isEmpty() && Minecraft.getInstance().getCurrentServerData().populationInfo.getString().split("/")[1] != null) {
+                        maxPlayers = Integer.parseInt(removeFormatting(Minecraft.getInstance().getCurrentServerData().populationInfo.getString().split("/")[1].trim()));
                     }
                     int online = Minecraft.getInstance().getConnection().getPlayerInfoMap().size();
 
@@ -116,7 +116,7 @@ public class DRPCEventHandler {
                             int posX = Double.valueOf(player.lastTickPosX).intValue();
                             int posY = Double.valueOf(player.lastTickPosY).intValue();
                             int posZ = Double.valueOf(player.lastTickPosZ).intValue();
-                            Discord.setPresence(ClientConfig.NAME.get(), ClientConfig.WORLD_MESSAGE.get().replace("%world%", iServer.getFolderName()).replace("%coords%", "X:" + posX + " Y:" + posY + " Z:" + posZ), "world");
+                            Discord.setPresence(ClientConfig.NAME.get(), ClientConfig.WORLD_MESSAGE.get().replace("%world%", iServer.func_240793_aU_().getWorldName()).replace("%coords%", "X:" + posX + " Y:" + posY + " Z:" + posZ), "world");
                             tickAmount = 100;
                         } else
                             tickAmount--;
@@ -131,7 +131,7 @@ public class DRPCEventHandler {
                                 if (Minecraft.getInstance().getCurrentServerData().serverIP.toLowerCase().contains("hypixel.net")) {
                                     String scoreboardTitle;
                                     try {
-                                        scoreboardTitle = removeFormatting(Minecraft.getInstance().world.getScoreboard().getObjectiveInDisplaySlot(1).getDisplayName().getFormattedText());
+                                        scoreboardTitle = removeFormatting(Minecraft.getInstance().world.getScoreboard().getObjectiveInDisplaySlot(1).getDisplayName().getString());
                                     } catch (NullPointerException e) {
                                         scoreboardTitle = "";
                                     }
@@ -240,7 +240,7 @@ public class DRPCEventHandler {
                                         for (Score s : Minecraft.getInstance().world.getScoreboard().getSortedScores(Minecraft.getInstance().world.getScoreboard().getObjectiveInDisplaySlot(1))) {
                                             if (s.getObjective().equals(Minecraft.getInstance().world.getScoreboard().getObjectiveInDisplaySlot(1))) {
                                                 System.out.println(removeFormatting(s.getPlayerName()));
-                                                if (removeFormatting(s.getPlayerName()).contains(TextFormatting.getTextWithoutFormattingCodes(Minecraft.getInstance().player.getDisplayName().getFormattedText()).substring(0, 12).trim())) {
+                                                if (removeFormatting(s.getPlayerName()).contains(TextFormatting.getTextWithoutFormattingCodes(Minecraft.getInstance().player.getDisplayName().getString()).substring(0, 12).trim())) {
                                                     Discord.setPresence("Hypixel", "Turbo Kart Racers - In Game - Position: " + removeFormatting(s.getPlayerName()).charAt(0), "49tz49873897485");
                                                     return;
                                                 }
