@@ -14,7 +14,7 @@ public class DRPCLog {
 		Log.debug(msg);
 		if(DRPC.logtochat){
 			try {
-				Minecraft.getInstance().player.sendMessage(new StringTextComponent("\u00A77\u00A7o[DEBUG] " + msg), Util.field_240973_b_);
+				Minecraft.getInstance().player.sendMessage(new StringTextComponent("\u00A77\u00A7o[DEBUG] " + msg), Util.DUMMY_UUID);
 			} catch (Exception e) {
 			}}
 	}
@@ -23,7 +23,7 @@ public class DRPCLog {
 		Log.info(msg);
 		if(DRPC.logtochat){
 			try {
-				Minecraft.getInstance().player.sendMessage(new StringTextComponent("\u00A77\u00A7o[Info]\u00A7f\u00A7o " + msg), Util.field_240973_b_);
+				Minecraft.getInstance().player.sendMessage(new StringTextComponent("\u00A77\u00A7o[Info]\u00A7f\u00A7o " + msg), Util.DUMMY_UUID);
 			}catch (Exception e){
 			}
 		}
@@ -33,7 +33,7 @@ public class DRPCLog {
 		Log.error(msg);
 		if(DRPC.logtochat){
 			try {
-				Minecraft.getInstance().player.sendMessage(new StringTextComponent("\u00A77\u00A7o[ERROR]\u00A7c\u00A7o " + msg), Util.field_240973_b_);
+				Minecraft.getInstance().player.sendMessage(new StringTextComponent("\u00A77\u00A7o[ERROR]\u00A7c\u00A7o " + msg), Util.DUMMY_UUID);
 			} catch (Exception e) {
 			}}
 	}
@@ -41,7 +41,7 @@ public class DRPCLog {
 		Log.fatal(msg);
 		if(DRPC.logtochat){
 			try {
-				Minecraft.getInstance().player.sendMessage(new StringTextComponent("\u00A77\u00A7o[FATAL]\u00A74\u00A7o " + msg), Util.field_240973_b_);
+				Minecraft.getInstance().player.sendMessage(new StringTextComponent("\u00A77\u00A7o[FATAL]\u00A74\u00A7o " + msg), Util.DUMMY_UUID);
 			} catch (Exception e) {
 			}}
 	}

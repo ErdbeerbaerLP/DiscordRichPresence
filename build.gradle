@@ -93,6 +93,8 @@ dependencies {
     shade "com.google.guava:guava:28.1-jre"
     shade 'com.github.Vatuu:discord-rpc:1.6.2'
     shade 'com.github.Vatuu:discord-rpc-binaries:3.4.0'
+    //Gui Library
+    compile 'com.github.ErdbeerbaerLP:ErdbeerbaerGuiLib:1.0.2'
 }
 reobf {
     shadowJar  {
