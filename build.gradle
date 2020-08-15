@@ -22,6 +22,11 @@ group = 'de.erdbeerbaerlp.discordrpc' // http://maven.apache.org/guides/mini/gui
 archivesBaseName = 'discordrpc'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+compileJava.options.encoding = 'UTF-8'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
 configurations {
     shade
     compile.extendsFrom(shade)
@@ -81,6 +86,9 @@ repositories {
         name = 'sponge'
         url = 'https://repo.spongepowered.org/maven'
     }
+    flatDir {
+        dirs 'libs'
+    }
 }
 
 dependencies {
@@ -93,8 +101,9 @@ dependencies {
     shade "com.google.guava:guava:29.0-jre"
     shade 'com.github.Vatuu:discord-rpc:1.6.2'
     shade 'com.github.Vatuu:discord-rpc-binaries:3.4.0'
+
     //Gui Library
-    compile 'com.github.ErdbeerbaerLP:ErdbeerbaerGuiLib:1.0.2'
+    compile name: 'eguilib-1.0.2-1.16'
 }
 reobf {
     shadowJar  {
@@ -132,8 +141,8 @@ curseforge {
             mainArtifact(jar) {
                 displayName = "DiscordRichPresence-$version (MC 1.16)"
             }
-            options {
-                forgeGradleIntegration = false // defaults to true
+            relations {
+                requiredDependency 'eguilib'
             }
         }
     }

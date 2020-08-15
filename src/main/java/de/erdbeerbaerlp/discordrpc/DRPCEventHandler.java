@@ -105,7 +105,7 @@ public class DRPCEventHandler {
                     }
                     int online = Minecraft.getInstance().getConnection() == null ? -1 : Minecraft.getInstance().getConnection().getPlayerInfoMap().size();
 
-                    if (!usingCustomMsg && !serverCustomMessage.equals("")) {
+                    if (!usingCustomMsg && !serverCustomMessage.equals("") && ClientConfig.ENABLE_CUSTOM_INTEGRATION.get()) {
                         Discord.setPresence(ClientConfig.NAME.get(), serverCustomMessage.replace("%players%", online + "").replace("%otherpl%", (online - 1) + ""), customIco);
                         usingCustomMsg = true;
                     }
@@ -128,7 +128,7 @@ public class DRPCEventHandler {
                                 Discord.setPresence(ClientConfig.NAME.get(), serverCustomMessage.replace("%players%", online + "").replace("%otherpl%", (online - 1) + ""), customIco);
                                 usingCustomMsg = true;
                             } else {
-                                if (Minecraft.getInstance().getCurrentServerData().serverIP.toLowerCase().contains("hypixel.net")) {
+                                if (Minecraft.getInstance().getCurrentServerData().serverIP.toLowerCase().contains("hypixel.net") && ClientConfig.ENABLE_HYPIXEL_INTEGRATION.get()) {
                                     String scoreboardTitle;
                                     try {
                                         scoreboardTitle = removeFormatting(Minecraft.getInstance().world.getScoreboard().getObjectiveInDisplaySlot(1).getDisplayName().getString());
@@ -340,11 +340,11 @@ public class DRPCEventHandler {
                                         return;
                                     }
                                     Discord.setPresence(ClientConfig.NAME.get(), "Hypixel [" + scoreboardTitle + "] with " + (online - 1) + " other players", "49tz49873897485");
-                                } else if (Minecraft.getInstance().getCurrentServerData().serverIP.toLowerCase().contains("mineplex.com")) {
+                                } else if (Minecraft.getInstance().getCurrentServerData().serverIP.toLowerCase().contains("mineplex.com") && ClientConfig.ENABLE_CUSTOM_INTEGRATION.get()) {
                                     Discord.setPresence(ClientConfig.NAME.get(), "Playing on Mineplex with " + (online - 1) + " other players", "23498365347867869");
-                                } else if (Minecraft.getInstance().getCurrentServerData().serverIP.toLowerCase().contains("wynncraft.com")) {
+                                } else if (Minecraft.getInstance().getCurrentServerData().serverIP.toLowerCase().contains("wynncraft.com") && ClientConfig.ENABLE_CUSTOM_INTEGRATION.get()) {
                                     Discord.setPresence(ClientConfig.NAME.get(), "Playing on Wynncraft, The Minecraft MMORPG", "4878hz4389634tz987");
-                                } else if (Minecraft.getInstance().getCurrentServerData().serverIP.toLowerCase().contains("hivemc.com")) {
+                                } else if (Minecraft.getInstance().getCurrentServerData().serverIP.toLowerCase().contains("hivemc.com") && ClientConfig.ENABLE_HIVEMC_INTEGRATION.get()) {
                                     try {
                                         JsonParser parse = new JsonParser();
                                         URL gameURL = new URL("https://api.hivemc.com/v1/player/" + Minecraft.getInstance().player.getName().getUnformattedComponentText() + "/status/raw?v=1");
