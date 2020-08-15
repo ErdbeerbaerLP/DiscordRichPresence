@@ -17,7 +17,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'net.minecraftforge.gradle'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
-version = '2.0.4'
+version = '2.0.5'
 group = 'de.erdbeerbaerlp.discordrpc' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'discordrpc'
 
@@ -40,7 +40,7 @@ minecraft {
     // stable_#            stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not always work.
     // simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: 'snapshot', version: '20200514-1.16'
+    mappings channel: 'snapshot', version: '20200723-1.16.1'
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
     
     //accessTransformer = file('my_at.cfg')
@@ -119,7 +119,6 @@ jar {
 }
 curseforge {
     // $GRADLE_USER_HOME/gradle.properties
-
     if (project.hasProperty('curseforge.apikey')) {
         apiKey = getProperty("curseforge.apikey")
         project {
@@ -127,6 +126,7 @@ curseforge {
             changelog = project.changelog
             releaseType = 'release'
             addGameVersion '1.16.1'
+            addGameVersion '1.16.2'
             mainArtifact(jar) {
                 displayName = "DiscordRichPresence-$version (MC 1.16)"
             }
