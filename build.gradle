@@ -135,7 +135,7 @@ curseforge {
         project {
             id = '300569'
             changelog = project.changelog
-            releaseType = 'release'
+            releaseType = 'beta'
             addGameVersion '1.16.1'
             addGameVersion '1.16.2'
             mainArtifact(jar) {
