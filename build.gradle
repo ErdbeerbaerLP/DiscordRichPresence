@@ -98,7 +98,7 @@ dependencies {
     shade 'com.github.NukerHD:hive-java-api:1.0-snapshot'
     compile 'com.github.NukerHD:hive-java-api:1.0-snapshot'
     //DiscordRichPresence lib
-    shade "com.google.guava:guava:29.0-jre"
+    shade "com.google.guava:guava:30.0-jre"
     shade 'com.github.Vatuu:discord-rpc:1.6.2'
     shade 'com.github.Vatuu:discord-rpc-binaries:3.4.0'
 
