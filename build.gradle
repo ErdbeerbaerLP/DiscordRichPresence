@@ -17,7 +17,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'net.minecraftforge.gradle'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
-version = '2.0.5'
+version = '2.0.6'
 group = 'de.erdbeerbaerlp.discordrpc' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'discordrpc'
 
@@ -32,7 +32,7 @@ configurations {
     compile.extendsFrom(shade)
 }
 shadowJar {
-    classifier = '1.16'
+    classifier = '1.16.4'
     configurations = [project.configurations.shade]
     exclude 'com/sun/jna/**'
     relocate 'com.google', 'drpcshadow.com.google'
@@ -89,11 +89,15 @@ repositories {
     flatDir {
         dirs 'libs'
     }
+    maven {
+        name = "CurseForge"
+        url = "https://minecraft.curseforge.com/api/maven/"
+    }
 }
 
 dependencies {
 	//Forge
-    minecraft 'net.minecraftforge:forge:1.16.1-32.0.23'
+    minecraft 'net.minecraftforge:forge:1.16.4-35.1.13'
     //Hive MC Libs
     shade 'com.github.NukerHD:hive-java-api:1.0-snapshot'
     compile 'com.github.NukerHD:hive-java-api:1.0-snapshot'
@@ -103,7 +107,7 @@ dependencies {
     shade 'com.github.Vatuu:discord-rpc-binaries:3.4.0'
 
     //Gui Library
-    compile name: 'eguilib-1.0.2-1.16'
+    compile 'eguilib:eguilib:1.0.4:1.16'
 }
 reobf {
     shadowJar  {
@@ -116,7 +120,7 @@ artifacts {
 }
 // Example for how to get properties into the manifest for reading by the runtime..
 jar {
-    classifier = "1.16"
+    classifier = "1.16.4"
     manifest {
         attributes(["Specification-Title": "discordrpc",
                     "Specification-Vendor": "discordrpc",
@@ -135,11 +139,10 @@ curseforge {
         project {
             id = '300569'
             changelog = project.changelog
-            releaseType = 'beta'
-            addGameVersion '1.16.1'
-            addGameVersion '1.16.2'
+            releaseType = 'release'
+            addGameVersion '1.16.4'
             mainArtifact(jar) {
-                displayName = "DiscordRichPresence-$version (MC 1.16)"
+                displayName = "DiscordRichPresence-$version (MC 1.16.4)"
             }
             relations {
                 requiredDependency 'eguilib'

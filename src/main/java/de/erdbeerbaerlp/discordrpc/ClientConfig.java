@@ -43,7 +43,7 @@ public class ClientConfig {
         WORLD_MESSAGE = builder.comment("Placeholders:\n%coords% (X:??? Y:??? Z:???)\n%world% World name").define("Singleplayer-Text", "Playing in %world% (%coords%)");
         PREVENT_CLIENT_NAME_CHANGE = builder.comment("Setting this to true disables name changing through GUI").define("Disable-Name-changing", false);
         LOGTOCHAT = builder.comment("Do you want to print log of this mod to ingame chat?").define("LogToChat", false);
-        CLIENT_ID = builder.comment("Custom client id, see https://github.com/ErdbeerbaerLP/DiscordRichPresence/wiki/Set-up-custom-Icons-(for-Modpacks) for more info").define("client-id", "511106082366554122");
+        CLIENT_ID = builder.comment("Custom client id, see https://github.com/ErdbeerbaerLP/DiscordRichPresence/wiki/Set-up-custom-Icons-(for-Modpacks) for more info", "Default: 511106082366554122").define("client-id", "511106082366554122");
         CONFIG_GUI_DISABLED = builder.comment("Disables config GUI\nRequires config file editing to enable again").define("Disable-Config-GUI", false);
         ENABLE_HYPIXEL_INTEGRATION = builder.comment("Do you want to use custom Hypixel integration (show what game you are playing and such)?").define("Hypixel-Integration", true);
         ENABLE_HIVEMC_INTEGRATION = builder.comment("Do you want to use custom Hivemc integration (show what game you are playing)?").define("Hivemc-Integration", true);
