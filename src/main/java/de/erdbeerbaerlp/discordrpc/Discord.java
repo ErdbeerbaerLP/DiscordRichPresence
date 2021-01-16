@@ -6,26 +6,12 @@ import net.arikia.dev.drpc.DiscordRichPresence;
 
 public class Discord {
     public static long now = DRPC.gameStarted;
-    private static DiscordRichPresence presence = new DiscordRichPresence();
-    //	private static Thread discordUpdater = new Thread() {
-//		public void run() {
-//			while(true) {
-//				rpc.runCallbacks();
-//				try {
-//					sleep(TimeUnit.SECONDS.toMillis(1));
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//					return;
-//				}
-//			}
-//		};
-//	};
+    private static final DiscordRichPresence presence = new DiscordRichPresence();
     private static String currentTitle;
     private static String currentSubtitle;
     private static String currentImgKey;
-    private static boolean isDev = false;
-    private static DiscordEventHandlers handlers = new DiscordEventHandlers();
+    private static final boolean isDev = false;
+    private static final DiscordEventHandlers handlers = new DiscordEventHandlers();
 
     private static boolean initialized = false;
 
@@ -52,7 +38,6 @@ public class Discord {
     public static void initDiscord() {
         if (initialized) return;
         DiscordRPC.discordInitialize(ClientConfig.CLIENT_ID.get(), handlers, true);
-//		if(!discordUpdater.isAlive()) discordUpdater.start();
         DRPCLog.Info("Starting Discord");
         Discord.initialized = true;
     }
@@ -65,7 +50,6 @@ public class Discord {
     public static void customDiscordInit(String clientID) {
         if (initialized) return;
         DiscordRPC.discordInitialize(clientID, handlers, true);
-//		if(!discordUpdater.isAlive()) discordUpdater.start();
         DRPCLog.Info("Starting Discord with client ID " + clientID);
         Discord.initialized = true;
     }
@@ -117,7 +101,6 @@ public class Discord {
     }
 
     protected static void shutdown() {
-//		discordUpdater.interrupt();
         DiscordRPC.discordShutdown();
     }
 }
