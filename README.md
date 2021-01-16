@@ -1,6 +1,6 @@
 This mod gives you an Discord RichPresence.
 
-![](http://cf.way2muchnoise.eu/short_300569.svg) ![](http://cf.way2muchnoise.eu/versions/For%20MC_300569_all.svg)
+[![](http://cf.way2muchnoise.eu/short_300569.svg) ![](http://cf.way2muchnoise.eu/versions/For%20MC_300569_all.svg)](https://www.curseforge.com/minecraft/mc-mods/discordrpc)
 
 
 Features:
