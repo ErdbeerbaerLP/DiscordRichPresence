@@ -1,6 +1,6 @@
 This mod gives you an Discord RichPresence.
 
-![](https://cf.way2muchnoise.eu/short_300569.svg) ![](https://cf.way2muchnoise.eu/versions/For%20MC_300569_all.svg)
+![](http://cf.way2muchnoise.eu/short_300569.svg) ![](http://cf.way2muchnoise.eu/versions/For%20MC_300569_all.svg)
 
 
 Features:
