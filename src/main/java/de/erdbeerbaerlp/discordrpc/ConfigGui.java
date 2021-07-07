@@ -30,7 +30,7 @@ public class ConfigGui extends BetterGuiScreen {
     private CheckBox devCommands, disableConfigMenu;
 
     //Page 3 Components
-    private CheckBox hypixel, hive, customMsg;
+    private CheckBox hypixel, customMsg;
 
     public ConfigGui(GuiScreen parentScreen) {
         super();
@@ -61,7 +61,6 @@ public class ConfigGui extends BetterGuiScreen {
         disableConfigMenu = new CheckBox(0, 0, "Disable Config Menu", !RPCconfig.CONFIG_GUI_ENABLED);
 
         hypixel = new CheckBox(0, 0, "Enable Hypixel Integration", RPCconfig.ENABLE_HYPIXEL_INTEGRATION);
-        hive = new CheckBox(0, 0, "Enable HiveMC Integration", RPCconfig.ENABLE_HIVEMC_INTEGRATION);
         customMsg = new CheckBox(0, 0, "Enable Custom Server Integration", RPCconfig.ENABLE_CUSTOM_INTEGRATION);
 
 
@@ -77,7 +76,6 @@ public class ConfigGui extends BetterGuiScreen {
 
         serverIntegrations.setTooltips("Configurate how some servers will show up");
         hypixel.setTooltips("When enabled, this mod will show details about your current game if available");
-        hive.setTooltips("When enabled, the discord rich presence will show your current game using HiveMCs API");
         customMsg.setTooltips("When enabled, every server can define custom messages using this mod or an spigot plugin", "Also disables hardcoded custom icons and text of not fully integrated servers like mineplex");
 
 
@@ -102,14 +100,12 @@ public class ConfigGui extends BetterGuiScreen {
 
 
         hypixel.assignToPage(3);
-        hive.assignToPage(3);
         customMsg.assignToPage(3);
 
 
         save.setClickListener(() -> {
             RPCconfig.DEV_COMMANDS = devCommands.isChecked();
             RPCconfig.NAME = gameName.getText();
-            RPCconfig.ENABLE_HIVEMC_INTEGRATION = hive.isChecked();
             RPCconfig.ENABLE_HYPIXEL_INTEGRATION = hypixel.isChecked();
             RPCconfig.ENABLE_CUSTOM_INTEGRATION = customMsg.isChecked();
             RPCconfig.WORLD_MESSAGE = singleplayerText.getText();
@@ -150,7 +146,6 @@ public class ConfigGui extends BetterGuiScreen {
                 devCommands,
                 disableConfigMenu,
                 hypixel,
-                hive,
                 customMsg);
 
     }
@@ -193,8 +188,6 @@ public class ConfigGui extends BetterGuiScreen {
         disableConfigMenu.setPosition(devCommands.getX(), devCommands.getY() + 15);
 
         hypixel.setPosition(width / 8, height / 4);
-        hive.setPosition(hypixel.getX(), hypixel.getY() + 15);
-        customMsg.setPosition(hypixel.getX(), hive.getY() + 15);
     }
 
     @Override

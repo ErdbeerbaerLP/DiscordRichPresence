@@ -36,7 +36,6 @@ public class RPCconfig {
     protected static String CLIENT_ID;
 
     static boolean ENABLE_HYPIXEL_INTEGRATION;
-    static boolean ENABLE_HIVEMC_INTEGRATION;
     static boolean ENABLE_CUSTOM_INTEGRATION;
 
 
@@ -122,7 +121,6 @@ public class RPCconfig {
             DEV_COMMANDS = propEnableDevelopmentCommands.getBoolean();
             ENABLE_CUSTOM_INTEGRATION = propEnableCustomMSG.getBoolean();
             ENABLE_HYPIXEL_INTEGRATION = propEnableHypixel.getBoolean();
-            ENABLE_HIVEMC_INTEGRATION = propEnableHive.getBoolean();
         }
 
         propertyName.set(NAME);
@@ -131,7 +129,6 @@ public class RPCconfig {
         propertySingleplayer.set(WORLD_MESSAGE);
         propertyMultiplayer.set(SERVER_MESSAGE);
         propEnableCustomMSG.set(ENABLE_CUSTOM_INTEGRATION);
-        propEnableHive.set(ENABLE_HIVEMC_INTEGRATION);
         propEnableHypixel.set(ENABLE_HYPIXEL_INTEGRATION);
         propertyInMenu.set(MAIN_MENU_TEXT);
         propEnableDevelopmentCommands.set(DEV_COMMANDS);

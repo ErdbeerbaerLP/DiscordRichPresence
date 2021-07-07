@@ -1,8 +1,5 @@
 package de.erdbeerbaerlp.discordrpc;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import fr.nukerhd.hiveapi.response.games.Games;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiDownloadTerrain;
@@ -27,15 +24,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class DRPCEventHandler {
     protected static int currentOnline = -1;
@@ -380,31 +370,6 @@ public class DRPCEventHandler {
                                     Discord.setPresence(RPCconfig.NAME, "Playing on Mineplex with " + (online - 1) + " other players", "23498365347867869");
                                 } else if (Minecraft.getMinecraft().getCurrentServerData().serverIP.toLowerCase().contains("wynncraft.com") && RPCconfig.ENABLE_CUSTOM_INTEGRATION) {
                                     Discord.setPresence(RPCconfig.NAME, "Playing on Wynncraft, The Minecraft MMORPG", "4878hz4389634tz987");
-                                } else if (Minecraft.getMinecraft().getCurrentServerData().serverIP.toLowerCase().contains("hivemc.com") && RPCconfig.ENABLE_HIVEMC_INTEGRATION) {
-                                    try {
-                                        JsonParser parse = new JsonParser();
-                                        URL gameURL = new URL("https://api.hivemc.com/v1/player/" + Minecraft.getMinecraft().player.getName() + "/status/raw?v=1");
-                                        HttpURLConnection gameConn = (HttpURLConnection) gameURL.openConnection();
-                                        gameConn.setRequestProperty("User-Agent", "ErdbeerbaerLP-DiscordRichPresence-Mod");
-                                        InputStream isGame = gameConn.getInputStream();
-                                        BufferedReader r = new BufferedReader(new InputStreamReader(isGame, StandardCharsets.UTF_8));
-                                        String result = r.lines().collect(Collectors.joining());
-                                        JsonElement json = parse.parse(result);
-                                        gameConn.disconnect();
-                                        String gameS = json.getAsJsonObject().get("status").getAsString();
-                                        String gameO;
-                                        try {
-                                            gameO = Games.valueOf(gameS).getName();
-                                        } catch (IllegalArgumentException e) {
-                                            gameO = gameS;
-                                        }
-                                        if (gameO.equals("HUB")) gameO = "in HUB";
-                                        if (gameO.equals("BEDT")) gameO = "BedWars";
-                                        Discord.setPresence("TheHive", "Playing " + gameO + " on hivemc.com", "38462896734683686");
-                                    } catch (Exception ignored) {
-                                    }
-
-
                                 } else {
 
                                     int posX = Double.valueOf(Minecraft.getMinecraft().player.posX).intValue();
