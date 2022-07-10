@@ -143,13 +143,16 @@ curseforge {
         project {
             id = '300569'
             changelog = project.changelog
-            releaseType = 'release'
+            releaseType = 'beta'
             addGameVersion '1.19'
             mainArtifact(jar) {
                 displayName = "DiscordRichPresence-$version (MC 1.19)"
             }
             options {
                 detectNewerJava = true
+            }
+            relations {
+                requiredDependency 'eguilib'
             }
         }
     }
