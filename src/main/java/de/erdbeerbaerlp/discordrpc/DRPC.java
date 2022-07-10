@@ -1,12 +1,18 @@
 package de.erdbeerbaerlp.discordrpc;
 
 import com.google.common.base.Predicate;
-import de.erdbeerbaerlp.guilib.IHasConfigGUI;
+import com.mojang.logging.LogUtils;
+import de.erdbeerbaerlp.discordrpc.client.ClientConfig;
+import de.erdbeerbaerlp.discordrpc.client.DRPCEventHandler;
+import de.erdbeerbaerlp.discordrpc.client.Discord;
+import de.erdbeerbaerlp.discordrpc.client.gui.ConfigGui;
+import de.erdbeerbaerlp.discordrpc.server.ServerConfig;
+import de.jcm.discordgamesdk.Core;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.ConfigGuiHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -19,18 +25,28 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.network.NetworkDirection;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.PacketDistributor;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.network.simple.SimpleChannel;
+import org.slf4j.Logger;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 
 @Mod("discordrpc")
-public class DRPC implements IHasConfigGUI {
+public class DRPC /*implements IHasConfigGUI*/ {
     /**
      * Mod ID
      */
@@ -38,21 +54,39 @@ public class DRPC implements IHasConfigGUI {
     /**
      * The timestamp when the game was launched
      */
-    public static final long gameStarted = Instant.now().toEpochMilli();
+    public static final Instant gameStarted = Instant.now();
     private static final String protVersion = "1.0.0";
     private static final Predicate<String> pred = (ver) -> ver.equals(protVersion) || ver.equals(NetworkRegistry.ACCEPTVANILLA) || ver.equals(NetworkRegistry.ABSENT);
-    protected static final SimpleChannel MSG = NetworkRegistry.newSimpleChannel(new ResourceLocation(DRPC.MODID, "discord-msg"), () -> {
-        return protVersion;
-    }, pred, pred);
+    public static final Logger LOGGER = LogUtils.getLogger();
     protected static final SimpleChannel ICON = NetworkRegistry.newSimpleChannel(new ResourceLocation(DRPC.MODID, "discord-icon"), () -> {
         return protVersion;
     }, pred, pred);
     public static boolean started = false;
-    protected static boolean isEnabled = true;
-    protected static boolean isClient = true;
-    protected static boolean preventConfigLoad = false;
+    protected static final SimpleChannel MSG = NetworkRegistry.newSimpleChannel(new ResourceLocation(DRPC.MODID, "discord-msg"), () -> protVersion, pred, pred);
+    public static boolean isEnabled = true;
+    public static boolean isClient = true;
+    public static boolean preventConfigLoad = false;
 
     public DRPC() {
+        AtomicBoolean downloaded = new AtomicBoolean(true);
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () -> {
+            try {
+                File discordLibrary = downloadDiscordLibrary();
+                if (discordLibrary == null) {
+                    LOGGER.error("Error downloading Discord SDK.");
+                    LOGGER.error("Not loading mod");
+                    downloaded.set(false);
+                    return;
+                }
+                // Initialize the Core
+                Core.init(discordLibrary);
+            } catch (IOException e) {
+                e.printStackTrace();
+                LOGGER.error("Not loading mod");
+                downloaded.set(false);
+            }
+        });
+        if (!downloaded.get()) return;
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::serverSetup);
@@ -61,10 +95,11 @@ public class DRPC implements IHasConfigGUI {
         ICON.registerMessage(1, Message_Icon.class, (a, b) -> a.encode(a, b), (a) -> new Message_Icon(readString(a)), (a, b) -> a.onMessageReceived(a, b));
         MSG.registerMessage(1, Message_Message.class, (a, b) -> a.encode(a, b), (a) -> new Message_Message(readString(a)), (a, b) -> a.onMessageReceived(a, b));
         DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
-            ModLoadingContext.get().registerConfig(Type.COMMON, ClientConfig.CONFIG_SPEC, "DiscordRPC.toml");
-            MinecraftForge.EVENT_BUS.register(ClientConfig.class);
-            MinecraftForge.EVENT_BUS.addListener(ClientConfig::onFileChange);
-            MinecraftForge.EVENT_BUS.addListener(ClientConfig::onLoad);
+            try {
+                ClientConfig.instance().loadConfig();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             MinecraftForge.EVENT_BUS.register(DRPCEventHandler.class);
         });
         DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, () -> () -> {
@@ -75,6 +110,72 @@ public class DRPC implements IHasConfigGUI {
             MinecraftForge.EVENT_BUS.addListener(DRPC::playerChangeDimension);
             MinecraftForge.EVENT_BUS.addListener(DRPC::playerJoin);
         });
+    }
+
+    public static File downloadDiscordLibrary() throws IOException {
+        // Find out which name Discord's library has (.dll for Windows, .so for Linux)
+        String name = "discord_game_sdk";
+        String suffix;
+
+        String osName = System.getProperty("os.name").toLowerCase(Locale.ROOT);
+        String arch = System.getProperty("os.arch").toLowerCase(Locale.ROOT);
+
+        if (osName.contains("windows")) {
+            suffix = ".dll";
+        } else if (osName.contains("linux")) {
+            suffix = ".so";
+        } else if (osName.contains("mac os")) {
+            suffix = ".dylib";
+        } else {
+            throw new RuntimeException("cannot determine OS type: " + osName);
+        }
+
+		/*
+		Some systems report "amd64" (e.g. Windows and Linux), some "x86_64" (e.g. Mac OS).
+		At this point we need the "x86_64" version, as this one is used in the ZIP.
+		 */
+        if (arch.equals("amd64"))
+            arch = "x86_64";
+
+        // Path of Discord's library inside the ZIP
+        String zipPath = "lib/" + arch + "/" + name + suffix;
+
+        // Open the URL as a ZipInputStream
+        URL downloadUrl = new URL("https://dl-game-sdk.discordapp.net/2.5.6/discord_game_sdk.zip");
+        HttpURLConnection connection = (HttpURLConnection) downloadUrl.openConnection();
+        connection.setRequestProperty("User-Agent", "discord-game-sdk4j (https://github.com/JnCrMx/discord-game-sdk4j)");
+        ZipInputStream zin = new ZipInputStream(connection.getInputStream());
+
+        // Search for the right file inside the ZIP
+        ZipEntry entry;
+        while ((entry = zin.getNextEntry()) != null) {
+            if (entry.getName().equals(zipPath)) {
+                // Create a new temporary directory
+                // We need to do this, because we may not change the filename on Windows
+                File tempDir = new File(System.getProperty("java.io.tmpdir"), "java-" + name + System.nanoTime());
+                if (!tempDir.mkdir())
+                    throw new IOException("Cannot create temporary directory");
+                tempDir.deleteOnExit();
+
+                // Create a temporary file inside our directory (with a "normal" name)
+                File temp = new File(tempDir, name + suffix);
+                temp.deleteOnExit();
+
+                // Copy the file in the ZIP to our temporary file
+                Files.copy(zin, temp.toPath());
+
+                // We are done, so close the input stream
+                zin.close();
+
+                // Return our temporary file
+                return temp;
+            }
+            // next entry
+            zin.closeEntry();
+        }
+        zin.close();
+        // We couldn't find the library inside the ZIP
+        return null;
     }
 
     private static String readString(ByteBuf b) {
@@ -93,7 +194,7 @@ public class DRPC implements IHasConfigGUI {
         return new String(out, StandardCharsets.UTF_8).trim();
     }
 
-    private static void sendPackets(ServerPlayerEntity p) {
+    private static void sendPackets(ServerPlayer p) {
         new Thread(() -> {
             try {
                 Thread.sleep(1500);
@@ -107,25 +208,33 @@ public class DRPC implements IHasConfigGUI {
 
     @SubscribeEvent
     public static void playerJoin(PlayerEvent.PlayerLoggedInEvent ev) {
-        DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, () -> () -> sendPackets((ServerPlayerEntity) ev.getPlayer()));
+        DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, () -> () -> sendPackets((ServerPlayer) ev.getPlayer()));
     }
 
     @SubscribeEvent
     public static void playerChangeDimension(PlayerEvent.PlayerChangedDimensionEvent ev) {
-        DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, () -> () -> sendPackets((ServerPlayerEntity) ev.getPlayer()));
+        DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, () -> () -> sendPackets((ServerPlayer) ev.getPlayer()));
     }
 
     private void setup(final FMLCommonSetupEvent event) {
     } //Unused for now
 
     private void clientSetup(final FMLClientSetupEvent event) {
+        ModLoadingContext.get().registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class,
+                () -> new ConfigGuiHandler.ConfigGuiFactory((mc, screen) -> {
+                    if (ClientConfig.instance().configGUIDisabled)
+                        return null;
+                    else
+                        return new ConfigGui(screen);
+                }));
         MinecraftForge.EVENT_BUS.register(DRPCEventHandler.class);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            DRPCLog.Info("Shutting down DiscordHook.");
+            DRPC.LOGGER.info("Shutting down DiscordHook.");
             Discord.shutdown();
         }));
         if (isEnabled) Discord.initDiscord();
-        if (isEnabled) Discord.setPresence(ClientConfig.NAME.get(), "Starting game...", "34565655649643693", false);
+        if (isEnabled)
+            Discord.setPresence(ClientConfig.instance().name, "Starting game...", "34565655649643693", false);
 
     }
 
@@ -136,12 +245,12 @@ public class DRPC implements IHasConfigGUI {
     public void postInit(InterModProcessEvent event) {
 
         if (isEnabled && isClient)
-            Discord.setPresence(ClientConfig.NAME.get(), "Starting game...", "3454083453475893469");
+            Discord.setPresence(ClientConfig.instance().name, "Starting game...", "3454083453475893469");
         started = true;
     }
-
+/*
     @Override
     public Screen getConfigGUI(Screen screen) {
         return ClientConfig.CONFIG_GUI_DISABLED.get() ? null : new ConfigGui(screen);
-    }
+    }*/
 }

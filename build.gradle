@@ -1,27 +1,28 @@
 buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
-        jcenter()
         mavenCentral()
     }
 
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
-        classpath "com.github.jengelman.gradle.plugins:shadow:4.0.4"
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1+', changing: true
+        classpath 'org.spongepowered:mixingradle:0.7.32'
     }
 }
 plugins {
     id "com.matthewprenger.cursegradle" version "1.4.0"
+    id 'com.github.johnrengelman.shadow' version "7.0.0"
 }
-apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.spongepowered.mixin'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
-version = '2.0.7'
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+version = '3.0.0'
 group = 'de.erdbeerbaerlp.discordrpc' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'discordrpc'
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 compileJava.options.encoding = 'UTF-8'
 
 tasks.withType(JavaCompile) {
@@ -29,14 +30,13 @@ tasks.withType(JavaCompile) {
 }
 configurations {
     shade
-    compile.extendsFrom(shade)
+    compileOnly.extendsFrom(shade)
 }
 shadowJar {
-    classifier = '1.16.4'
+    classifier = '1.19'
     configurations = [project.configurations.shade]
-    exclude 'com/sun/jna/**'
-    relocate 'com.google', 'drpcshadow.com.google'
-    relocate 'org.apache.http.entity.mime', 'somesubpackage.org.apache.http.entity.mime'
+    relocate "com.moandjiezana", "drpc.com.moandjiezana"
+    relocate 'com.google.gson', 'dcshadow.com.google.gson'
 }
 
 minecraft {
@@ -45,7 +45,7 @@ minecraft {
     // stable_#            stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not always work.
     // simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: 'snapshot', version: '20200723-1.16.1'
+    mappings channel: 'official', version: '1.19'
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
     
     //accessTransformer = file('my_at.cfg')
@@ -79,8 +79,12 @@ minecraft {
         }
     }
 }
+mixin {
+    add sourceSets.main, 'mixins.drpc.refmap.json'
+    config 'mixins.drpc.json'
+}
+
 repositories {
-    jcenter()
     maven { url 'https://jitpack.io' }
     maven {
         name = 'sponge'
@@ -93,24 +97,24 @@ repositories {
         name = "CurseForge"
         url = "https://minecraft.curseforge.com/api/maven/"
     }
+
+
+    maven { url "https://repo.erdbeerbaerlp.de/repository/maven-public/" }
 }
 
 dependencies {
 	//Forge
-    minecraft 'net.minecraftforge:forge:1.16.5-36.0.0'
-    //Hive MC Libs
-    shade 'com.github.NukerHD:hive-java-api:1.0-snapshot'
-    compile 'com.github.NukerHD:hive-java-api:1.0-snapshot'
-    //DiscordRichPresence lib
-    shade "com.google.guava:guava:30.1-jre"
-    shade 'com.github.Vatuu:discord-rpc:1.6.2'
-    shade 'com.github.Vatuu:discord-rpc-binaries:3.4.0'
+    minecraft 'net.minecraftforge:forge:1.19-41.0.87'
+    //Discord game sdk
+    shade 'com.github.JnCrMx:discord-game-sdk4j:v0.5.5'
+    shade("de.erdbeerbaerlp:toml4j:2073e86")
+    // Apply Mixin AP
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-    //Gui Library
-    compile 'eguilib:eguilib:1.0.5:1.16'
+    compileOnly('de.erdbeerbaerlp:guilib:2.0.2')
 }
 reobf {
-    shadowJar  {
+    shadowJar {
         dependsOn tasks.createMcpToSrg
         mappings = tasks.createMcpToSrg.outputs.files.singleFile
     }
@@ -120,11 +124,11 @@ artifacts {
 }
 // Example for how to get properties into the manifest for reading by the runtime..
 jar {
-    classifier = "1.16.4"
+    classifier = "1.19"
     manifest {
         attributes(["Specification-Title": "discordrpc",
                     "Specification-Vendor": "discordrpc",
-                    "Specification-Version": "2.0", 
+                    "Specification-Version": "3.0",
                     "Implementation-Title": project.name,
                     "Implementation-Version": "${version}",
                     "Implementation-Vendor" :"discordrpc",
@@ -140,13 +144,12 @@ curseforge {
             id = '300569'
             changelog = project.changelog
             releaseType = 'release'
-            addGameVersion '1.16.4'
-            addGameVersion '1.16.5'
+            addGameVersion '1.19'
             mainArtifact(jar) {
-                displayName = "DiscordRichPresence-$version (MC 1.16.4+)"
+                displayName = "DiscordRichPresence-$version (MC 1.19)"
             }
-            relations {
-                requiredDependency 'eguilib'
+            options {
+                detectNewerJava = true
             }
         }
     }

@@ -1,10 +1,14 @@
-package de.erdbeerbaerlp.discordrpc;
+package de.erdbeerbaerlp.discordrpc.client.gui;
 
+import de.erdbeerbaerlp.discordrpc.DRPC;
+import de.erdbeerbaerlp.discordrpc.client.ClientConfig;
 import de.erdbeerbaerlp.guilib.components.*;
 import de.erdbeerbaerlp.guilib.gui.ExtendedScreen;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.resources.ResourceLocation;
+
+import java.io.IOException;
 
 
 public class ConfigGui extends ExtendedScreen {
@@ -25,10 +29,10 @@ public class ConfigGui extends ExtendedScreen {
     private Label gameNameLabel, singleplayerLabel, multiplayerLabel;
 
     //Page 2 Components
-    private CheckBox logToChat, disableConfigMenu;
+    private CheckBox disableConfigMenu;
 
     //Page 3 Components
-    private CheckBox hypixel, hive, customMsg;
+    private CheckBox hypixel, customMsg;
 
     public ConfigGui(Screen parentScreen) {
         super(parentScreen);
@@ -55,28 +59,24 @@ public class ConfigGui extends ExtendedScreen {
         singleplayerText = new TextField(0, 0, 200);
         multiplayerText = new TextField(0, 0, 200);
 
-        logToChat = new CheckBox(0, 0, "Enable Log in chat", ClientConfig.LOGTOCHAT.get());
-        disableConfigMenu = new CheckBox(0, 0, "Disable Config Menu", ClientConfig.CONFIG_GUI_DISABLED.get());
+        disableConfigMenu = new CheckBox(0, 0, "Disable Config Menu", ClientConfig.instance().configGUIDisabled);
 
-        hypixel = new CheckBox(0, 0, "Enable Hypixel Integration", ClientConfig.ENABLE_HYPIXEL_INTEGRATION.get());
-        hive = new CheckBox(0, 0, "Enable HiveMC Integration", ClientConfig.ENABLE_HIVEMC_INTEGRATION.get());
-        customMsg = new CheckBox(0, 0, "Enable Custom Server Integration", ClientConfig.ENABLE_CUSTOM_INTEGRATION.get());
+        hypixel = new CheckBox(0, 0, "Enable Hypixel Integration", ClientConfig.instance().hypixelIntegration);
+        customMsg = new CheckBox(0, 0, "Enable Custom Server Integration", ClientConfig.instance().customIntegration);
 
 
         backToMenu.setTooltips("Back to main config menu");
 
         general.setTooltips("Some basic settings");
-        gameName.setTooltips("The first line of your Rich Presence", "Default: Minecraft 1.12");
+        gameName.setTooltips("The first line of your Rich Presence", "Default: Minecraft 1.19");
         singleplayerText.setTooltips("The second line of the Rich Presence when in singleplayer", "", "PLACEHOLDERS: ", "%coords% - Coordinates (X:??? Y:??? Z:???)", "%world% World name", "%dimensionName% - The name of the dimension", "%dimensionID% - The ID of the current dimension", "%biome% - The current Biome");
         multiplayerText.setTooltips("The default second line of the Rich Presence when in multiplayer", "", "PLACEHOLDERS: ", "%ip%  Server IP", "%online% - Online players", "%coords% - Coordinates (X:??? Y:??? Z:???)", "%max% - Server´s maximum amount of players (unless bungeecord!)", "%otherpl% - Amount of players -1 (except you)", "%dimensionName% - The name of the dimension", "%dimensionID% - The ID of the current dimension", "%biome% - The current Biome");
 
         developers.setTooltips("Some config entries for developers / modpack creators");
         disableConfigMenu.setTooltips("WARNING:", "This disables the config menu!", "Only use when you really want to disable it!");
-        logToChat.setTooltips("Do you want to print log of this mod to ingame chat?");
 
         serverIntegrations.setTooltips("Configurate how some servers will show up");
         hypixel.setTooltips("When enabled, this mod will show details about your current game if available");
-        hive.setTooltips("When enabled, the discord rich presence will show your current game using HiveMCs API");
         customMsg.setTooltips("When enabled, every server can define custom messages using this mod or an spigot plugin", "Also disables hardcoded custom icons and text of not fully integrated servers like mineplex");
 
 
@@ -96,29 +96,38 @@ public class ConfigGui extends ExtendedScreen {
         multiplayerLabel.assignToPage(1);
 
 
-        logToChat.assignToPage(2);
         disableConfigMenu.assignToPage(2);
 
 
         hypixel.assignToPage(3);
-        hive.assignToPage(3);
         customMsg.assignToPage(3);
 
 
+        disableConfigMenu.setChangeListener(() -> {
+            if (disableConfigMenu.isChecked()) {
+                openConfirmation("Are you sure you want to disable this?", "Disabling config menu REQUIRES you to edit the config file to apply changes", "Continue", "Keep enabled", (b) -> {
+                    if (!b) {
+                        disableConfigMenu.setIsChecked(false);
+                    }
+                });
+            }
+        });
         save.setClickListener(() -> {
-            ClientConfig.LOGTOCHAT.set(logToChat.isChecked());
-            ClientConfig.NAME.set(gameName.getText());
-            ClientConfig.ENABLE_HIVEMC_INTEGRATION.set(hive.isChecked());
-            ClientConfig.ENABLE_HYPIXEL_INTEGRATION.set(hypixel.isChecked());
-            ClientConfig.ENABLE_CUSTOM_INTEGRATION.set(customMsg.isChecked());
-            ClientConfig.WORLD_MESSAGE.set(singleplayerText.getText());
-            ClientConfig.SERVER_MESSAGE.set(multiplayerText.getText());
-            ClientConfig.CONFIG_GUI_DISABLED.set(disableConfigMenu.isChecked());
+            ClientConfig.instance().name = gameName.getText();
+            ClientConfig.instance().hypixelIntegration = hypixel.isChecked();
+            ClientConfig.instance().customIntegration = customMsg.isChecked();
+            ClientConfig.instance().worldMessage = singleplayerText.getText();
+            ClientConfig.instance().serverMessage = multiplayerText.getText();
+            ClientConfig.instance().configGUIDisabled = disableConfigMenu.isChecked();
+            try {
+                ClientConfig.instance().saveConfig();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             close();
         });
 
-        bugReport.setClickListener(() -> openURL("https://github.com/ErdbeerbaerLP/DiscordRichPresence/issues", (a) -> {
-        }));
+        bugReport.setClickListener(() -> openURL("https://github.com/ErdbeerbaerLP/DiscordRichPresence/issues"));
         cancel.setClickListener(this::close);
         general.setClickListener(() -> this.setPage(1));
         developers.setClickListener(() -> this.setPage(2));
@@ -127,9 +136,9 @@ public class ConfigGui extends ExtendedScreen {
 
         title.setCentered();
         backToMenu.setVisible(false);
-        gameName.setText(ClientConfig.NAME.get());
-        singleplayerText.setText(ClientConfig.WORLD_MESSAGE.get());
-        multiplayerText.setText(ClientConfig.SERVER_MESSAGE.get());
+        gameName.setText(ClientConfig.instance().name);
+        singleplayerText.setText(ClientConfig.instance().worldMessage);
+        multiplayerText.setText(ClientConfig.instance().serverMessage);
 
 
         addAllComponents(
@@ -148,18 +157,16 @@ public class ConfigGui extends ExtendedScreen {
                 singleplayerText,
                 multiplayerLabel,
                 multiplayerText,
-                logToChat,
                 disableConfigMenu,
                 hypixel,
-                hive,
                 customMsg);
 
     }
 
     @Override
     public void updateGui() {
-        singleplayerText.setEnabled(Minecraft.getInstance().world == null);
-        multiplayerText.setEnabled(Minecraft.getInstance().world == null);
+        singleplayerText.setEnabled(Minecraft.getInstance().level == null);
+        multiplayerText.setEnabled(Minecraft.getInstance().level == null);
         title.setX(width / 2);
         title.setY(10);
         discordLogo.setPosition(width / 2 - discordLogo.getWidth() / 2, 20);
@@ -190,13 +197,11 @@ public class ConfigGui extends ExtendedScreen {
         multiplayerLabel.setX(multiplayerText.getX());
         multiplayerLabel.setY(multiplayerText.getY() - 12);
 
-        logToChat.setX(width / 8);
-        logToChat.setY(height / 3);
-        disableConfigMenu.setPosition(logToChat.getX(), logToChat.getY() + 15);
+        disableConfigMenu.setX(width / 8);
+        disableConfigMenu.setY(height / 3);
 
         hypixel.setPosition(width / 8, height / 4);
-        hive.setPosition(hypixel.getX(), hypixel.getY() + 15);
-        customMsg.setPosition(hypixel.getX(), hive.getY() + 15);
+        customMsg.setPosition(hypixel.getX(), hypixel.getY() + 15);
     }
 
     @Override

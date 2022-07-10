@@ -26,26 +26,26 @@ Adds Discord Rich Presence to the game
 '''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.discordrpc]] #optional
-    # the modid of the dependency
-    modId="forge" #mandatory
-    # Does this dependency have to exist - if not, ordering below must be specified
-    mandatory=true #mandatory
-    # The version range of the dependency
-    versionRange="[31,)" #mandatory
-    # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
-    ordering="NONE"
-    # Side this dependency is applied on - BOTH, CLIENT or SERVER
-    side="BOTH"
+# the modid of the dependency
+modId = "forge" #mandatory
+# Does this dependency have to exist - if not, ordering below must be specified
+mandatory = true #mandatory
+# The version range of the dependency
+versionRange = "[41.0.63,)" #mandatory
+# An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
+ordering = "NONE"
+# Side this dependency is applied on - BOTH, CLIENT or SERVER
+side = "BOTH"
 # Here's another dependency
 [[dependencies.discordrpc]]
-    modId="minecraft"
-    mandatory = true
-versionRange = "[1.16.4,1.16.5]"
-ordering = "NONE"
-    side="BOTH"
-[[dependencies.discordrpc]]
-    modId="eguilib"
+modId = "minecraft"
 mandatory = true
-versionRange = "[1.0.4,)"
+versionRange = "[1.19,)"
 ordering = "NONE"
-    side="CLIENT"
+side = "BOTH"
+[[dependencies.discordrpc]]
+modId = "eguilib"
+mandatory = true
+versionRange = "[2.0.1,)"
+ordering = "NONE"
+side = "CLIENT"

@@ -1,10 +1,10 @@
-package de.erdbeerbaerlp.discordrpc;
+package de.erdbeerbaerlp.discordrpc.client;
 
-import net.minecraft.scoreboard.Score;
-import net.minecraft.scoreboard.ScoreObjective;
-import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.scores.Objective;
+import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.world.scores.Score;
+import net.minecraft.world.scores.Scoreboard;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -31,24 +31,24 @@ public class ScoreboardUtils {
 
         List<String> found = new ArrayList<>();
 
-        ScoreObjective sidebar = scoreboard.getObjectiveInDisplaySlot(1);
+        Objective sidebar = scoreboard.getDisplayObjective(1);
 
         if (sidebar != null) {
-            List<Score> scores = new ArrayList<>(scoreboard.getSortedScores(sidebar));
+            List<Score> scores = new ArrayList<>(scoreboard.getPlayerScores(sidebar));
 
             /*Scores retrieved here do not care for ordering, this is done by the Scoreboard its self.
               We'll need to do this our selves in this case.
               This will appear backwars in chat, but remember that the scoreboard reverses this order
               to ensure highest scores go first.
              */
-            scores.sort(Comparator.comparingInt(Score::getScorePoints));
+            scores.sort(Comparator.comparingInt(Score::getScore));
             found = scores.stream()
                     .filter(score -> {
                         //noinspection ConstantConditions
                         if (score.getObjective() == null || score.getObjective().getName() == null) return false;
                         return score.getObjective().getName().equals(sidebar.getName());
                     })
-                    .map(score -> (getPrefixFromContainingTeam(scoreboard, score.getPlayerName()) + getSuffixFromContainingTeam(scoreboard, score.getPlayerName())))
+                    .map(score -> (getPrefixFromContainingTeam(scoreboard, score.getOwner()) + getSuffixFromContainingTeam(scoreboard, score.getOwner())))
                     .collect(Collectors.toList());
         }
         return found;
@@ -64,9 +64,9 @@ public class ScoreboardUtils {
      */
     private static String getSuffixFromContainingTeam(Scoreboard scoreboard, String member) {
         String suffix = null;
-        for (ScorePlayerTeam team : scoreboard.getTeams()) {
-            if (team.getMembershipCollection().contains(member)) {
-                suffix = TextFormatting.getTextWithoutFormattingCodes(team.getSuffix().getString());
+        for (PlayerTeam team : scoreboard.getPlayerTeams()) {
+            if (team.getPlayers().contains(member)) {
+                suffix = ChatFormatting.stripFormatting(team.getPlayerSuffix().getString());
                 break;
             }
         }
@@ -76,9 +76,9 @@ public class ScoreboardUtils {
 
     private static String getPrefixFromContainingTeam(Scoreboard scoreboard, String member) {
         String suffix = null;
-        for (ScorePlayerTeam team : scoreboard.getTeams()) {
-            if (team.getMembershipCollection().contains(member)) {
-                suffix = TextFormatting.getTextWithoutFormattingCodes(team.getPrefix().getString());
+        for (PlayerTeam team : scoreboard.getPlayerTeams()) {
+            if (team.getPlayers().contains(member)) {
+                suffix = ChatFormatting.stripFormatting(team.getPlayerPrefix().getString());
                 break;
             }
         }
