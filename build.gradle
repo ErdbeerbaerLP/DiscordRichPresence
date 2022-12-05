@@ -97,7 +97,7 @@ repositories {
 
 dependencies {
 	//Forge
-    minecraft 'net.minecraftforge:forge:1.16.5-36.0.0'
+    minecraft 'net.minecraftforge:forge:1.19.2-43.1.65'
     //Hive MC Libs
     shade 'com.github.NukerHD:hive-java-api:1.0-snapshot'
     compile 'com.github.NukerHD:hive-java-api:1.0-snapshot'
