@@ -46,6 +46,6 @@ side = "BOTH"
 [[dependencies.discordrpc]]
 modId = "eguilib"
 mandatory = true
-versionRange = "[2.0.1,)"
+versionRange = "[2.0.4,)"
 ordering = "NONE"
 side = "CLIENT"

@@ -12,7 +12,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ConfigGuiHandler;
+import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -208,20 +208,20 @@ public class DRPC /*implements IHasConfigGUI*/ {
 
     @SubscribeEvent
     public static void playerJoin(PlayerEvent.PlayerLoggedInEvent ev) {
-        DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, () -> () -> sendPackets((ServerPlayer) ev.getPlayer()));
+        DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, () -> () -> sendPackets((ServerPlayer) ev.getEntity()));
     }
 
     @SubscribeEvent
     public static void playerChangeDimension(PlayerEvent.PlayerChangedDimensionEvent ev) {
-        DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, () -> () -> sendPackets((ServerPlayer) ev.getPlayer()));
+        DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, () -> () -> sendPackets((ServerPlayer) ev.getEntity()));
     }
 
     private void setup(final FMLCommonSetupEvent event) {
     } //Unused for now
 
     private void clientSetup(final FMLClientSetupEvent event) {
-        ModLoadingContext.get().registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class,
-                () -> new ConfigGuiHandler.ConfigGuiFactory((mc, screen) -> {
+        ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class,
+                () -> new ConfigScreenHandler.ConfigScreenFactory((mc, screen) -> {
                     if (ClientConfig.instance().configGUIDisabled)
                         return null;
                     else

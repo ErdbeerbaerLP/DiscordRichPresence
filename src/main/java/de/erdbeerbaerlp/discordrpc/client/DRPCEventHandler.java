@@ -11,7 +11,7 @@ import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.world.scores.Score;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.commons.lang3.StringUtils;
 
@@ -31,7 +31,7 @@ public class DRPCEventHandler {
     private static int limboTimes = 0;
 
     @SubscribeEvent
-    public static void onWorldLeave(WorldEvent.Unload event) {
+    public static void onWorldLeave(LevelEvent.Unload event) {
         if (DRPC.isClient && DRPC.isEnabled && Minecraft.getInstance().getCurrentServer() == null) {
             resetVars();
             Discord.setPresence(ClientConfig.instance().name, ClientConfig.instance().menuText, "cube");
