@@ -110,17 +110,17 @@ public class IngameDiscordGui extends ExtendedScreen {
         title.setY(10);
         this.exitButton.setX(this.width - this.exitButton.getWidth() - 6);
         this.exitButton.setY(6);
-        configButton.setX(exitButton.x - configButton.getWidth() - 3);
-        configButton.setY(exitButton.y);
+        configButton.setX(exitButton.getX() - configButton.getWidth() - 3);
+        configButton.setY(exitButton.getY());
 
         noSingleplayerLabel.setPosition(width / 2, height / 2);
 
         createLobby.setPosition(width / 3, height - height / 8);
-        capacitySlider.setPosition(createLobby.x, createLobby.y - 40);
+        capacitySlider.setPosition(createLobby.getX(), createLobby.getY() - 40);
 
 
         leaveLobby.setPosition(width / 2, height - 100);
-        connectedPlayers.setPosition(leaveLobby.x - 100, leaveLobby.y - 200);
+        connectedPlayers.setPosition(leaveLobby.getX() - 100, leaveLobby.getY() - 200);
         if (Discord.getCurrentLobbyID() != -1) {
             leaveLobby.setText(Discord.isLobbyOwner(Discord.getCurrentLobbyID()) ? "Delete Lobby" : "Leave Lobby");
 
